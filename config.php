@@ -52,4 +52,6 @@ PRIMARY KEY (  `pal` )
 	$conf['m_translate']['authurl']="https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/"; // Esto supuestamente no se debe modificar
 	$conf['m_translate']['scopeurl']="http://api.microsofttranslator.com"; // Esto tampoco
 	$conf['m_translate']['granttype']="client_credentials"; // Esto tampoco debe ser modificado :P
+	
+	$conf['m_google']['api_key']=""; // google api key
 ?>

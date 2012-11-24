@@ -33,7 +33,7 @@ class ee111t1t1172{
 				// si, todo esto parece un poco lioso, pero.. asi me gusta :p
 				if(preg_match('/youtube\.com\/watch\?v=([A-Za-z0-9._%-]*)[&\w;=\+_\-]*/',$text,$m2)){
 					$id=$m2[1];
-					$gap=file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$id."&part=id,contentDetails,statistics,snippet&key=AIzaSyDHchWlOxj8lB-UusOVmWcVZT_Yc5T5duA");
+					$gap=file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$id."&part=id,contentDetails,statistics,snippet&key=".$irc->conf["m_google"]["api_key"]);
 					$jao=json_decode($gap);
 					//print_r($jao);
 					$vname=$jao->items[0]->snippet->title;
