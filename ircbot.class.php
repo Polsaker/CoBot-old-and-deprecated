@@ -1,4 +1,8 @@
 <?php
+/* 
+ * Hecho por Ramiro Bou bajo la licencia CC-By-NC-SA
+ * http://creativecommons.org/licenses/by-nc-sa/3.0/
+ */ 
 
 class IRCBot{
 	public $conf;

@@ -1,29 +1,4 @@
-m<?php
-// SQL: 
-/*
-CREATE TABLE  `users` (
-`id` INT( 255 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`user` VARCHAR( 255 ) NOT NULL ,
-`pass` VARCHAR( 255 ) NOT NULL ,
-`rng` INT( 3 ) NOT NULL
-) ENGINE = MYISAM ;
-CREATE TABLE  `nickassoc` (
-`ID` INT( 255 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`ircnick` VARCHAR( 255 ) NOT NULL ,
-`wikinick` VARCHAR( 255 ) NOT NULL
-) ENGINE = MYISAM ;
-CREATE TABLE  `proxys` (
-`ip` VARCHAR( 255 ) NOT NULL,
-`p` INT( 255 ) NOT NULL
-) ENGINE = MYISAM 
-CREATE TABLE `defs` (
-`pal` VARCHAR( 255 ) NOT NULL ,
-`def` VARCHAR( 400 ) NOT NULL ,
-PRIMARY KEY (  `pal` )
-) ENGINE = MYISAM ;
-
-*/
-	
+<?php
 	/* Configuración para la conexión a la base de datos */
 	$conf['db']['host']="localhost"; // host de la base de datos mysql
 	$conf['db']['user']=""; //usuario mysql
@@ -39,7 +14,7 @@ PRIMARY KEY (  `pal` )
 	$conf['irc']['ssl']=false; // usar SSL para conectarse al servidor IRC.
 	
 	$conf['irc']['channels']=array("#CoBOT"); // canales a los que el bot entrara al conectarse
-		$conf['irc']['prefix']="$"; //prefijo de los comandos
+	$conf['irc']['prefix']="$"; //prefijo de los comandos
 	
 	$conf['conn']['reconnect']=15; //numero de reconecciones. dejar en 1 para desactivars
 	

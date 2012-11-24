@@ -1,5 +1,9 @@
 <?php
-	define("VER", "0.2.0.0.3s");
+/* 
+ * Hecho por Ramiro Bou bajo la licencia CC-By-NC-SA
+ * http://creativecommons.org/licenses/by-nc-sa/3.0/
+ */ 
+	define("VER", "0.2.0.0.3");
 	date_default_timezone_set('UTC');
 	require("config.php");
 	require("ircbot.class.php");
