@@ -27,7 +27,7 @@ class ee111t1t1171{
 		if(!@isset($param[1])){$irc->SendCommand("PRIVMSG $channel :05Error: Faltan parámetros"); return 0;}
 		if(!file_exists("plugins/".$param[1])){$irc->SendCommand("PRIVMSG $channel :05Error: No pude encontrar el módulo en /plugins"); return 0;}
 		$k=$irc->load($param[1]);
-		if($k==-2){$irc->SendCommand("PRIVMSG $channel :05Error: El módulo ya está cargado!");}elseif($k==-1){$irc->SendCommand("PRIVMSG $channel :05Error: Error de formato en el módulo (¿talvez sea una versión antigua?)");}elseif($k==-3){$irc->SendCommand("PRIVMSG $channel :05Error: Parece que te has equivocado al poner el nombre del módulo (no puedo encontrar la clase!!)");}else{$irc->SendCommand("PRIVMSG $channel :El módulo se ha cargado exitosamente");}
+		if($k==-2){$irc->SendCommand("PRIVMSG $channel :05Error: El módulo ya está cargado!");}elseif($k==-1){$irc->SendCommand("PRIVMSG $channel :05Error: Error de formato en el módulo (¿talvez sea una versión antigua?)");}elseif($k==-3){$irc->SendCommand("PRIVMSG $channel :05Error: Parece que te has equivocado al poner el nombre del módulo (no puedo encontrar la clase!!)");}elseif($k==3){$irc->SendCommand("PRIVMSG $channel :05Error: El módulo tiene errores de sintaxis!");}else{$irc->SendCommand("PRIVMSG $channel :El módulo se ha cargado exitosamente");}
 	}
 	public function unloadmod(&$irc,$msg,$channel,$param,$who)
 	{
