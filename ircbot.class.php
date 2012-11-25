@@ -168,14 +168,7 @@ class IRCBot{
 	public function checkauth ($uhost,$lvlr, $ch = "*"){
 		$i=0;
 		while(@$this->authd[$i]['hst']){
-		//	echo $this->authd[$i]['hst'] . "  " .$uhost;
 			if($this->authd[$i]['hst']==$uhost){
-				/*if((is_numeric($this->authd[$i]['rng'])) && ($this->authd[$i]['rng']>=$lvlr)){
-					return 1;
-				}elseif($this->authd[$i]['rng']==("o".$lvlr)){
-					return 1;
-				}*/
-				
 				$pr2=explode("|",$this->authd[$i]['rng']);
 				$pr4=array();
 				foreach($pr2 as $key=>$val){
@@ -189,7 +182,6 @@ class IRCBot{
 					if($w==2){return 1;}	
 					$w=0;			
 				}
-				
 			}
 			$i++;
 		}
@@ -324,7 +316,6 @@ class IRCBot{
 									break;
 								}
 							}
-							
 						//}
 						
 						if($k!=1){
@@ -345,7 +336,6 @@ class IRCBot{
 									break;
 								}
 							}
-							echo "---------------------------------$k";
 				if($k!=1){
 					if(@isset($this->hdf[$this->serv['command']])){
 						$i=0;
