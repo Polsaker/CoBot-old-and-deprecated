@@ -19,6 +19,7 @@ $ircbot->load("m_youtube.php");
 $ircbot->load("m_hash.php");
 $ircbot->load("m_modules.php");
 $ircbot->load("m_ignore.php");
+$ircbot->load("m_booksearch.php");
 
 
 ?>
