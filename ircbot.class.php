@@ -9,7 +9,7 @@ class IRCBot{
 	public $serv;
 	public $nick;
 	public $kvar;
-	public $hdf/*=array()*/;
+	public $hdf;
 	public $initscript=array();
 	public $connscript=array();
 	public $joinscript=array();
@@ -39,8 +39,7 @@ class IRCBot{
 	}
 	public function SendCommand($command){
 		$command=$command."\r\n";
-		$searchutf = explode(",","á,é,í,ó,ú,ñ,Á,É,Í,Ó,Ú,Ñ,Ã¡,Ã©,Ã­,Ã³,Ãº,Ã±,ÃÃ¡,ÃÃ©,ÃÃ­,ÃÃ³,ÃÃº,ÃÃ±");
-		$replaceutf = explode(",","á,é,í,ó,ú,ñ,Á,É,Í,Ó,Ú,Ñ,á,é,í,ó,ú,ñ,Á,É,Í,Ó,Ú,Ñ");
+		$command=mb_convert_encoding($command,'utf-8');
 		$command= str_replace($searchutf, $replaceutf, $command);
 		fwrite($this->serv['socket'], $command, strlen($command));
 	}
