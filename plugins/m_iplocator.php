@@ -13,8 +13,8 @@ class ee111t1t1172{
 		public function __construct(&$irc){	
 			$irc->addcmd($this, 'ip', 'iplocator');	
 			$this->help['ip']='Geolocaliza una IP. Sintaxis: ip <IP/IPv6> [p] (si el segundo aprametro es "p", se buscarán proxys en la ip)';
-			$this->gi = geoip_open("/home/mrx/cobot/plugins/GeoLiteCity.dat",GEOIP_STANDARD);
-			$this->gi6 = geoip_open("/home/mrx/cobot/plugins/GeoLiteCityv6.dat",GEOIP_STANDARD);
+			$this->gi = geoip_open("plugins/GeoLiteCity.dat",GEOIP_STANDARD);
+			$this->gi6 = geoip_open("plugins/GeoLiteCityv6.dat",GEOIP_STANDARD);
 			include("plugins/proxy.php");
 
 		}
@@ -63,7 +63,7 @@ while($rowx=mysql_fetch_array($rsx)){$i=1;if($rowx['p']==0){$i=2;}else{$i=1;}}
 				if($re){$resp.=" - 04La IP está listada en el filtro de abusos/proxy";$sql="INSERT INTO proxys (ip,p) VALUES ('".$ip."',1)";}else{$sql="INSERT INTO proxys (ip,p) VALUES ('".$ip."',0)";}
 				if($i==0){$rsx = mysql_query($sql);}
 			}
-			$irc->SendCommand("PRIVMSG ".$channel." :".$resp);
+			$irc->SendCommand("PRIVMSG ".$channel." :".utf8_encode($resp));
 		}
 		
 		private function ipdetector($ip){ 
