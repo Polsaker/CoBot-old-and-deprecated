@@ -39,7 +39,7 @@ class IRCBot{
 	}
 	public function SendCommand($command){
 		$command=$command."\r\n";
-		$command=mb_convert_encoding($command,'utf-8');
+		$command=mb_convert_encoding($command,$this->conf['conn']['charset']);
 		fwrite($this->serv['socket'], $command, strlen($command));
 	}
 	private function remChan($chan){
@@ -205,7 +205,7 @@ class IRCBot{
 					if($channel==$this->nick){
 						$this->serv['myconn']=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass']);
 						mysql_select_db($this->conf['db']['name']);
-						$sqlx="select * from users where user='".mysql_real_escape_string($param[1])."' AND pass=sha1('".mysql_real_escape_string($param[2])."')";
+						$sqlx="select * from users where user='".$param[1]."' AND pass=sha1('".$param[2]."')";
 						$rsx = mysql_query($sqlx) or die(exit("  - ERROR: verifique que las tablas mysql esten creadas."));
 						$i=0;
 						while($rowx=mysql_fetch_array($rsx)){$i++;

@@ -17,6 +17,7 @@
 	$conf['irc']['prefix']="$"; //prefijo de los comandos
 	
 	$conf['conn']['reconnect']=15; //numero de reconecciones. dejar en 1 para desactivars
+	$conf['conn']['charset']="ISO-8859-1";
 	
 	//Configuración para el módulo OPER:
 	$conf['m_oper']['operuser']="";
@@ -29,4 +30,5 @@
 	$conf['m_translate']['granttype']="client_credentials"; // Esto tampoco debe ser modificado :P
 	
 	$conf['m_google']['api_key']=""; // google api key
+	$conf['m_short']['bitly-api']=""; //Bit.ly api key
 ?>
