@@ -134,23 +134,32 @@ class IRCBot{
 	
 	private function helpsys($commands, $channel,$who){
 		if(@!$commands[1]){
-			$clist = "help auth ignore"; //agregamos los comandos nativos...
+			$clist = "Lista de comandos: help auth ignore"; //agregamos los comandos nativos...
 			//y agregamos todos los comandos cargados via plugin a la lista...
 			$i=0;
+			$this->SendCommand("PRIVMSG ".$channel." :03Co04BOT v".VER." Por Mr. X Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
 			while(!($this->pcdc<$i)){
 				if(@$this->pcomms[$i]['comm']){
 					if($this->pcomms[$i]['ali']!=1){
 						if(@isset($this->plugins[$this->pcomms[$i]['pgin']]->help[$this->pcomms[$i]['comm'].'_l'])){
 							if($this->checkauth($who,$this->plugins[$this->pcomms[$i]['pgin']]->help[$this->pcomms[$i]['comm'].'_l'])==1){
-								$clist.=" ".$this->pcomms[$i]['comm'];
+								if((strlen($clist)+strlen($this->pcomms[$i]['comm']))>=380){
+									$this->SendCommand("PRIVMSG ".$channel." :".$clist."   06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
+									$clist="";
+								}else{$clist.=" ".$this->pcomms[$i]['comm'];}
 							}
-						}else{$clist.=" ".$this->pcomms[$i]['comm'];}
+						}else{
+							if((strlen($clist)+strlen($this->pcomms[$i]['comm']))>=380){
+								$this->SendCommand("PRIVMSG ".$channel." :".$clist."   06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
+								$clist="";
+							}else{$clist.=" ".$this->pcomms[$i]['comm'];}
+						}
 					}
 				}
 				$i++;
 			}
-			$this->SendCommand("PRIVMSG ".$channel." :03Co04BOT v".VER." Por Mr. X Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
-			$this->SendCommand("PRIVMSG ".$channel." :Lista de comandos: ".$clist);
+			
+			$this->SendCommand("PRIVMSG ".$channel." :".trim($clist));
 		}else{
 			switch($commands[1]){
 				case "help":
