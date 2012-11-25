@@ -40,6 +40,9 @@ class IRCBot{
 	}
 	public function SendCommand($command){
 		$command=$command."\r\n";
+		$searchutf = explode(",","á,é,í,ó,ú,ñ,Á,É,Í,Ó,Ú,Ñ,Ã¡,Ã©,Ã­,Ã³,Ãº,Ã±,ÃÃ¡,ÃÃ©,ÃÃ­,ÃÃ³,ÃÃº,ÃÃ±");
+		$replaceutf = explode(",","á,é,í,ó,ú,ñ,Á,É,Í,Ó,Ú,Ñ,á,é,í,ó,ú,ñ,Á,É,Í,Ó,Ú,Ñ");
+		$command= str_replace($searchutf, $replaceutf, $command);
 		$command=mb_convert_encoding($command,$this->conf['conn']['charset']);
 		fwrite($this->serv['socket'], $command, strlen($command));
 	}
@@ -74,9 +77,8 @@ class IRCBot{
 		fclose($fp);
 		
 		$fp = fopen("plugins/temp/$plugin", "w+");
-		fputs($fp, $nmod);
+		fputs($fp, utf8_encode($nmod));
 		fclose($fp);
-		
 		
 		
 		include("plugins/temp/$plugin");
