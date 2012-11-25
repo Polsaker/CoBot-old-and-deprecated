@@ -35,7 +35,7 @@ $key="ee111t1t1172";
 			$this->help['piedrapapelotijeras']='Invita a alguien a jugar a piedra papel o tijeras. Sintaxis: piedrapapelotijeras <NICK>';
 			$this->help['infinity']='Regula las opciones de dinero infinito.';
 			$this->help['infinity_l']=8;
-			if(!@is_array($irc->hdf['PRIVMSG'])){$irc->hdf['PRIVMSG']=array();}
+			if(!@isset($irc->hdf['PRIVMSG'])){$irc->hdf['PRIVMSG']=array();}
 			array_push($irc->hdf['PRIVMSG'],array("games","comecom")); 
 		}
 

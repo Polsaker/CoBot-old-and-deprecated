@@ -9,11 +9,11 @@ class ee111t1t1172{
 		public $help;
 		private $ch=array();
 		public function __construct(&$irc){	
-			if(!@is_array($irc->hdf['MODE'])){$irc->hdf['MODE']=array();}
+			if(!@isset($irc->hdf['MODE'])){$irc->hdf['MODE']=array();}
 			array_push($irc->hdf['MODE'],array("protect","modeprot"));
-			if(!@is_array($irc->hdf['474'])){$irc->hdf['474']=array();}
+			if(!@isset($irc->hdf['474'])){$irc->hdf['474']=array();}
 			array_push($irc->hdf['474'],array("protect","banprot"));
-			if(!@is_array($irc->hdf['473'])){$irc->hdf['473']=array();}
+			if(!@isset($irc->hdf['473'])){$irc->hdf['473']=array();}
 			array_push($irc->hdf['473'],array("protect","invprot"));
 			
 		}
