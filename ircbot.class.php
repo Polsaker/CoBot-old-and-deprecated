@@ -63,12 +63,22 @@ class IRCBot{
 		$nclassname=$mname."x".$ts;
 		echo "  - Cargando plugin ". $mname. " ";
 		if(@isset($this->plugins[$mname])){ echo "[ERR] El plugin ya está cargado\n"; return -2;}
+		
+		@$r=shell_exec("php -l plugins/$plugin");
+		if(!preg_match("@.*No syntax errors detected.*@",$r)){
+			echo "[ERR] El plugin parece tener errores de sintáxis!!\n";
+			return 3;
+		}
+		
 		$nmod=preg_replace("/class $fkey{/","class $nclassname{",$pfile);
 		fclose($fp);
 		
 		$fp = fopen("plugins/temp/$plugin", "w+");
 		fputs($fp, $nmod);
 		fclose($fp);
+		
+		
+		
 		include("plugins/temp/$plugin");
 		if(!class_exists($nclassname)){echo "[ERR] No encuentro la funcion principal!!\n"; return -3;}
 		$this->plugins[$mname]=new $nclassname($this);
