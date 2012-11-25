@@ -205,7 +205,7 @@ class IRCBot{
 	private function procom($msg, $guy, $channel){
 		$param=explode(" ", substr ($msg, 1));
 		$nk=explode("!",$guy);
-
+		$param[0]=strtolower($param[0]);
 		if($msg[0]==$this->conf['irc']['prefix']){
 			switch($param[0]){
 				case "help":
