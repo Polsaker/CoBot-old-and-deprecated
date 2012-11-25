@@ -22,6 +22,7 @@ class IRCBot{
 	public $disconn=0;
 	public function __construct($config){
 		$this->conf=$config;
+		include("errhandler.php");
 		echo "  - Resolviendo '". $this->conf['irc']['host'] ."'";
 		$this->serv['ip']=gethostbynamel($this->conf['irc']['host']);
 		$this->nick=$this->conf['irc']['nick'];
@@ -61,7 +62,7 @@ class IRCBot{
 		
 		$nclassname=$mname."x".$ts;
 		echo "  - Cargando plugin ". $mname. " ";
-		if(@isset($this->plugins[$name])){ echo "[ERR] El plugin ya está cargado\n"; return -2;}
+		if(@isset($this->plugins[$mname])){ echo "[ERR] El plugin ya está cargado\n"; return -2;}
 		$nmod=preg_replace("/class $fkey{/","class $nclassname{",$pfile);
 		fclose($fp);
 		
@@ -105,8 +106,8 @@ class IRCBot{
 		$this->pcomms[$this->pcdc]['pgin']=$plugin;
 		$this->pcomms[$this->pcdc]['comm']=$command;
 		$this->pcomms[$this->pcdc]['ali']=0;
-		$i=0;
-		while(@$alias[$i]){
+		if(!@isset($alias[0])){return 0;}
+		$i=0;while(@isset($alias[$i])){
 			$this->pcdc=$this->pcdc+1;
 			$this->pcomms[$this->pcdc]['pgin']=$plugin;
 			$this->pcomms[$this->pcdc]['comm']=$alias[$i];
@@ -250,7 +251,7 @@ class IRCBot{
 			$i=0;
 			$this->SendCommand("NICK " . $this->nick);
 			$this->SendCommand("USER " . $this->nick. " * * :CoBOT, IRC Bot");
-			while(@$this->initscript[$i]){
+			while(@isset($this->initscript[$i])){
 				@$this->SendCommand($this->initscript[$i]);
 				$i++;
 			}
@@ -263,14 +264,14 @@ class IRCBot{
 				switch($this->serv['command']){
 					case "001":
 						$i=0;
-						while(@$this->connscript[$i]){
+						while(@isset($this->connscript[$i])){
 							time_nanosleep(0,250000000); //anti-excess flood
 							@$this->SendCommand($this->connscript[$i]);
 							$i++;
 						}
 						if($this->conf['irc']['nspass']){$this->SendCommand("PRIVMSG NickServ :IDENTIFY ".$this->conf['irc']['nspass']);}
 						$i=0;
-						while(@$this->conf['irc']['channels'][$i]){
+						while(@isset($this->conf['irc']['channels'][$i])){
 							$this->SendCommand("JOIN ".$this->conf['irc']['channels'][$i]);$i++;}
 						break;
 					case "PING":
@@ -280,7 +281,7 @@ class IRCBot{
 						if (preg_match('@^:'.preg_quote($this->nick, '@').'!.+ JOIN (.+)$@',$this->serv['rbuffer'], $matches)){
 							$this->addChan($matches[1]);
 							$i=0;
-							while(@$this->joinscript[$i]){
+							while(@isset($this->joinscript[$i])){
 								time_nanosleep(0,250000000);
 								$joinscript=str_replace("&c",substr($matches[1],1,strlen($matches[1])-1),$this->joinscript[$i]);
 								@$this->SendCommand($joinscript);
@@ -338,7 +339,7 @@ class IRCBot{
 				if($k!=1){
 					if(@isset($this->hdf[$this->serv['command']])){
 						$i=0;
-						while(@$this->hdf[$this->serv['command']][$i]){
+						while(@isset($this->hdf[$this->serv['command']][$i])){
 							$fn=$this->hdf[$this->serv['command']][$i][1];
 							$this->plugins[$this->hdf[$this->serv['command']][$i][0]]->$fn($this,$this->serv['rbuffer']);
 							$i++;
