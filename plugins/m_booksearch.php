@@ -21,16 +21,15 @@ class ee111t1t1172{
 				$i++;
 			}
 			$ts=substr($ts,0,strlen($ts)-1);
+			if(preg_match("#.*isbn\:.*#",$ts,$m)){
+				$ts=str_replace("-","",$ts);
+			}
 			$gap=file_get_contents("https://www.googleapis.com/books/v1/volumes?country=AR&q=".urlencode($ts)."&key=".$irc->conf['m_google']['api_key']);
 			$jao=json_decode($gap);
 			if($jao->totalItems==0){$resp="No se encontraron resultados..";}else{
 				$i=0;
 				while(($i<3) && (@$jao->items[$i])){
-					@$resp="".$jao->items[$i]->volumeInfo->title."";
-					if(@$jao->items[$i]->volumeInfo->authors[0]){$resp.=", Autor: ".$jao->items[$i]->volumeInfo->authors[0]."";}
-					if(@$jao->items[$i]->volumeInfo->pageCount){$resp.=", ".$jao->items[$i]->volumeInfo->pageCount." páginas.";}
-					if(@$jao->items[$i]->volumeInfo->industryIdentifiers[$i]->identifier){$resp.=" ISBN-10: ".$jao->items[$i]->volumeInfo->industryIdentifiers[$i]->identifier."";}
-					if(@$jao->items[$i]->volumeInfo->industryIdentifiers[1]->identifier){$resp.=", ISBN-13 ".$jao->items[$i]->volumeInfo->industryIdentifiers[1]->identifier.".";}
+					@$resp="".$jao->items[$i]->volumeInfo->title.", Autor: ".$jao->items[$i]->volumeInfo->authors[0].", ".$jao->items[$i]->volumeInfo->pageCount." páginas. ISBN-10: ".$jao->items[$i]->volumeInfo->industryIdentifiers[$i]->identifier.", ISBN-13 ".$jao->items[$i]->volumeInfo->industryIdentifiers[1]->identifier.".";
 					$irc->SendCommand("PRIVMSG ".$channel." :".$resp);
 					$i++;
 				}
