@@ -13,7 +13,6 @@ $ircbot->load("m_learn.php");
 $ircbot->load("m_protect.php");
 #$ircbot->load("m_oper.php");
 $ircbot->load("m_translate.php");
-include("xml2array.php");
 $ircbot->load("m_wikichan.php");
 $ircbot->load("m_games.php");
 $ircbot->load("m_youtube.php");
