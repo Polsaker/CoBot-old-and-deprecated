@@ -61,6 +61,7 @@ class ee111t1t1172{
 				case "icy": $r="Helado";break;
 				case "tstorms": $r="Tormentas";break;
 				case "chancetstorms": $r="Posibles Tormentas";break;
+				case "chancesnow": $r="Posibles Nevadas";break;
 				
 			}
 			return $r;
