@@ -20,48 +20,21 @@ class ee111t1t1172{
 			$gap=file_get_contents("http://api.wunderground.com/api/".$irc->conf['m_weather']['api_key']."/conditions/forecast/lang:es/q/".urlencode($ts).".json");
 			$jao=json_decode($gap);
 			
-			$resp="El tiempo en \00310".$jao->current_observation->display_location->full."\003: Viento a ".$jao->current_observation->wind_kph." Kilómetros por hora (".$jao->current_observation->wind_dir."), Presión ".$jao->current_observation->pressure_mb." hps,";
+			$resp="El tiempo en \00310".$jao->current_observation->display_location->full."\003: Viento a ".str_replace("W","O", $jao->current_observation->wind_kph)." Kilómetros por hora (".$jao->current_observation->wind_dir."), Presión ".$jao->current_observation->pressure_mb." hPa,";
 			$resp.="  Sensación térmica: ".$jao->current_observation->feelslike_c."ºC";
-			$resp.=", [".$this->conv($jao->current_observation->icon)."] Pronostico:";
+			$resp.=", [".$this->conv($jao->current_observation->icon)."] Pronostico: ";
 			
-			$resp.= "  \00303". $this->convday($jao->forecast->txt_forecast->forecastday[0]->title);
-			$resp.= "\003 [".$this->conv($jao->forecast->txt_forecast->forecastday[0]->icon)."], ";
-			if(preg_match("#.*High of.+#",$jao->forecast->txt_forecast->forecastday[0]->fcttext_metric,$m)){
-				$k1=explode("High of ",$jao->forecast->txt_forecast->forecastday[0]->fcttext_metric);$k=substr($k1[1],0,2);$k=trim($k,"C");
-				$resp.="Máxima de \00306".$k."ºC\003";
-			}elseif(preg_match("#.*Low of.*#",$jao->forecast->txt_forecast->forecastday[0]->fcttext_metric,$m)){
-				$k1=explode("Low of ",$jao->forecast->txt_forecast->forecastday[0]->fcttext_metric);$k=substr($k1[1],0,2);$k=trim($k,"C");
-				$resp.="Mínima de ".$k."ºC";
-			}
-			$resp.= ",  \00303". $this->convday($jao->forecast->txt_forecast->forecastday[1]->title);
-			$resp.= "\003 [".$this->conv($jao->forecast->txt_forecast->forecastday[1]->icon)."] ";
-			if(preg_match("#.*High of.*#",$jao->forecast->txt_forecast->forecastday[1]->fcttext_metric,$m)){
-				$k1=explode("High of ",$jao->forecast->txt_forecast->forecastday[1]->fcttext_metric);$k=substr($k1[1],0,2);$k=trim($k,"C");
-				$resp.="Máxima de \00306".$k."ºC\003";
-			}elseif(preg_match("#.*Low of.*#",$jao->forecast->txt_forecast->forecastday[1]->fcttext_metric,$m)){
-				$k1=explode("Low of ",$jao->forecast->txt_forecast->forecastday[1]->fcttext_metric);$k=substr($k1[1],0,2);$k=trim($k,"C");
-				$resp.="Mínima de \00306".$k."ºC\003";
+			$i=0;
+			while($i!=3){
+				$resp.= "\00303". $this->convday($jao->forecast->simpleforecast->forecastday[$i]->date->weekday);
+				$resp.= "\003 [".$this->conv($jao->forecast->simpleforecast->forecastday[$i]->icon)."], ";
+				$resp.="Máxima de \00306".$jao->forecast->simpleforecast->forecastday[$i]->high->celsius."ºC\003 ";
+				$resp.="Mínima de \00306".$jao->forecast->simpleforecast->forecastday[$i]->low->celsius."ºC\003, ";
+				$i++;
 			}
 			
-			$resp.= "  \00303". $this->convday($jao->forecast->txt_forecast->forecastday[2]->title);
-			$resp.= "\003 [".$this->conv($jao->forecast->txt_forecast->forecastday[2]->icon)."], ";
-			if(preg_match("#.*High of.+#",$jao->forecast->txt_forecast->forecastday[2]->fcttext_metric,$m)){
-				$k1=explode("High of ",$jao->forecast->txt_forecast->forecastday[2]->fcttext_metric);$k=substr($k1[1],0,2);$k=trim($k,"C");
-				$resp.="Máxima de \00306".$k."ºC\003";
-			}elseif(preg_match("#.*Low of.*#",$jao->forecast->txt_forecast->forecastday[2]->fcttext_metric,$m)){
-				$k1=explode("Low of ",$jao->forecast->txt_forecast->forecastday[2]->fcttext_metric);$k=substr($k1[1],0,2);$k=trim($k,"C");
-				$resp.="Mínima de ".$k."ºC";
-			}
-			$resp.= ",  \00303". $this->convday($jao->forecast->txt_forecast->forecastday[3]->title);
-			$resp.= "\003 [".$this->conv($jao->forecast->txt_forecast->forecastday[3]->icon)."] ";
-			if(preg_match("#.*High of.*#",$jao->forecast->txt_forecast->forecastday[3]->fcttext_metric,$m)){
-				$k1=explode("High of ",$jao->forecast->txt_forecast->forecastday[3]->fcttext_metric);$k=substr($k1[1],0,2);$k=trim($k,"C");
-				$resp.="Máxima de \00306".$k."ºC\003";
-			}elseif(preg_match("#.*Low of.*#",$jao->forecast->txt_forecast->forecastday[3]->fcttext_metric,$m)){
-				$k1=explode("Low of ",$jao->forecast->txt_forecast->forecastday[3]->fcttext_metric);$k=substr($k1[1],0,2);$k=trim($k,"C");
-				$resp.="Mínima de \00306".$k."ºC\003";
-			}
 			
+					
 			//$resp="Resultados de la búsqueda en Google de \"".$ts."\": ".$jao->items[0]->title." 10".$jao->items[0]->link." ".$jao->items[1]->title." 10".$jao->items[1]->link." ".$jao->items[2]->title." 10".$jao->items[2]->link."";
 			
 			$irc->SendCommand("PRIVMSG ".$channel." :".$resp);
@@ -76,7 +49,7 @@ class ee111t1t1172{
 				case "mist": $r="Con niebla";break;
 				case "chancerain": $r="Posibles precipitaciones";break;
 				case "rain": $r="Lluvia";break;
-				case "chancestorm": $r="Probabilidad de tormentas";break;
+				case "chancestorms": $r="Probabilidad de tormentas";break;
 				case "storm": $r="Tormenta";break;
 				case "snow": $r="Nieve";break;
 				case "cloudy": $r="Nublado";break;
@@ -86,6 +59,8 @@ class ee111t1t1172{
 				case "foggy": $r="Niebla";break;
 				case "fog": $r="Niebla";break;
 				case "icy": $r="Helado";break;
+				case "tstorms": $r="Tormentas";break;
+				case "chancetstorms": $r="Posibles Tormentas";break;
 				
 			}
 			return $r;
