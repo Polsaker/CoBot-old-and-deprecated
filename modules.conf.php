@@ -21,6 +21,6 @@ $ircbot->load("m_modules.php");
 $ircbot->load("m_ignore.php");
 $ircbot->load("m_booksearch.php");
 $ircbot->load("m_short.php");
-
+$ircbot->load("m_weather.php");
 
 ?>
