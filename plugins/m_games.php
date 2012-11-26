@@ -15,7 +15,7 @@ $key="ee111t1t1172";
 			$irc->addcmd($this, 'ppt', 'games');	
 			$irc->addcmd($this, 'pptj', 'games');	
 			$irc->addcmd($this, 'infinity', 'games');	
-			$irc->addcmd($this, 'deluser', 'games');	
+			$irc->addcmd($this, 'delgameuser', 'games');	
 			$this->help['enablegame']='Activa los juegos en un canal';
 			$this->help['enablegame_l']=4;
 			$this->help['disablegame']='Desactiva los juegos en un canal';
@@ -30,14 +30,16 @@ $key="ee111t1t1172";
 			$this->help['imp_l']=4;
 			$this->help['congelar']='Cierra o abre una cuenta cerrada.';
 			$this->help['congelar_l']=4;
-			$this->help['deluser']='Elimina una cuenta de los juegos.';
-			$this->help['deluser_l']=4;
+			$this->help['delgameuser']='Elimina una cuenta de los juegos.';
+			$this->help['delgameuser_l']=4;
 			$this->help['piedrapapelotijeras']='Invita a alguien a jugar a piedra papel o tijeras. Sintaxis: piedrapapelotijeras <NICK>';
 			$this->help['infinity']='Regula las opciones de dinero infinito.';
 			$this->help['infinity_l']=8;
 			if(!@isset($irc->hdf['PRIVMSG'])){$irc->hdf['PRIVMSG']=array();}
 			array_push($irc->hdf['PRIVMSG'],array("games","comecom")); 
 		}
+		
+		
 
 		public function enablegame(&$irc,$msg,$channel,$param,$who)
 		{
