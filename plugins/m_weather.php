@@ -17,7 +17,7 @@ class ee111t1t1172{
 				$i++;
 			}
 			$ts=substr($ts,0,strlen($ts)-1);
-			$gap=file_get_contents("http://api.wunderground.com/api/".$irc->conf['m_weather']['api_key']."/conditions/forecast/lang:es/q/".urlencode($ts).".json");
+			$gap=file_get_contents("http://api.wunderground.com/api/".$irc->conf['m_weather']['api_key']."/conditions/forecast/lang:es/q/".urlencode(str_replace(" ", "_",$ts)).".json");
 			$jao=json_decode($gap);
 			
 			$resp="El tiempo en \00310".$jao->current_observation->display_location->full."\003: Viento a ".str_replace("W","O", $jao->current_observation->wind_kph)." Kilómetros por hora (".$jao->current_observation->wind_dir."), Presión ".$jao->current_observation->pressure_mb." hPa,";
@@ -61,7 +61,6 @@ class ee111t1t1172{
 				case "icy": $r="Helado";break;
 				case "tstorms": $r="Tormentas";break;
 				case "chancetstorms": $r="Posibles Tormentas";break;
-				case "chancesnow": $r="Posibles Nevadas";break;
 				
 			}
 			return $r;
