@@ -16,8 +16,7 @@ class IRCBot{
 	private $users;
 	private $authd;
 	private $plugins;
-	private $pcomms;private $pcdc=-1;
-	private $iautdc=-1;
+	private $pcomms;
 	private $chanlst=array();
 	public $disconn=0;
 	public function __construct($config){
@@ -27,13 +26,14 @@ class IRCBot{
 		$this->serv['ip']=gethostbynamel($this->conf['irc']['host']);
 		$this->nick=$this->conf['irc']['nick'];
 		
-		if($this->serv['ip']==false){die(" [ERR]\n");}else{ echo " [OK] ".$this->serv['ip'][0]."\n";}
+		if($this->serv['ip']==false){die(" [ERR]\n");}
+		 echo " [OK] ".$this->serv['ip'][0]."\n";
 		
-		$this->serv['myconn']=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass'])or die (exit(mysql_error()));
+		$myconn=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass'])or die (exit(mysql_error()));
 		mysql_select_db($this->conf['db']['name']);
 		$sqlx="select * from users";
 		$rsx = mysql_query($sqlx) or die(exit("  - ERROR: verifique que las tablas mysql esten creadas."));
-		mysql_close($this->serv['myconn']);
+		mysql_close($myconn);
 
 		ini_set('user_agent', 'CoBOT IRC BOT/'.VER);
 		
@@ -43,13 +43,11 @@ class IRCBot{
 		$command=mb_convert_encoding($command,$this->conf['conn']['charset']);
 		fwrite($this->serv['socket'], $command, strlen($command));
 	}
+	
 	private function remChan($chan){
 		foreach ($this->chanlst as $key => $this_channel){
-			if($this_channel == $chan){
-				unset($this->chanlst[$key]);
-			}
+			if($this_channel == $chan){unset($this->chanlst[$key]);}
 		}
-		
 	}
 	public function load($plugin){
 		copy("plugins/$plugin","plugins/temp/$plugin"); 
@@ -77,7 +75,6 @@ class IRCBot{
 		fputs($fp, $nmod);
 		fclose($fp);
 		
-		
 		include("plugins/temp/$plugin");
 		if(!class_exists($nclassname)){echo "[ERR] No encuentro la funcion principal!!\n"; return -3;}
 		$this->plugins[$mname]=new $nclassname($this);
@@ -94,9 +91,7 @@ class IRCBot{
 		//y ahora vamos a des-cargar sus funciones.
 		$i=0;
 		foreach($this->pcomms as $key=>$val){
-			if($this->pcomms[$key]['pgin']==$name){
-				unset($this->pcomms[$key]);
-			}
+			if($this->pcomms[$key]['pgin']==$name){unset($this->pcomms[$key]);}
 			$i++;
 		}
 		foreach($this->hdf as $c=>$v){
@@ -111,83 +106,62 @@ class IRCBot{
 	}
 	
 	public function addcmd($oplugin,$command,$plugin,$alias=array()){
-		$this->pcdc=$this->pcdc+1;
-		$this->pcomms[$this->pcdc]['pgin']=$plugin;
-		$this->pcomms[$this->pcdc]['comm']=$command;
-		$this->pcomms[$this->pcdc]['ali']=0;
+		if(!is_array($this->pcomms)){$this->pcomms=array();}
+		$i=0;foreach(@$this->pcomms as $k=>$v){$i++;} $this->pcomms[$i]=array();
+		array_push($this->pcomms,array('pgin'=>$plugin, 'comm'=>$command, 'ali'=>0));
 		if(!@isset($alias[0])){return 0;}
 		$i=0;while(@isset($alias[$i])){
-			$this->pcdc=$this->pcdc+1;
-			$this->pcomms[$this->pcdc]['pgin']=$plugin;
-			$this->pcomms[$this->pcdc]['comm']=$alias[$i];
-			$this->pcomms[$this->pcdc]['alifn']=$command;
-			$this->pcomms[$this->pcdc]['ali']=1;
+			/*$i2=0;foreach($this->pcomms as $k=>$v){$i2++;} $this->pcomms[$i2]=array();*/
+			$this->pcomms[count($this->pcomms)]=array();
+			array_push($this->pcomms,array('pgin'=>$plugin, 'comm'=>$alias[$i], 'ali'=>1, 'alifn' => $command));
 			$i++;
 		}
 	}
 
-
-	private function addChan($chan){
-		array_push($this->chanlst, $chan);
-	}
+	private function addChan($chan){ array_push($this->chanlst, $chan);}
 	
 	private function helpsys($commands, $channel,$who){
-		if(@!$commands[1]){
-			$clist = "Lista de comandos: help auth ignore"; //agregamos los comandos nativos...
+		if(@!isset($commands[1])){
+			$clist = "Lista de comandos: help auth"; //agregamos los comandos nativos...
+			if($this->checkauth($who,8)){$clist.=" ignore";}
 			//y agregamos todos los comandos cargados via plugin a la lista...
-			$i=0;
 			$this->SendCommand("PRIVMSG ".$channel." :03Co04BOT v".VER." Por Mr. X Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
-			while(!($this->pcdc<$i)){
-				if(@$this->pcomms[$i]['comm']){
-					if($this->pcomms[$i]['ali']!=1){
-						if(@isset($this->plugins[$this->pcomms[$i]['pgin']]->help[$this->pcomms[$i]['comm'].'_l'])){
-							if($this->checkauth($who,$this->plugins[$this->pcomms[$i]['pgin']]->help[$this->pcomms[$i]['comm'].'_l'])==1){
-								if((strlen($clist)+strlen($this->pcomms[$i]['comm']))>=380){
-									$this->SendCommand("PRIVMSG ".$channel." :".$clist."   06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
-									$clist="";
-								}else{$clist.=" ".$this->pcomms[$i]['comm'];}
-							}
-						}else{
-							if((strlen($clist)+strlen($this->pcomms[$i]['comm']))>=380){
-								$this->SendCommand("PRIVMSG ".$channel." :".$clist."   06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
-								$clist="";
-							}else{$clist.=" ".$this->pcomms[$i]['comm'];}
-						}
+			
+			foreach($this->pcomms as $key => $val){
+				if((@isset($val['comm']))&&($val['ali']!=1)){
+					if(@isset($this->plugins[$val['pgin']]->help[$val['comm'].'_l'])){
+						if($this->checkauth($who,$this->plugins[$val['pgin']]->help[$val['comm'].'_l'])!=1){continue;}
 					}
+					if((strlen($clist)+strlen($val['comm']))>=380){
+						$this->SendCommand("PRIVMSG ".$channel." :".$clist."   06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
+						$clist="";
+					}else{$clist.=" ".$val['comm'];}
 				}
-				$i++;
 			}
+
 			
 			$this->SendCommand("PRIVMSG ".$channel." :".trim($clist));
 		}else{
 			switch($commands[1]){
-				case "help":
-					$this->SendCommand("PRIVMSG ".$channel." :help: Proporciona ayuda sobre un comando.");
-					break;
-				case "auth":
-					$this->SendCommand("PRIVMSG ".$channel." :auth: Permite identificarse y usar ciertos comandos especiales. Sintaxis: auth <usuario> <contraseña>");
-					break;
-				case "ignore":
-					$this->SendCommand("PRIVMSG ".$channel." :ignore: Ignora a un usuario. Sintaxis: ignore <mascara (regex)>");
-					break;
+				case "help":$this->SendCommand("PRIVMSG ".$channel." :help: Proporciona ayuda sobre un comando.");break;
+				case "auth":$this->SendCommand("PRIVMSG ".$channel." :auth: Permite identificarse y usar ciertos comandos especiales. Sintaxis: auth <usuario> <contraseña>");break;
+				case "ignore":$this->SendCommand("PRIVMSG ".$channel." :ignore: Ignora a un usuario. Sintaxis: ignore <mascara (regex)>");break;
 			}
-			$i=0;
-			while(!($this->pcdc<$i)){
-				if($this->pcomms[$i]['comm']==$commands[1]){
-					if($this->pcomms[$i]['ali']==1){
-						$this->SendCommand("PRIVMSG ".$channel." :".$command[1]."Alias de ".$this->pcomms[$i]['alifn'].". ".$this->plugins[$this->pcomms[$i]['pgin']]->help[$this->pcomms[$i]['alifn']]);
-					}else{$this->SendCommand("PRIVMSG ".$channel." :".$commands[1].": ".$this->plugins[$this->pcomms[$i]['pgin']]->help[$commands[1]]);}
+			foreach($this->pcomms as $key => $val){
+				if((@isset($val['comm']))&&($val['comm']==$commands[1])){
+					if($val['ali']==1){
+						$this->SendCommand("PRIVMSG $channel :$commands[1] Alias de ".$val['alifn'].". ".$this->plugins[$val['pgin']]->help[$val['alifn']]);
+					}else{$this->SendCommand("PRIVMSG $channel :$commands[1]: ".$this->plugins[$val['pgin']]->help[$commands[1]]);}
 				}
-				$i++;
 			}
 		}
 	}
 	
 	public function checkauth ($uhost,$lvlr, $ch = "*"){
-		$i=0;
-		while(@$this->authd[$i]['hst']){
-			if($this->authd[$i]['hst']==$uhost){
-				$pr2=explode("|",$this->authd[$i]['rng']);
+		if(!is_array($this->authd)){return 0;}
+		foreach($this->authd as $key => $val){
+			if($val['hst']==$uhost){
+				$pr2=explode("|",$val['rng']);
 				$pr4=array();
 				foreach($pr2 as $key=>$val){
 					$pr3=explode(",",$val);
@@ -201,7 +175,6 @@ class IRCBot{
 					$w=0;			
 				}
 			}
-			$i++;
 		}
 		return 0;
 	}
@@ -218,8 +191,7 @@ class IRCBot{
 		if($msg[0]==$this->conf['irc']['prefix']){
 			switch($param[0]){
 				case "help":
-					$this->helpsys($param,$channel,$guy);
-					break;
+					$this->helpsys($param,$channel,$guy);return 0;
 				case "auth":
 					if($channel==$this->nick){
 						$this->serv['myconn']=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass']);
@@ -229,16 +201,15 @@ class IRCBot{
 						$i=0;
 						while($rowx=mysql_fetch_array($rsx)){$i++;
 							$this->SendCommand("PRIVMSG ".$nk[0]." :Autenticado exitosamente.");
-							$this->iautdc=$this->iautdc+1;
-							$this->authd[$this->iautdc]['rng']=$rowx['rng'];
-							$this->authd[$this->iautdc]['hst']=$guy;
-							break;
+							if(!is_array($this->authd[count($this->authd)])){$this->authd[count($this->authd)]=array();}
+							array_push($this->authd,array('rng'=>$rowx['rng'],'hst'=>$guy));
+							return 0;
 						}
 						mysql_close($this->serv['myconn']);
 
 						if($i==0){$this->SendCommand("PRIVMSG ".$nk[0]." :04ERROR: Usuario/Contraseña incorrectos.");}
 					}else{$this->SendCommand("PRIVMSG ".$channel." :04ERROR: Este comando no debe ser utilizado en un canal.");}
-					break;
+					return 0;
 				case "ignore":
 					if($this->checkauth($guy,8)){
 						if(!@$param[1]){break;}
@@ -247,15 +218,14 @@ class IRCBot{
 						$sqlx="INSERT INTO `ignore` (host) VALUES ('$param[1]')";
 						$rsx = mysql_query($sqlx);
 					}else{	$this->SendCommand("PRIVMSG ".$channel." :04ERROR: No autorizado");}
+					return 0;
 					break;
 			}
-			$i=0;
-			while(!($this->pcdc<$i)){
-				if(@$this->pcomms[$i]['comm']==$param[0]){
-					if($this->pcomms[$i]['ali']!=1){$fn=$this->pcomms[$i]['comm'];}else{$fn=$this->pcomms[$i]['alifn'];}
-					$this->plugins[$this->pcomms[$i]['pgin']]->$fn($this,$msg,strtolower($channel),$param,$guy);
+			foreach($this->pcomms as $key => $val){
+				if((isset($val['comm'])) && (@$val['comm']==$param[0])){
+					if($val['ali']!=1){$fn=$val['comm'];}else{$fn=$val['alifn'];}
+					$this->plugins[$val['pgin']]->$fn($this,$msg,strtolower($channel),$param,$guy);
 				}
-				$i++;
 			}
 		}
 	}
@@ -266,13 +236,9 @@ class IRCBot{
 		if($this->serv['socket']){
 			echo " [OK] \r\n";
 			socket_set_blocking($this->serv['socket'], false);
-			$i=0;
 			$this->SendCommand("NICK " . $this->nick);
 			$this->SendCommand("USER " . $this->nick. " * * :CoBOT, IRC Bot");
-			while(@isset($this->initscript[$i])){
-				@$this->SendCommand($this->initscript[$i]);
-				$i++;
-			}
+			foreach($this->initscript as $key => $val){@$this->SendCommand($val);}
 			while(!@feof($this->serv['socket'])){
 				$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"utf8"); 
 				echo $this->serv['rbuffer'];
@@ -281,16 +247,9 @@ class IRCBot{
 				@$this->serv['command'] = $coi[1];
 				switch($this->serv['command']){
 					case "001":
-						$i=0;
-						while(@isset($this->connscript[$i])){
-							time_nanosleep(0,250000000); //anti-excess flood
-							@$this->SendCommand($this->connscript[$i]);
-							$i++;
-						}
+						foreach($this->connscript as $key => $val){time_nanosleep(0,250000000); @$this->SendCommand($val);}
 						if($this->conf['irc']['nspass']){$this->SendCommand("PRIVMSG NickServ :IDENTIFY ".$this->conf['irc']['nspass']);}
-						$i=0;
-						while(@isset($this->conf['irc']['channels'][$i])){
-							$this->SendCommand("JOIN ".$this->conf['irc']['channels'][$i]);$i++;}
+						foreach($this->conf['irc']['channels'] as $key => $val){$this->SendCommand("JOIN ".$val);}
 						break;
 					case "PING":
 						$this->SendCommand('PONG :' . substr($this->serv['rbuffer'], 6)); 
@@ -298,24 +257,18 @@ class IRCBot{
 					case "JOIN":
 						if (preg_match('@^:'.preg_quote($this->nick, '@').'!.+ JOIN (.+)$@',$this->serv['rbuffer'], $matches)){
 							$this->addChan($matches[1]);
-							$i=0;
-							while(@isset($this->joinscript[$i])){
+							foreach($this->joinscript as $key => $val){
 								time_nanosleep(0,250000000);
-								$joinscript=str_replace("&c",substr($matches[1],1,strlen($matches[1])-1),$this->joinscript[$i]);
+								$joinscript=str_replace("&c",substr($matches[1],1,strlen($matches[1])-1),$val);
 								@$this->SendCommand($joinscript);
-								$i++;
 							}
 						}
 						break;
 					case "PART":
 						if (preg_match('@^:'.preg_quote($this->nick, '@').'!.+ PART (.+)$@',$this->serv['rbuffer'], $matches)){	$this->remChan($matches[1]);}
 						break;
-					case "KICK":
-						if (preg_match('@^:.+!.+ KICK (.+)$@',$this->serv['rbuffer'], $matches)){$this->SendCommand("JOIN ".$matches[1]);}
-						break;
+					case "KICK": if (preg_match('@^:.+!.+ KICK (.+)$@',$this->serv['rbuffer'], $matches)){$this->SendCommand("JOIN ".$matches[1]);}	break; //autojoin
 					case "PRIVMSG":
-						
-						
 						$msg = explode('PRIVMSG ',$this->serv['rbuffer'],2);
 						preg_match('/:(.*)/',$msg[0],$matches);
 						$who = $matches[1];
@@ -324,17 +277,14 @@ class IRCBot{
 						
 						$this->serv['myconn']=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass']);
 						mysql_select_db($this->conf['db']['name']);
-						$sqlx="SELECT * FROM `ignore`";
-						$rsx = mysql_query($sqlx);
+						$rsx = mysql_query("SELECT * FROM `ignore`");
 						$k=0;
-					//	if($rsx){
 							while(@$rowx=mysql_fetch_array($rsx)){
 								if(preg_match("#".$rowx['host']."#",$who,$m)){
 									$k=1;
 									break;
 								}
 							}
-						//}
 						
 						if($k!=1){
 						$this->procom($msg,$who,$channel);}
@@ -347,20 +297,14 @@ class IRCBot{
 						$sqlx="SELECT * FROM `ignore`";
 						$rsx = mysql_query($sqlx);
 						$k=0;
-					//	if($rsx){
 							while(@$rowx=mysql_fetch_array($rsx)){
-								if(preg_match("#.*".$rowx['host'].".*#",$this->serv['rbuffer'],$m)){
-									$k=1;
-									break;
-								}
+								if(preg_match("#.*".$rowx['host'].".*#",$this->serv['rbuffer'],$m)){$k=1;break;}
 							}
 				if($k!=1){
 					if(@isset($this->hdf[$this->serv['command']])){
-						$i=0;
-						while(@isset($this->hdf[$this->serv['command']][$i])){
-							$fn=$this->hdf[$this->serv['command']][$i][1];
-							$this->plugins[$this->hdf[$this->serv['command']][$i][0]]->$fn($this,$this->serv['rbuffer']);
-							$i++;
+						foreach($this->hdf[$this->serv['command']] as $key => $val){
+							$fn=$val[1];
+							$this->plugins[$val[0]]->$fn($this,$this->serv['rbuffer']);
 						}
 					}
 				}
