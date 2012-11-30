@@ -20,6 +20,19 @@ class ee111t1t1172{
 			$gap=file_get_contents("http://api.wunderground.com/api/".$irc->conf['m_weather']['api_key']."/conditions/forecast/lang:es/q/".urlencode(str_replace(" ", "_",$ts)).".json");
 			$jao=json_decode($gap);
 			
+			if(!@isset($jao->current_observation)){
+				$resp="05Error: No se pudo encontrar la ciudad. ";
+				if(@isset($jao->response->results[0])){
+					$resp.="Talvez quiso decir: ";$i=0;
+					while((!isset($jao->response->results[$i]))||($i!=7)){
+						$resp.="\"".$jao->response->results[$i]->city.", ".$jao->response->results[$i]->country_name."\",";
+						$i++;
+					}
+				}
+				$irc->SendCommand("PRIVMSG $channel :$resp");
+				return 0;
+			}
+			
 			$resp="El tiempo en \00310".$jao->current_observation->display_location->full."\003: Viento a ".str_replace("W","O", $jao->current_observation->wind_kph)." Kilómetros por hora (".$jao->current_observation->wind_dir."), Presión ".$jao->current_observation->pressure_mb." hPa,";
 			$resp.="  Sensación térmica: ".$jao->current_observation->feelslike_c."ºC";
 			$resp.=", [".$this->conv($jao->current_observation->icon)."] Pronostico: ";
