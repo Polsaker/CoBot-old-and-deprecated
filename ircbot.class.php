@@ -44,6 +44,22 @@ class IRCBot{
 		fwrite($this->serv['socket'], $command, strlen($command));
 	}
 	
+	public function SendPriv($chan,$msg,$arrow=false,$len=400, $sep=" "){
+		$send="";
+		if($arrow==true){
+			$a=explode($sep, $msg);
+			foreach($a as $key=>$val){
+				if(strlen($send)+strlen($val)>=$len){
+					time_nanosleep(0,250000000); 
+					$this->SendCommand("PRIVMSG $chan :$send 06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
+					$send="";
+				}else{$send.=$val.$sep;}
+			}
+			$send=substr($send,0,"-".(strlen($sep)+1));
+			$this->SendCommand("PRIVMSG $chan :$send");
+		}else{$send=$msg;}
+	}
+	
 	private function remChan($chan){
 		foreach ($this->chanlst as $key => $this_channel){
 			if($this_channel == $chan){unset($this->chanlst[$key]);}
