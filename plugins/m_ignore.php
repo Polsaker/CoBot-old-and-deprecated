@@ -32,8 +32,9 @@ class ee111t1t1172{
 		$rsx = mysql_query($sqlx);
 		$list="";
 		while(@$rowx=mysql_fetch_array($rsx)){
-			$list.=$rowx['host'];
+			$list.=$rowx['host']. ", ";
 		}
+		$list=trim($list);$list=trim($list,",");
 		$irc->SendCommand("PRIVMSG $channel :$list");
 	}
 }
