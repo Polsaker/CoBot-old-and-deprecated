@@ -67,8 +67,8 @@ class IRCBot{
 	
 	public function rehash(){
 		include("config.php");
-		$this->conf=$config;
-		echo "Recargando el archivo de configuración [OK]";
+		$this->conf=$conf;
+		echo "Recargando el archivo de configuración [OK]\n";
 	}
 	
 	public function load($plugin){
