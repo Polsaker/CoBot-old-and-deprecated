@@ -8,7 +8,7 @@
 class ee111t1t1172{
 	public $help;
 	public function __construct(&$irc){	
-		$irc->addcmd($this, 'conv', 'ping',array("convertir","divisa"));	
+		$irc->addcmd($this, 'conv', 'divisa',array("convertir","divisa"));	
 		$this->help['conv']='Convierte divisas. Sintaxis: conv <Divisa origen> <Divisa destino> <cantidad> (Las divisas deben estar en formato ISO 4217)';
 	}
 
