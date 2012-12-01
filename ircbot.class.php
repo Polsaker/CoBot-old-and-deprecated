@@ -63,6 +63,13 @@ class IRCBot{
 			if($this_channel == $chan){unset($this->chanlst[$key]);}
 		}
 	}
+	
+	public function rehash(){
+		include("config.php");
+		$this->conf=$config;
+		echo "Recargando el archivo de configuración [OK]";
+	}
+	
 	public function load($plugin){
 		copy("plugins/$plugin","plugins/temp/$plugin"); 
 		$fp = fopen("plugins/temp/$plugin", "r");
