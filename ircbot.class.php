@@ -54,8 +54,9 @@ class IRCBot{
 				}else{$send.=$val.$sep;}
 			}
 			$send=trim($send,$sep);
-			$this->SendCommand("PRIVMSG $chan :$send");
+			
 		}else{$send=$msg;}
+		$this->SendCommand("PRIVMSG $chan :$send");
 	}
 	
 	private function remChan($chan){
