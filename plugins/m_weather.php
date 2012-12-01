@@ -24,12 +24,13 @@ class ee111t1t1172{
 				$resp="05Error: No se pudo encontrar la ciudad. ";
 				if(@isset($jao->response->results[0])){
 					$resp.="Talvez quiso decir: ";$i=0;
-					while((!isset($jao->response->results[$i]))||($i!=7)){
+					while((!isset($jao->response->results[$i]))||($i!=20)){
+						if(!isset($jao->response->results[$i]->city)){break;}
 						$resp.="\"".$jao->response->results[$i]->city.", ".$jao->response->results[$i]->country_name."\",";
 						$i++;
 					}
 				}
-				$irc->SendCommand("PRIVMSG $channel :$resp");
+				$irc->SendPriv($channel,$resp,true,400,"\",");
 				return 0;
 			}
 			
