@@ -21,7 +21,7 @@ class ee111t1t1172{
 		$cantidad = urlencode($cantidad);
 		$divisa_origen = urlencode($divisa_origen);
 		$divisa_destino = urlencode($divisa_destino);
-		$url = "http://www.google.com/ig/calculator?hl=en&amp;q=$cantidad$divisa_origen=?$divisa_destino";
+		$url = "http://www.google.com/ig/calculator?hl=en&q=$cantidad$divisa_origen=?$divisa_destino";
 		$rawdata = file_get_contents($url);
 		$data = explode('"', $rawdata);
 		$data = explode(' ', $data['3']);
