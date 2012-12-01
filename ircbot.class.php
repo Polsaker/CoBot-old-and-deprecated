@@ -44,9 +44,7 @@ class IRCBot{
 	
 	public function SendPriv($chan,$msg,$arrow=false,$len=400, $sep=" "){
 		$send="";
-		if($arrow!=true){
-			$this->SendCommand("PRIVMSG $chan :".$msg);
-		}else{
+		if($arrow==true){
 			$a=explode($sep, $msg);
 			foreach($a as $key=>$val){
 				if(strlen($send)+strlen($val)>=$len){
@@ -56,14 +54,14 @@ class IRCBot{
 				}else{$send.=$val.$sep;}
 			}
 			$send=trim($send,$sep);
-			$this->SendCommand("PRIVMSG $chan :".$send);
-		}
-		
+			
+		}else{$send=$msg;}
+		$this->SendCommand("PRIVMSG $chan :$send");
 	}
 	
 	private function remChan($chan){
 		foreach ($this->chanlst as $key => $this_channel){
-			if($this_channel == $chan){unset($this->chanlst[$key]);}
+			if($this_channel == $chan){unset($this->conf['irc']['channels'][$key]);}
 		}
 	}
 	
@@ -141,7 +139,7 @@ class IRCBot{
 		}
 	}
 
-	private function addChan($chan){ array_push($this->chanlst, $chan);}
+	private function addChan($chan){ array_push($this->conf['irc']['channels'], $chan);}
 	
 	private function helpsys($commands, $channel,$who){
 		if(@!isset($commands[1])){
