@@ -3,7 +3,7 @@
 	 * m_ping.php
 	 * Agrega el comando ping.
 	 */
-	 $name="ping"; 
+	 $name="divisa"; 
 	$key="ee111t1t1172";
 class ee111t1t1172{
 	public $help;
