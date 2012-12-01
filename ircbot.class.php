@@ -8,12 +8,10 @@ class IRCBot{
 	public $conf;
 	public $serv;
 	public $nick;
-	public $kvar;
 	public $hdf;
 	public $initscript=array();
 	public $connscript=array();
 	public $joinscript=array();
-	private $users;
 	private $authd;
 	private $plugins;
 	private $pcomms;
@@ -55,7 +53,7 @@ class IRCBot{
 					$send="";
 				}else{$send.=$val.$sep;}
 			}
-			$send=substr($send,0,"-".(strlen($sep)+1));
+			$send=trim($send,$sep);
 			$this->SendCommand("PRIVMSG $chan :$send");
 		}else{$send=$msg;}
 	}
@@ -123,11 +121,10 @@ class IRCBot{
 	
 	public function addcmd($oplugin,$command,$plugin,$alias=array()){
 		if(!is_array($this->pcomms)){$this->pcomms=array();}
-		$i=0;foreach(@$this->pcomms as $k=>$v){$i++;} $this->pcomms[$i]=array();
+		$this->pcomms[count($this->pcomms)]=array();
 		array_push($this->pcomms,array('pgin'=>$plugin, 'comm'=>$command, 'ali'=>0));
 		if(!@isset($alias[0])){return 0;}
 		$i=0;while(@isset($alias[$i])){
-			/*$i2=0;foreach($this->pcomms as $k=>$v){$i2++;} $this->pcomms[$i2]=array();*/
 			$this->pcomms[count($this->pcomms)]=array();
 			array_push($this->pcomms,array('pgin'=>$plugin, 'comm'=>$alias[$i], 'ali'=>1, 'alifn' => $command));
 			$i++;
@@ -148,15 +145,11 @@ class IRCBot{
 					if(@isset($this->plugins[$val['pgin']]->help[$val['comm'].'_l'])){
 						if($this->checkauth($who,$this->plugins[$val['pgin']]->help[$val['comm'].'_l'])!=1){continue;}
 					}
-					if((strlen($clist)+strlen($val['comm']))>=380){
-						$this->SendCommand("PRIVMSG ".$channel." :".$clist."   06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
-						$clist="";
-					}else{$clist.=" ".$val['comm'];}
+					$clist.=" ".$val['comm'];
 				}
 			}
 
-			
-			$this->SendCommand("PRIVMSG ".$channel." :".trim($clist));
+			$this->SendPriv($channel,trim($clist),true,380);
 		}else{
 			switch($commands[1]){
 				case "help":$this->SendCommand("PRIVMSG ".$channel." :help: Proporciona ayuda sobre un comando.");break;
