@@ -26,11 +26,11 @@ class ee111t1t1172{
 					$resp.="Talvez quiso decir: ";$i=0;
 					while((!isset($jao->response->results[$i]))||($i!=20)){
 						if(!isset($jao->response->results[$i]->city)){break;}
-						$resp.="\"".$jao->response->results[$i]->city.", ".$jao->response->results[$i]->country_name."\" (zmw:".$jao->response->results[$i]->zmw."),";
+						$resp.="\"".$jao->response->results[$i]->city.", ".$jao->response->results[$i]->country_name."\" (zmw:".$jao->response->results[$i]->zmw."), ";
 						$i++;
 					}
 				}
-				$irc->SendPriv($channel,$resp,true,400,"\",");
+				$irc->SendPriv($channel,$resp,true,400,"), ");
 				return 0;
 			}
 			
