@@ -51,7 +51,7 @@ class IRCBot{
 			foreach($a as $key=>$val){
 				if(strlen($send)+strlen($val)>=$len){
 					time_nanosleep(0,250000000); 
-					$this->SendCommand("PRIVMSG $chan :$send 06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
+					$this->SendCommand("PRIVMSG $chan :".$send." 06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
 					$send="";
 				}else{$send.=$val.$sep;}
 			}
