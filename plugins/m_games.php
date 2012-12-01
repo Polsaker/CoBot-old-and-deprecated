@@ -122,15 +122,19 @@ $key="ee111t1t1172";
 			if($irc->checkauth($who,4,"games")!=1){$irc->SendCommand("PRIVMSG ".$channel." :05Error: No tienes permisos suficientes como para ejecutar esta funciÃ³n.");return 0;}
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
 			$rsxq = mysql_query("SELECT * FROM games_users",$myconn);
+			if((isset($param[1]))&&($param[1]=="s")){$s=0;}else{$s=1;}
+			$u=0;$r=0;$c=0;
 			while($rowx=mysql_fetch_array($rsxq)){
-				if(($rowx["imp"]==1)&&($rowx["dinero"]<500000000)){$irc->SendCommand("PRIVMSG $channel :$rowx[nick] esta exento de cobrar impuestos."); continue; 
+				$c++;
+				if(($rowx["imp"]==1)&&($rowx["dinero"]<500000000)){if($s){$irc->SendCommand("PRIVMSG $channel :$rowx[nick] esta exento de cobrar impuestos.");} continue; 
 				}elseif(($rowx["imp"]==1)&&($rowx["dinero"]>=500000000)){
 					$imp= $rowx["dinero"] * 1/100;
 					$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
 					$rowx2=mysql_fetch_array($rsx);
 					
-					$irc->SendCommand("PRIVMSG $channel :$rowx[nick] Tiene mas de 03$500000000 y ha comprado una exención, se le cobra un impuesto del 1% (03$$imp), le quedan 03$".($rowx["dinero"]-$imp)."");
+					if($s){$irc->SendCommand("PRIVMSG $channel :$rowx[nick] Tiene mas de 03$500000000 y ha comprado una exención, se le cobra un impuesto del 1% (03$$imp), le quedan 03$".($rowx["dinero"]-$imp)."");}
 					$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+$imp)."' WHERE  plata=$rowx2[plata]",$myconn);
+					$r=$r+$imp;$u++;
 					$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-$imp)."' WHERE nick='".$rowx["nick"]."'",$myconn);
 					continue;
 				}
@@ -138,28 +142,32 @@ $key="ee111t1t1172";
 					if($rowx["dinero"]>100000){
 	
 						$imp= $rowx["dinero"] * 15/100;
-						$irc->SendCommand("PRIVMSG $channel :$rowx[nick] Tiene mas de 03$100000 y tiene el hiperimpuesto se le cobra un impuesto del 15% (03$$imp), le quedan 03$".($rowx["dinero"]-$imp)."");
+						if($s){$irc->SendCommand("PRIVMSG $channel :$rowx[nick] Tiene mas de 03$100000 y tiene el hiperimpuesto se le cobra un impuesto del 15% (03$$imp), le quedan 03$".($rowx["dinero"]-$imp)."");}
 						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+$imp)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$r=$r+$imp;$u++;
 						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-$imp)."' WHERE nick='".$rowx["nick"]."'",$myconn);
 					}else{
-						$irc->SendCommand("PRIVMSG $channel :$rowx[nick] no tiene mas de 03$100000, no se le cobra impuesto.");
+						if($s){$irc->SendCommand("PRIVMSG $channel :$rowx[nick] no tiene mas de 03$100000, no se le cobra impuesto.");}
 					}
 					continue;
 					
 				}
-				sleep(1);
+				if($s){sleep(1);}
 				if($rowx["dinero"]>100000){
 					$imp= $rowx["dinero"] * 5/100;
 					$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
 					$rowx2=mysql_fetch_array($rsx);
 					
-					$irc->SendCommand("PRIVMSG $channel :$rowx[nick] Tiene mas de 03$100000, se le cobra un impuesto del 5% (03$$imp), le quedan 03$".($rowx["dinero"]-$imp)."");
+					if($s){$irc->SendCommand("PRIVMSG $channel :$rowx[nick] Tiene mas de 03$100000, se le cobra un impuesto del 5% (03$$imp), le quedan 03$".($rowx["dinero"]-$imp)."");}
 					$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+$imp)."' WHERE  plata=$rowx2[plata]",$myconn);
+					$r=$r+$imp;$u++;
 					$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-$imp)."' WHERE nick='".$rowx["nick"]."'",$myconn);
 				}else{
-					$irc->SendCommand("PRIVMSG $channel :$rowx[nick] no tiene mas de 03$100000, no se le cobra impuesto.");
+					if($s){$irc->SendCommand("PRIVMSG $channel :$rowx[nick] no tiene mas de 03$100000, no se le cobra impuesto.");}
 				}
 			}
+			$irc->SendPriv($channel,"Se ha terminado de cobrar impuestos: Se han recaudado 03$$r, a $u de $c usuarios.");
+			
 		}
 		
 		public function confiscar(&$irc,$msg,$channel,$param,$who)
