@@ -72,7 +72,7 @@ class IRCBot{
 	
 	public function CheckUpd(){
 		//Por ahora solo verifica por actualizaciones del núcleo
-		$f=trim(file_get_contents("http://localhost/upd/updchk.php?f=ircbot.class.php"));
+		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.class.php"));
 		$df=sha1_file("ircbot.class.php");
 		if($df!=$f){return 1;}else{return 2;}
 	}
@@ -81,7 +81,7 @@ class IRCBot{
 		$r=$this->CheckUpd();
 		if($r==2){return -1;}
 		copy("ircbot.class.php","old/ircbot.class.php.".time());
-		$f=file_get_contents("http://localhost/upd/upd/ircbot.class.php.d");
+		$f=file_get_contents("http://upd.cobot.tk/upd/upd/ircbot.class.php.d");
 		$fp=fopen("ircbot.class.php","w+");
 		fputs($fp,$f); 
 		fclose($fp);
