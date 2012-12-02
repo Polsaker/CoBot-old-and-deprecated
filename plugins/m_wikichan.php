@@ -20,6 +20,7 @@ class ee111t1t1172{
 		$this->help['contribs']='Muestra el número de contribuciones de un usuario en una determinada cantidad de dias. Sintaxis: contribs <dias> <usuario>.';
 		$this->help['chwadd']='Asocia una wiki con un canal. Requiere permisos de nivel 5 o superior. Sintaxis: chwadd <canal> <wiki>.';
 		$this->help['chwadd_l']=5;
+		$this->help['chwrem_l']=5;
 		
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 			mysql_select_db($irc->conf['db']['name']);
