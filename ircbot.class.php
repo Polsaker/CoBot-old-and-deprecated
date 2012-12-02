@@ -264,6 +264,7 @@ class IRCBot{
 					return 0;
 				case "update":
 					$r=$this->Update();
+					if($r==-1){$this->SendPriv($channel, "03Error: No hay actualizaciones pendientes!");}
 					return 0;
 			}
 			foreach($this->pcomms as $key => $val){
