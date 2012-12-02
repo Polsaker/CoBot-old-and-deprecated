@@ -5,7 +5,7 @@
 class ee111t1t1172{
 	public $help;
 	public function __construct(&$irc){	
-		$irc->addcmd($this, 'rae', 'rae',array("palabra","real"));	
+		$irc->addcmd($this, 'rae', 'rae',array("palabra","real","drae"));	
 		$this->help['conv']='Busca una palabra en el diccionario de la RAE';
 	}
 
@@ -17,7 +17,7 @@ class ee111t1t1172{
 			$div.="\"$val\", ";
 		}
 		
-		$irc->SendPriv($channel,$div,true,400, "\", ");
+		$irc->SendPriv($channel,$div,true,400, ", ");
 	}
 }
 ?>
