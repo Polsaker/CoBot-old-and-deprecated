@@ -35,6 +35,11 @@ class IRCBot{
 
 		ini_set('user_agent', 'CoBOT IRC BOT/'.VER);
 		
+		//Creamos los directorios importantes..
+		if(!is_dir("old")){mkdir("old");} 
+		if(!is_dir("log")){mkdir("log");} 
+		if(!is_dir("plugins/temp")){mkdir("plugins/temp");} 
+		
 	}
 	public function SendCommand($command){
 		$command=$command."\r\n";
@@ -75,7 +80,6 @@ class IRCBot{
 	public function Update(){
 		$r=$this->CheckUpd();
 		if($r==2){return -1;}
-		if(!is_dir("old")){mkdir("old");} 
 		copy("ircbot.class.php","old/ircbot.class.php.".time());
 		$f=file_get_contents("http://localhost/upd/upd/ircbot.class.php.d");
 		$fp=fopen("ircbot.class.php","w+");
