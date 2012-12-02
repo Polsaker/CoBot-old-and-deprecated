@@ -81,7 +81,7 @@ class IRCBot{
 		$r=$this->CheckUpd();
 		if($r==2){return -1;}
 		copy("ircbot.class.php","old/ircbot.class.php.".time());
-		$f=file_get_contents("http://upd.cobot.tk/upd/upd/ircbot.class.php.d");
+		$f=file_get_contents("http://upd.cobot.tk/upd.php?f=ircbot.class.php");
 		$fp=fopen("ircbot.class.php","w+");
 		fputs($fp,$f); 
 		fclose($fp);
