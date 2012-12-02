@@ -27,9 +27,9 @@ class ee111t1t1172{
 			$gap=file_get_contents("https://www.googleapis.com/books/v1/volumes?country=AR&q=".urlencode($ts)."&key=".$irc->conf['m_google']['api_key']);
 			$jao=json_decode($gap);
 			if($jao->totalItems==0){$resp="No se encontraron resultados..";}else{
-				$i=0;
+				$i=0; 
 				while(($i<3) && (@$jao->items[$i])){
-					@$resp="".$jao->items[$i]->volumeInfo->title.", Autor: ".$jao->items[$i]->volumeInfo->authors[0].", ".$jao->items[$i]->volumeInfo->pageCount." páginas. ISBN-10: ".$jao->items[$i]->volumeInfo->industryIdentifiers[$i]->identifier.", ISBN-13 ".$jao->items[$i]->volumeInfo->industryIdentifiers[1]->identifier.".";
+					@$resp="".$jao->items[$i]->volumeInfo->title.", Autor: ".$jao->items[$i]->volumeInfo->authors[0].", ".$jao->items[$i]->volumeInfo->pageCount." páginas. ISBN-10: ".$jao->items[$i]->volumeInfo->industryIdentifiers[$i]->identifier.", ISBN-13 ".$jao->items[$i]->volumeInfo->industryIdentifiers[1]->identifier.". 10http://books.google.com.mx/books?id=".$jao->items[$i]->id."";
 					$irc->SendCommand("PRIVMSG ".$channel." :".$resp);
 					$i++;
 				}
