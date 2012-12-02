@@ -65,6 +65,28 @@ class IRCBot{
 		}
 	}
 	
+	public function CheckUpd(){
+		//Por ahora solo verifica por actualizaciones del núcleo
+		$f=trim(file_get_contents("http://localhost/upd/updchk.php?f=ircbot.class.php"));
+		$df=sha1_file("ircbot.class.php");
+		if($df!=$f){return 1;}else{return 2;}
+	}
+	
+	public function Update(){
+		$r=$this->CheckUpd();
+		if($r==2){return -1;}
+		if(!is_dir("old")){mkdir("old");} 
+		copy("ircbot.class.php","old/ircbot.class.php.".time());
+		$f=file_get_contents("http://localhost/upd/upd/ircbot.class.php.d");
+		$fp=fopen("ircbot.class.php","w+");
+		fputs($fp,$f); 
+		fclose($fp);
+		$this->disconn=$this->conf['conn']['reconnect']+2;
+		$this->SendCommand("QUIT :[UPDATE] Aplicando actualizaciones.");
+		exec("php restart.php"); 
+		 
+	}
+	
 	public function rehash(){
 		include("config.php");
 		$this->conf=$conf;
@@ -145,6 +167,7 @@ class IRCBot{
 		if(@!isset($commands[1])){
 			$clist = "Lista de comandos: help auth"; //agregamos los comandos nativos...
 			if($this->checkauth($who,8)){$clist.=" ignore";}
+			if($this->checkauth($who,10)){$clist.=" updchk update";}
 			//y agregamos todos los comandos cargados via plugin a la lista...
 			$this->SendCommand("PRIVMSG ".$channel." :03Co04BOT v".VER." Por Mr. X Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
 			
@@ -163,6 +186,8 @@ class IRCBot{
 				case "help":$this->SendCommand("PRIVMSG ".$channel." :help: Proporciona ayuda sobre un comando.");break;
 				case "auth":$this->SendCommand("PRIVMSG ".$channel." :auth: Permite identificarse y usar ciertos comandos especiales. Sintaxis: auth <usuario> <contraseña>");break;
 				case "ignore":$this->SendCommand("PRIVMSG ".$channel." :ignore: Ignora a un usuario. Sintaxis: ignore <mascara (regex)>");break;
+				case "updchk":$this->SendPriv($channel,"updchk: Verifica si hay actualizaciones disponibles"); break;
+				case "update":$this->SendPriv($channel,"update: Actualiza el núcleo del bot."); break;
 			}
 			foreach($this->pcomms as $key => $val){
 				if((@isset($val['comm']))&&($val['comm']==$commands[1])){
@@ -196,10 +221,7 @@ class IRCBot{
 		return 0;
 	}
 	
-	public function mask2nick($mask){
-		$nick=explode("!",$mask);
-		return $nick[0];
-	}
+	public function mask2nick($mask){$nick=explode("!",$mask);return $nick[0];}
 	// Ten cuidado!! esto está atado con alambres!
 	private function procom($msg, $guy, $channel){
 		$param=explode(" ", substr ($msg, 1));
@@ -236,7 +258,13 @@ class IRCBot{
 						$rsx = mysql_query($sqlx);
 					}else{	$this->SendCommand("PRIVMSG ".$channel." :04ERROR: No autorizado");}
 					return 0;
-					break;
+				case "updchk":
+					$r=$this->CheckUpd();
+					if($r==1){$this->SendPriv($channel,"Hay actualizaciones disponibles!!");}else{$this->SendPriv($channel,"No hay actualizaciones disponibles");}
+					return 0;
+				case "update":
+					$r=$this->Update();
+					return 0;
 			}
 			foreach($this->pcomms as $key => $val){
 				if((isset($val['comm'])) && (@$val['comm']==$param[0])){
