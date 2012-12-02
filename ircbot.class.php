@@ -74,9 +74,11 @@ class IRCBot{
 		//Por ahora solo verifica por actualizaciones del núcleo
 		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.class.php"));
 		$df=sha1_file("ircbot.class.php");
-		if($df!=$f){return 1;}else{return 2;}
+		$f2=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.php"));
+		$df2=sha1_file("ircbot.php");
+		if(($df!=$f) || ($df2!=$f2)){return 1;}else{return 2;}
 	}
-	
+	 
 	public function Update(){
 		$r=$this->CheckUpd();
 		if($r==2){return -1;}
@@ -85,6 +87,13 @@ class IRCBot{
 		$fp=fopen("ircbot.class.php","w+");
 		fputs($fp,$f); 
 		fclose($fp);
+		
+		copy("ircbot.php","old/ircbot.php.".time());
+		$f=file_get_contents("http://upd.cobot.tk/upd.php?f=ircbot.php");
+		$fp=fopen("ircbot.php","w+");
+		fputs($fp,$f); 
+		fclose($fp);
+		
 		$this->disconn=$this->conf['conn']['reconnect']+2;
 		$this->SendCommand("QUIT :[UPDATE] Aplicando actualizaciones.");
 		exec("php restart.php"); 
