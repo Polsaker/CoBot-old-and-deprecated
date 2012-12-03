@@ -70,33 +70,82 @@ class IRCBot{
 		}
 	}
 	
-	public function CheckUpd(){
-		//Por ahora solo verifica por actualizaciones del núcleo
+	public function CheckUpd($verbose=false,$channel=""){
+		$s=0;$uparr=array();
 		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.class.php"));
 		$df=sha1_file("ircbot.class.php");
-		$f2=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.php"));
-		$df2=sha1_file("ircbot.php");
-		if(($df!=$f) || ($df2!=$f2)){return 1;}else{return 2;}
+		if($df!=$f){$s=1;array_push($uparr,array("ircbot.class.php",0));if($verbose){$this->SendPriv($channel,"Actualización pendiente de 03ircbot.class.php");}}
+
+		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.php"));
+		$df=sha1_file("ircbot.php");
+		if($df!=$f){$s=1;array_push($uparr,array("ircbot.php",0));if($verbose){$this->SendPriv($channel,"Actualización pendiente de 03ircbot.php");}}
+		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=plugins"));
+		$fa=explode("\n",$f);
+		foreach($fa as $key=>$val){
+			$fe=explode("|",$val);
+			if(file_exists("plugins/".$fe[0])){
+				
+				$hash=sha1_file("plugins/".$fe[0]);
+				if($fe[1]!=$hash){$s=1;array_push($uparr,array("plugins/".$fe[0],0));if($verbose){$this->SendPriv($channel,"Actualización pendiente de 03plugins/".$fe[0]."");}}
+			}else{$s=1;array_push($uparr,array("plugins/".$fe[0],1));if($verbose){$this->SendPriv($channel,"Actualización pendiente de 03plugins/".$fe[0]." 07[Nuevo]");}
+}
+		}
+		
+		
+		if($s==1){return 1;}else{return 2;}
 	}
-	 
-	public function Update(){
-		$r=$this->CheckUpd();
-		if($r==2){return -1;}
-		copy("ircbot.class.php","old/ircbot.class.php.".time());
-		$f=file_get_contents("http://upd.cobot.tk/upd.php?f=ircbot.class.php");
-		$fp=fopen("ircbot.class.php","w+");
-		fputs($fp,$f); 
-		fclose($fp);
+	   
+	public function Update($verbose=false,$channel=""){
+		$k=0;
+		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.class.php"));$df=sha1_file("ircbot.class.php");
 		
-		copy("ircbot.php","old/ircbot.php.".time());
-		$f=file_get_contents("http://upd.cobot.tk/upd.php?f=ircbot.php");
-		$fp=fopen("ircbot.php","w+");
-		fputs($fp,$f); 
-		fclose($fp);
-		
+		if($f!=$df){$k=1;
+			if($verbose){$this->SendPriv($channel,"Actualizando 03ircbot.class.php");}
+			copy("ircbot.class.php","old/ircbot.class.php");
+			$f=file_get_contents("http://upd.cobot.tk/upd.php?f=ircbot.class.php");
+			$fp=fopen("ircbot.class.php","w+");
+			fputs($fp,$f); 
+			fclose($fp); 
+		}
+		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.php"));$df=sha1_file("ircbot.php");
+		if($f!=$df){$k=1;
+			if($verbose){$this->SendPriv($channel,"Actualizando 03ircbot.php");}
+			copy("ircbot.php","old/ircbot.php");
+			$f=file_get_contents("http://upd.cobot.tk/upd.php?f=ircbot.php");
+			$fp=fopen("ircbot.php","w+");
+			fputs($fp,$f); 
+			fclose($fp);
+		}
+		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=plugins"));
+		$fa=explode("\n",$f);
+		foreach($fa as $key=>$val){
+			$fe=explode("|",$val);
+			if(file_exists("plugins/".$fe[0])){  
+				$hash=sha1_file("plugins/".$fe[0]);
+				if($fe[1]!=$hash){$k=1;
+					if($verbose){$this->SendPriv($channel,"Actualizando 03plugins/".$fe[0]."");}
+
+					copy("plugins/".$fe[0],"old/".$fe[0]);
+
+					$f=file_get_contents("http://upd.cobot.tk/upd.php?f=plugins&p=".$fe[0]);
+					$fp=fopen("plugins/".$fe[0],"w+");
+					fputs($fp,$f); 
+					fclose($fp);
+				}
+			}else{$k=1;
+				if($verbose){$this->SendPriv($channel,"Actualizando 03plugins/".$fe[0]." 07[Nuevo]");}
+
+				$f=file_get_contents("http://upd.cobot.tk/upd.php?f=plugins&p=".$fe[0]);
+				$fp=fopen("plugins/".$fe[0],"w+");
+				fputs($fp,$f); 
+				fclose($fp);
+			}
+		}
+		if($k==0){return -1;}
 		$this->disconn=$this->conf['conn']['reconnect']+2;
 		$this->SendCommand("QUIT :[UPDATE] Aplicando actualizaciones.");
-		exec("php restart.php"); 
+		exec("php restart.php");
+
 		 
 	}
 	
@@ -272,11 +321,11 @@ class IRCBot{
 					}else{	$this->SendCommand("PRIVMSG ".$channel." :04ERROR: No autorizado");}
 					return 0;
 				case "updchk":
-					$r=$this->CheckUpd();
-					if($r==1){$this->SendPriv($channel,"Hay actualizaciones disponibles!!");}else{$this->SendPriv($channel,"No hay actualizaciones disponibles");}
+					$r=$this->CheckUpd(true,$channel);
+					if($r==2){$this->SendPriv($channel,"No hay actualizaciones disponibles");}
 					return 0;
 				case "update":
-					$r=$this->Update();
+					$r=$this->Update(true,$channel);
 					if($r==-1){$this->SendPriv($channel, "03Error: No hay actualizaciones pendientes!");}
 					return 0;
 			}
@@ -287,7 +336,7 @@ class IRCBot{
 				}
 			}
 		}
-	}
+	} 
 	
 	public function IRCConnect(){
 		echo "  - Conectando a '". $this->serv['ip'][0].":".$this->conf['irc']['port']."'";
