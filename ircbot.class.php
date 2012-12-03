@@ -98,8 +98,8 @@ class IRCBot{
 	public function Update($verbose=false,$channel=""){
 		$k=0;
 		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.class.php"));$df=sha1_file("ircbot.class.php");
-		
-		if($f!=$df){$k=1;
+		$r=0;
+		if($f!=$df){$k=1;$r=1;
 			if($verbose){$this->SendPriv($channel,"Actualizando 03ircbot.class.php");}
 			copy("ircbot.class.php","old/ircbot.class.php");
 			$f=file_get_contents("http://upd.cobot.tk/upd.php?f=ircbot.class.php");
@@ -108,7 +108,7 @@ class IRCBot{
 			fclose($fp); 
 		}
 		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.php"));$df=sha1_file("ircbot.php");
-		if($f!=$df){$k=1;
+		if($f!=$df){$k=1;$r=1;
 			if($verbose){$this->SendPriv($channel,"Actualizando 03ircbot.php");}
 			copy("ircbot.php","old/ircbot.php");
 			$f=file_get_contents("http://upd.cobot.tk/upd.php?f=ircbot.php");
@@ -131,17 +131,20 @@ class IRCBot{
 					$fp=fopen("plugins/".$fe[0],"w+");
 					fputs($fp,$f); 
 					fclose($fp);
+					$this->unload($fe[0]);
+					$this->load($fe[0]);
 				}
 			}else{$k=1;
 				if($verbose){$this->SendPriv($channel,"Actualizando 03plugins/".$fe[0]." 07[Nuevo]");}
-
 				$f=file_get_contents("http://upd.cobot.tk/upd.php?f=plugins&p=".$fe[0]);
 				$fp=fopen("plugins/".$fe[0],"w+");
 				fputs($fp,$f); 
 				fclose($fp);
 			}
 		}
+		
 		if($k==0){return -1;}
+		if($r==0){return 0;}
 		$this->disconn=$this->conf['conn']['reconnect']+2;
 		$this->SendCommand("QUIT :[UPDATE] Aplicando actualizaciones.");
 		exec("php restart.php");
