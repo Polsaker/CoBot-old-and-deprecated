@@ -23,6 +23,7 @@ class ee111t1t1172{
 		$this->help['deluser_l']=9;
 		$this->help['listusers']='Lista todos los usuarios registrados en la base de datos del bot.';
 		$this->help['chgpass']='Modifica la contraseña de un usuario. Sintaxis: chgpass <usuario> <antigua contraseña> <nueva contraseña>';
+		$this->help['addpriv_l']=9;
 	}
 
 	public function register(&$irc,$msg,$channel,$param,$who)
