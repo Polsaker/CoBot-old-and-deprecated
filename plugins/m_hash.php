@@ -40,11 +40,19 @@ class ee111t1t1172{
 			case "salsa10": $hashed=hash("salsa10",$ts); break;
 			case "salsa20": $hashed=hash("salsa20",$ts); break;
 			case "str2hex": $hashed= strtoupper(bin2hex($ts)); break;
-			case "hex2str": $hashed= hex2bin($ts); break;
+			case "hex2str": $hashed= $this->hexToStr($ts); break;
 		}
 		$irc->SendCommand("PRIVMSG $channel :$hashed");
 	}
-
+private function hexToStr($hex)
+{
+    $string='';
+    for ($i=0; $i < strlen($hex)-1; $i+=2)
+    {
+        $string .= chr(hexdec($hex[$i].$hex[$i+1]));
+    }
+    return $string;
+}
 
 
 }
