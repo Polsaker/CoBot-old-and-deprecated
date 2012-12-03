@@ -30,7 +30,7 @@ class ee111t1t1172{
 				$i=0; 
 				while(($i<3) && (@$jao->items[$i])){
 					@$resp="".$jao->items[$i]->volumeInfo->title.", Autor: ".$jao->items[$i]->volumeInfo->authors[0].", ".$jao->items[$i]->volumeInfo->pageCount." páginas. ISBN-10: ".$jao->items[$i]->volumeInfo->industryIdentifiers[$i]->identifier.", ISBN-13 ".$jao->items[$i]->volumeInfo->industryIdentifiers[1]->identifier.". ";
-					if(preg_match("#.*isbn:.*#",$ts,$m)){$resp.="10http://books.google.com.mx/books?id=".$jao->items[$i]->id."";}
+					if(preg_match("#.*isbn:.*#",$ts,$m)){$resp.="10http://books.google.com/books?id=".$jao->items[$i]->id."";}
 					$irc->SendCommand("PRIVMSG ".$channel." :".$resp);
 					$i++;
 				}
