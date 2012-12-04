@@ -6,7 +6,7 @@ class ee111t1t1172{
 	public $help;
 	public function __construct(&$irc){	
 		$irc->addcmd($this, 'rae', 'rae',array("palabra","real","drae"));	
-		$this->help['conv']='Busca una palabra en el diccionario de la RAE';
+		$this->help['rae']='Busca una palabra en el diccionario de la RAE';
 	}
 
 	public function rae(&$irc,$msg,$channel,$param,$who){
