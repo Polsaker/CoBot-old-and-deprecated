@@ -309,6 +309,7 @@ $key="ee111t1t1172";
 				@$ppl = $irc->mask2nick($m[1]);
 				@$chn = $m[2];
 				@$msg = $m[3];
+				if($ppl=="banco"){return 0;}
 				if(preg_match('@^!(.+)@', $msg, $m2)){
 					
 					$cmd=trim($m2[1]);
