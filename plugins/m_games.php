@@ -64,7 +64,7 @@ $key="ee111t1t1172";
 			if($irc->checkauth($who,4,"games")!=1){$irc->SendCommand("PRIVMSG ".$channel." :05Error: No tienes permisos suficientes como para ejecutar esta función.");return 0;}
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 			mysql_select_db($irc->conf['db']['name']);
-			$rsx = mysql_query("DELETE FROM `games_users` WHERE 'nick'='$param[1]'",$myconn);
+			$rsx = mysql_query("DELETE FROM `games_users` WHERE `nick`='$param[1]'",$myconn);
 			mysql_close($myconn);
 		}
 		
