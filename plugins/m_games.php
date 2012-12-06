@@ -388,6 +388,7 @@ $key="ee111t1t1172";
 			$rowx2=mysql_fetch_array($rsx);
 			if($rowx2["plata"]<8000){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$chn." :05Error: El banco no tiene dinero!! Espera a que el banco obtenga dinero y registrate! (se necesitan $6000 [$1000 saldo de bienvenida+$5000 bono de bienvenida])");return 0;}
 			$rsx = mysql_query("INSERT INTO games_users (nick,dinero,bono) VALUES ('$nick','3000',1)",$myconn);
+			$rsx = mysql_query("INSERT INTO games_stats (nick) VALUES ('$nick')",$myconn);
 			$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]-8000)."' WHERE  plata=$rowx2[plata]",$myconn);
 			mysql_close($myconn);
 			$irc->SendCommand("PRIVMSG ".$chn." :Te has dado de alta!! ahora tienes $3000 y un bono para empezar a jugar!!");
@@ -563,6 +564,11 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 			if($rowxa["dinero"]!="*"){
 				if($rowx["dinero"]<25){$irc->SendCommand("PRIVMSG ".$chn." :$nick: Lo siento, necesitas $25 para poder jugar a los dados.");mysql_close($myconn);return 0;}else{$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-25)."' WHERE nick='".$nick."'",$myconn);}
 			}
+			
+			$q1=mysql_query("SELECT * FROM games_stats WHERE nick='$nick'");$n=mysql_fetch_array($q1);
+			$q2=mysql_query("UPDATE games_stats SET dados ='".($n["dados"]+1)."' WHERE  nick='$nick'",$myconn);
+
+			
 			$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
 			$rowx2=mysql_fetch_array($rsx);
 			$rsx = mysql_query("UPDATE games_banco SET plata =".($rowx2["plata"]+25)." WHERE  plata=$rowx2[plata]",$myconn);
@@ -636,7 +642,9 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 					$xtv=7000;
 					break;
 			}
-			
+			$q1=mysql_query("SELECT * FROM games_stats WHERE nick='$nick'");$n=mysql_fetch_array($q1);
+			$q2=mysql_query("UPDATE games_stats SET traga ='".($n["traga"]+1)."' WHERE  nick='$nick'",$myconn);
+
 			if($rowx["nivel"]>3){$atv=500;$ptv=2000;$xtv=7000;}
 			switch($d1){case 1:$fig ="[03@] ";$n1=$atv;break;case 2:$fig ="[07%] ";$n1=$ptv;break;case 3:$fig ="[04$] ";$n1=$xtv;break;}
 			switch($d2){case 1:$fig.="[03@] ";break;         case 2:$fig.="[07%] ";break;         case 3:$fig.="[04$] ";break;          case 4:$fig.="[11Q] ";break;case 5:$fig.="[13X] ";break;}
@@ -696,7 +704,8 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 			if($rowxa["dinero"]=="*"){$finala=mb_convert_encoding("&#8734;", 'UTF-8',  'HTML-ENTITIES')." (infinito)";}
 			$irc->SendCommand("PRIVMSG ".$chn." :$nick tira con fuerza de la rueda y....");
 			sleep(2);
-			
+			$q1=mysql_query("SELECT * FROM games_stats WHERE nick='$nick'");$n=mysql_fetch_array($q1);
+			$q2=mysql_query("UPDATE games_stats SET rued ='".($n["rued"]+1)."' WHERE  nick='$nick'",$myconn);
 			switch($d){
 				case 1:	$final=$final+($rowx2["plata"] * 25/100);$finald=$final;if($rowxa["dinero"]=="*"){$final="*";$finald=$finala;}  $rsx = mysql_query("UPDATE  games_users SET dinero=$final WHERE nick='$nick'",$myconn); $rsx = mysql_query("UPDATE games_banco SET plata =".($rowx2["plata"]-($rowx2["plata"] * 25/100))." WHERE  plata=$rowx2[plata]",$myconn);$irc->SendCommand("PRIVMSG ".$chn." :$nick: 04GANASTE11 EL 25% DEL DINERO DEL BANCO!!! Ahora tienes03 $$finald");break;
 				case 2:	$final=$final * 25/100;$finald=$final;if($rowxa["dinero"]=="*"){$final="*";$finald=$finala;} $rsx = mysql_query("UPDATE  games_users SET dinero=$final WHERE nick='$nick'",$myconn);	$rsx = mysql_query("UPDATE games_banco SET plata =".($rowx2["plata"]+($rowx["dinero"] * 75/100))." WHERE  plata=$rowx2[plata]",$myconn);$irc->SendCommand("PRIVMSG ".$chn." :$nick: 04PERDISTE11 el 75% de tu dinero!! Ahora tienes 03$$finald");break;
