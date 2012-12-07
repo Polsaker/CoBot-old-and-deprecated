@@ -399,7 +399,7 @@ $key="ee111t1t1172";
 				if($cmd[1]=="banco"){
 					$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
 					$rowx=mysql_fetch_array($rsx);
-					$irc->SendCommand("PRIVMSG ".$chn." :En el banco hay $$rowx[plata] Fags: [02B]");
+					$irc->SendCommand("PRIVMSG ".$chn." :En el banco hay $$rowx[plata] Flags: [02B]");
 					return 0;
 				}
 				$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$cmd[1]'",$myconn);
