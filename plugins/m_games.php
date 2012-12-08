@@ -1072,7 +1072,7 @@ $a=0;
 					}
 					if($rowx2['plata']>=$cmd[2]){
 						if(($cmd[2]+$rowx['plata'])<=$bmax){
-							$i=0;while($i==$cmd[2]){$i++;$this->user2bank($irc,$nick,500000);}
+							$i=0;while($i==$cmd[2]){$i++;$this->user2bank($irc,$nick,1000000);}
 							$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']+$cmd[2])."' WHERE nick='$nick'",$myconn);
 							$rsx = mysql_query("UPDATE games_banco SET plat='".($rowx2['plata']-$cmd[2])."' WHERE plat='$rowx2[plat]'",$myconn);
 							$irc->SendPriv($chn, "Has comprado $cmd[2] medidas de plata ");
@@ -1105,7 +1105,7 @@ $a=0;
 					if($rowx['cobre']>=$cant){
 						$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']-$cant)."' WHERE nick='$nick'",$myconn);
 						$rsx = mysql_query("UPDATE games_banco SET plat='".($rowx2['plat']+$cant)."' WHERE plat='$rowx2[plat]'",$myconn);
-						$i=0;while($i==$cant){$i++;$this->user2bank($irc,$nick,-500000);}
+						$i=0;while($i==$cant){$i++;$this->user2bank($irc,$nick,-1000000);}
 
 						$irc->SendPriv($chn,"Has vendido $cant medidas de plata.");
 
