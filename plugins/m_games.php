@@ -973,8 +973,8 @@ $a=0;
 									if($rowx["nivel"]<6){$irc->SendPriv($chn,"05Error: Debes ser por lo menos nivel 6 para comprar una caja fuerte nivel 2");return 0;}
 									$r=$this->user2bank($irc,$nick,850000000);
 									if($r==-3){$irc->SendPriv($chn,"05Error: Necesitas por lo menos $850000000 para comprar este producto");return 0;}
-									$rsx = mysql_query("UPDATE  games_users SET caja='3' WHERE nick='$nick'",$myconn);
-									$irc->SendPriv($chn,"Has comprado una caja fuerte nivel 3");
+									$rsx = mysql_query("UPDATE  games_users SET caja='4' WHERE nick='$nick'",$myconn);
+									$irc->SendPriv($chn,"Has comprado una caja fuerte nivel 4");
 									break;
 							}
 						}else{$irc->SendPriv($chn,"Sintaxis: !comprar caja <nivel>");}
