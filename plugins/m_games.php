@@ -1017,8 +1017,10 @@ $a=0;
 					if($rowx['cobre']>=$cant){
 						$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']-$cant)."' WHERE nick='$nick'",$myconn);
 						$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']+$cant)."' WHERE cobre='$rowx2[cobre]'",$myconn);
-						$this->user2bank($irc,$nick,-500000);
-						
+						$i=0;while($i==$cant){$i++;$this->user2bank($irc,$nick,-500000);}
+
+						$irc->SendPriv($chn,"Has vendido $cant cobres.");
+
 					}else{$irc->SendPriv($chn,"05Error: No tienes suficiente cobre!!");return 0;}
 					break;
 				default:
