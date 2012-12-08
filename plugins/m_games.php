@@ -45,8 +45,7 @@ $key="ee111t1t1172";
 		public function enablegame(&$irc,$msg,$channel,$param,$who)
 		{
 			if($irc->checkauth($who,4,"games")!=1){$irc->SendCommand("PRIVMSG ".$channel." :05Error: No tienes permisos suficientes como para ejecutar esta funciÃ³n.");return 0;}
-			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
-			mysql_select_db($irc->conf['db']['name']);
+			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
 			$rsx = mysql_query("INSERT INTO games_channels (chan) VALUES ('$param[1]')",$myconn);
 			mysql_close($myconn);
 		}
@@ -54,18 +53,17 @@ $key="ee111t1t1172";
 		public function disablegame(&$irc,$msg,$channel,$param,$who)
 		{
 			if($irc->checkauth($who,4,"games")!=1){$irc->SendCommand("PRIVMSG ".$channel." :05Error: No tienes permisos suficientes como para ejecutar esta funciÃ³n.");return 0;}
-			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
-			mysql_select_db($irc->conf['db']['name']);
+			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
 			$rsx = mysql_query("DELETE FROM games_channels WHERE chan='$param[1]",$myconn);
 			mysql_close($myconn);
 		}
 		public function delgameuser(&$irc,$msg,$channel,$param,$who)
 		{
 			if($irc->checkauth($who,4,"games")!=1){$irc->SendCommand("PRIVMSG ".$channel." :05Error: No tienes permisos suficientes como para ejecutar esta funciÃ³n.");return 0;}
-			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
-			mysql_select_db($irc->conf['db']['name']);
+			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
 			$rsx = mysql_query("DELETE FROM `games_users` WHERE `nick`='$param[1]'",$myconn);
 			$rsx = mysql_query("DELETE FROM `games_stats` WHERE `nick`='$param[1]'",$myconn);
+
 			mysql_close($myconn);
 		}
 		
@@ -253,7 +251,6 @@ $key="ee111t1t1172";
 			if(($rowx['n2']!=$irc->mask2nick($who)) && ($rowx['n1']!=$irc->mask2nick($who))){$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :05Error: No válido."); return 0;}
 			
 			if($irc->mask2nick($who)==$rowx['n2']){$n=2;}else{$n=1;}
-				//				$rsx = mysql_query("UPDATE  games_ppt SET dn='-1' WHERE ts='$param[1]'",$myconn);
 
 			switch ($param[2]){
 				case "piedra":if($n==1){$qp="n1m=1";}else{$qp="n2m=1";}break;
@@ -309,14 +306,15 @@ $key="ee111t1t1172";
 			if(preg_match('@^:(.+) PRIVMSG (.+) :(.+)@', $txt, $m)){
 				@$ppl = $irc->mask2nick($m[1]);
 				@$chn = $m[2];
+
 				@$msg = $m[3];
 				if($ppl=="banco"){return 0;}
 				if(preg_match('@^!(.+)@', $msg, $m2)){
 					
 					$cmd=trim($m2[1]);
 					
-					
 					$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
+
 					$rsx = mysql_query("SELECT * FROM users WHERE user='$ppl'",$myconn);
 					if(mysql_num_rows($rsx)!=0){
 						preg_match('/:(.*)/',$txt,$matches);
@@ -376,6 +374,7 @@ $key="ee111t1t1172";
 						case "comprar":
 							$this->comprar($irc,$ppl,$chn,$cmd);
 							break;
+						case "cobre": $this->cobre($irc,$ppl,$chn,$cmd);break;
 					}
 				}
 			}
@@ -400,7 +399,7 @@ $key="ee111t1t1172";
 				if($cmd[1]=="banco"){
 					$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
 					$rowx=mysql_fetch_array($rsx);
-					$irc->SendCommand("PRIVMSG ".$chn." :En el banco hay $$rowx[plata] Flags: [02B]");
+					$irc->SendCommand("PRIVMSG ".$chn." :En el banco hay $$rowx[plata] Flags: [02B] [04Co ".$rowx["cobre"]."] ");
 					return 0;
 				}
 				$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$cmd[1]'",$myconn);
@@ -416,6 +415,7 @@ $key="ee111t1t1172";
 				if($rowx["imp"]==2){$flags.="[11I] ";} //flag hiperimpuesto
 				if($rowx["frozen"]==1){$flags.="[04F] ";} // flag congelado
 				$rsx = mysql_query("SELECT * FROM users WHERE user='$cmd[1]'",$myconn);
+				if($rowx["caja"]>0){$flags.="[06C ".$rowx["caja"]."]";}
 				if(mysql_num_rows($rsx)!=0){
 					$rowx2=mysql_fetch_array($rsx);
 					$pr2=explode("|",$rowx2["rng"]);
@@ -437,6 +437,9 @@ $key="ee111t1t1172";
 					if($o){$flags.="[10O] ";} //flag dueño
 					$flags.="[07R] "; // flag registrado
 				}
+				if($rowx["caja"]>0){$flags.="[06C ".$rowx["caja"]."] ";}
+				if($rowx["cobre"]>0){$flags.="[04Co ".$rowx["cobre"]."] ";}
+
 				$flags=trim($flags);
 				if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',  'HTML-ENTITIES')." (infinito)";}
 				$irc->SendCommand("PRIVMSG ".$chn." :En la cuenta de $cmd[1] hay $$rowx[dinero] $flags [N $rowx[nivel]]");
@@ -473,12 +476,15 @@ $key="ee111t1t1172";
 					if($ap){$flags.="[15+A] ";} //flag +admin
 					if($o){$flags.="[10O] ";} //flag dueño
 					$flags.="[07R] "; // flag registrado
+					
 				}
+				if($rowx["caja"]>0){$flags.="[06C ".$rowx["caja"]."] ";}
+				if($rowx["cobre"]>0){$flags.="[04Co ".$rowx["cobre"]."] ";}
+
 				$flags=trim($flags);
 if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',  'HTML-ENTITIES')." (infinito)";}
 				$irc->SendCommand("PRIVMSG ".$chn." :$nick: en tu cuenta tienes $$rowx[dinero] $flags [N $rowx[nivel]]");
 			}
-		//	if(mysql_num_rows($rsx)==0){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$chn." :05Error: No estas dado de alta, date de alta con el comando !alta");return 0;}
 			$rowx=mysql_fetch_array($rsx);
 			
 			mysql_close($myconn);
@@ -528,36 +534,20 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 			if ($d%2==0){
 				$m=1;
 				switch($rowx["nivel"]){
-					case 0:
-						$w=rand(20, 1500);
-						break;
-					case 1:
-						$w=rand(30, 3000);
-						break;
-					case 2:
-						$w=rand(40, 4000);
-						break;
-					case 3:
-						$w=rand(50, 3000);
-						break;
+					case 0:	$w=rand(20, 1500);	break;
+					case 1: $w=rand(30, 3000);	break;
+					case 2:	$w=rand(40, 4000);	break;
+					case 3:	$w=rand(50, 3000);	break;
 				}
 				if($rowx["nivel"]>3){$w=rand(1, 700);}
 					
 			}else{
 				$m=0;
 				switch($rowx["nivel"]){
-					case 0:
-						$w=rand(20, 3500);
-						break;
-					case 1:
-						$w=rand(500, 4500);
-						break;
-					case 2:
-						$w=rand(1000, 7000);
-						break;
-					case 3:
-						$w=rand(5000, 10000);
-						break;
+					case 0:	$w=rand(20, 3500);	break;
+					case 1:	$w=rand(500, 4500);	break;
+					case 2:	$w=rand(1000, 7000);break;
+					case 3:	$w=rand(5000, 10000);break;
 				}
 				if($rowx["nivel"]>3){$w=rand(5000, 10000);}
 			}
@@ -622,26 +612,10 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 			$d3=rand(1,3);
 			$n1=0;$n2=0;$r=0;
 			switch($rowx["nivel"]){
-				case 0:
-					$atv=100;
-					$ptv=500;
-					$xtv=1000;
-					break;
-				case 1:
-					$atv=200;
-					$ptv=750;
-					$xtv=1250;	
-					break;
-				case 2:
-					$atv=400;
-					$ptv=1000;
-					$xtv=5000;
-					break;
-				case 3:
-					$atv=500;
-					$ptv=2000;
-					$xtv=7000;
-					break;
+				case 1:	$atv=100;$ptv=500;$xtv=1000;break;
+				case 2:	$atv=200;$ptv=750;$xtv=1250;break;
+				case 3:$atv=400;$ptv=1000;$xtv=5000;break;
+				case 4:$atv=500;$ptv=2000;$xtv=7000;break;
 			}
 			$q1=mysql_query("SELECT * FROM games_stats WHERE nick='$nick'");$n=mysql_fetch_array($q1);
 			$q2=mysql_query("UPDATE games_stats SET traga ='".($n["traga"]+1)."' WHERE  nick='$nick'",$myconn);
@@ -786,6 +760,8 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 			switch(@$cmd[1]){
 				case 1:
 					if(($rowx["dinero"]>35000)||($rowx["dinero"]=="*")){
+						if($rowx['nivel']>1){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Ya estas en un nivel superior al 1!!");return 0;}
+
 						$rsx = mysql_query("UPDATE  games_users SET nivel=1 WHERE nick='$nick'",$myconn);
 						if($rowx["dinero"]!="*"){
 						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-25000)."' WHERE nick='$nick'",$myconn);	}
@@ -870,9 +846,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						if($rowx['nivel']!=7){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Tienes que pasar por el nivel 7 antes de ir al 8!");return 0;}
 						
 						$rsx = mysql_query("UPDATE  games_users SET nivel=8 WHERE nick='$nick'",$myconn);
-						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-50000000)."' WHERE nick='$nick'",$myconn);}
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+50000000)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$this->user2bank($irc,$nick,50000000);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 8!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 70000000 para poder pasar al nivel 8!!");return 0;}
 					break;
@@ -898,6 +872,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 10!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 7000000000 para poder pasar al nivel 10!!");return 0;}
 					break;
+				default: $irc->SendPriv($chn, "Sintaxis: !nivel <numero de nivel>. Solo hay niveles del 1 al 10.");
 			}
 			mysql_close($myconn);
 		}
@@ -967,13 +942,115 @@ $a=0;
 						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-10000000)."' WHERE nick='$nick'",$myconn);}
 						$rsx = mysql_query("UPDATE  games_users SET imp='0' WHERE nick='$nick'",$myconn);
 						
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+10000000)."' WHERE  plata=$rowx2[plata]",$myconn);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora podrás pagar impuestos normalmente.");
 					}else{ if($rowx["nivel"]<8){$irc->SendCommand("PRIVMSG $chn :05Error: Debes ser nivel 8 o superior para comprar este articulo!");}else{$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas $50000000 para comprar este articulo!");}mysql_close($myconn); return 0;}
+					break;
+				case "caja":
+						if(isset($cmd[2])){
+							switch($cmd[2]){
+								case "1":
+									if($rowx["nivel"]<6){$irc->SendPriv($chn,"05Error: Debes ser por lo menos nivel 6 para comprar una caja fuerte nivel 1");return 0;}
+									$r=$this->user2bank($irc,$nick,10000000);
+									if($r==-3){$irc->SendPriv($chn,"05Error: Necesitas por lo menos $10000000 para comprar este producto");return 0;}
+									$rsx = mysql_query("UPDATE  games_users SET caja='1' WHERE nick='$nick'",$myconn);
+									$irc->SendPriv($chn,"Has comprado una caja fuerte nivel 1");
+									break;
+								case "2":
+									if($rowx["nivel"]<6){$irc->SendPriv($chn,"05Error: Debes ser por lo menos nivel 6 para comprar una caja fuerte nivel 2");return 0;}
+									$r=$this->user2bank($irc,$nick,100000000);
+									if($r==-3){$irc->SendPriv($chn,"05Error: Necesitas por lo menos $100000000 para comprar este producto");return 0;}
+									$rsx = mysql_query("UPDATE  games_users SET caja='2' WHERE nick='$nick'",$myconn);
+									$irc->SendPriv($chn,"Has comprado una caja fuerte nivel 2");
+									break;
+							}
+						}else{$irc->SendPriv($chn,"Sintaxis: !comprar caja <nivel>");}
 					break;
 				
 			}
 			mysql_close($myconn);
+		}
+		
+		private function cobre(&$irc,$nick,$chn, $cmd){
+			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
+			$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$nick'",$myconn);
+			$rowx=mysql_fetch_array($rsx);
+			$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
+			$rowx2=mysql_fetch_array($rsx);
+			if(!isset($cmd[1])){$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
+			if(!isset($cmd[2])){$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
+			switch($cmd[1]){
+				case "comprar":
+					if(!is_numeric($cmd[2])){$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
+					$cmd[2]=abs($cmd[2]);
+					switch($rowx['caja']){
+						case 1:$bmax=2;break;
+						case 2:$bmax=5;break;
+					}
+					if(($cmd[2]+$rowx['cobre'])<=$bmax){
+						$i=0;while($i==$cmd[2]){$i++;$this->user2bank($irc,$nick,500000);}
+						$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']+$cmd[2])."' WHERE nick='$nick'",$myconn);
+						$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']-$cmd[2])."' WHERE cobre='$rowx2[cobre]'",$myconn);
+						$irc->SendPriv($chn, "Has comprado $cmd[2] cobres");
+					}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax cobres");return 0;}
+					break;
+				case "transferir":
+					if(!isset($cmd[3])){$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
+					$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$cmd[2]'",$myconn);if(mysql_num_rows($rsx)==0){$irc->SendPriv($chn, "05Error: El usuario $cmd[2] no existe");}
+					$rowx3=mysql_fetch_array($rsx);
+					$cant=abs($cmd[3]);
+					switch($rowx3['caja']){
+						case "1":$bmax=2;break;
+						case "2":$bmax=5;break;
+					}
+					if(($rowx3['cobre']+$cant)<=$bmax){
+						if($rowx['cobre']>=$cant){
+							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']-$cant)."' WHERE nick='$nick'",$myconn);
+							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']+$cant)."' WHERE cobre='$rowx2[cobre]'",$myconn);
+							$irc->SendPriv($chn,"Se han transferido $cant cobres a $cmd[2]");
+						}else{$irc->SendPriv($chn,"05Error: No tienes suficiente cobre!!");return 0;}
+					}else{$irc->SendPriv($chn,"05Error: La caja de $cmd[2] solo soporta hasta $bmax cobres");return 0;}
+					
+					break; 
+				case "vender":
+					if(!is_numeric($cmd[2])){$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
+					$cant=abs($cmd[2]);
+					if($rowx['cobre']>=$cant){
+						$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']-$cant)."' WHERE nick='$nick'",$myconn);
+						$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']+$cant)."' WHERE cobre='$rowx2[cobre]'",$myconn);
+						$this->user2bank($irc,$nick,-500000);
+						
+					}else{$irc->SendPriv($chn,"05Error: No tienes suficiente cobre!!");return 0;}
+					break;
+				default:
+					$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;
+			}
+			mysql_close($myconn);
+		}
+		
+		//Pasa el dinero de un usuario al banco y viceversa si se usan numeros negativos
+		// Retorna:
+		#	-1 = No se encontro el usuario
+		#	-2 = el usuario tiene infinito (no se hace nada)
+		#	-3 = el usuario no tiene dinero suficiente
+		#	0  = Todo bien
+		private function user2bank(&$irc,$usuario,$cantidad){
+			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
+
+			$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$usuario'",$myconn);if(mysql_num_rows($rsx)==0){mysql_close($myconn);return -1;}
+			$rowx=mysql_fetch_array($rsx);
+			
+			$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
+			$rowx2=mysql_fetch_array($rsx);
+			
+			if($rowx["dinero"]!="*"){
+				if($rowx["dinero"]<$cantidad){mysql_close($myconn);return -3;
+				}else{
+					$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-$cantidad)."' WHERE nick='$usuario'",$myconn);
+					$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+$cantidad)."' WHERE  plata=$rowx2[plata]",$myconn);
+					mysql_close($myconn);
+				}
+			}else{return -2;}
+			
 		}
 	}
 ?>
