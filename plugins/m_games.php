@@ -65,6 +65,7 @@ $key="ee111t1t1172";
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 			mysql_select_db($irc->conf['db']['name']);
 			$rsx = mysql_query("DELETE FROM `games_users` WHERE `nick`='$param[1]'",$myconn);
+			$rsx = mysql_query("DELETE FROM `games_stats` WHERE `nick`='$param[1]'",$myconn);
 			mysql_close($myconn);
 		}
 		
