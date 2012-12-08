@@ -375,6 +375,7 @@ $key="ee111t1t1172";
 							$this->comprar($irc,$ppl,$chn,$cmd);
 							break;
 						case "cobre": $this->cobre($irc,$ppl,$chn,$cmd);break;
+						case "plata": $this->plata($irc,$ppl,$chn,$cmd);break;
 					}
 				}
 			}
@@ -399,7 +400,7 @@ $key="ee111t1t1172";
 				if($cmd[1]=="banco"){
 					$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
 					$rowx=mysql_fetch_array($rsx);
-					$irc->SendCommand("PRIVMSG ".$chn." :En el banco hay $$rowx[plata] Flags: [02B] [04Co ".$rowx["cobre"]."] ");
+					$irc->SendCommand("PRIVMSG ".$chn." :En el banco hay $$rowx[plata] Flags: [02B] [04Co ".$rowx["cobre"]."] [15Pl ".$rowx["plat"]."]");
 					return 0;
 				}
 				$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$cmd[1]'",$myconn);
@@ -439,6 +440,7 @@ $key="ee111t1t1172";
 				}
 				if($rowx["caja"]>0){$flags.="[06C ".$rowx["caja"]."] ";}
 				if($rowx["cobre"]>0){$flags.="[04Co ".$rowx["cobre"]."] ";}
+				if($rowx["plata"]>0){$flags.="[15Pl ".$rowx["plata"]."] ";}
 
 				$flags=trim($flags);
 				if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',  'HTML-ENTITIES')." (infinito)";}
@@ -480,6 +482,7 @@ $key="ee111t1t1172";
 				}
 				if($rowx["caja"]>0){$flags.="[06C ".$rowx["caja"]."] ";}
 				if($rowx["cobre"]>0){$flags.="[04Co ".$rowx["cobre"]."] ";}
+				if($rowx["plata"]>0){$flags.="[15Pl ".$rowx["plata"]."] ";}
 
 				$flags=trim($flags);
 if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',  'HTML-ENTITIES')." (infinito)";}
@@ -1006,7 +1009,7 @@ $a=0;
 						if(($cmd[2]+$rowx['cobre'])<=$bmax){
 							$i=0;while($i==$cmd[2]){$i++;$this->user2bank($irc,$nick,500000);}
 							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']+$cmd[2])."' WHERE nick='$nick'",$myconn);
-							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']-$cmd[2])."' WHERE cobre='$rowx2[cobre]'",$myconn);
+							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx3['cobre']+$cant)."' WHERE nick='$rowx3[nick]'",$myconn);
 							$irc->SendPriv($chn, "Has comprado $cmd[2] cobres");
 						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax cobres");return 0;}
 					}else{$irc->SendPriv($chn,"05Error: No hay suficiente stock de cobres como para que puedas comprar tantos..");return 0;}
@@ -1045,6 +1048,71 @@ $a=0;
 					break;
 				default:
 					$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;
+			}
+			mysql_close($myconn);
+		}
+		// y se siigue repitiendo hasta el infinito
+		private function plata(&$irc,$nick,$chn, $cmd){
+			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
+			$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$nick'",$myconn);
+			$rowx=mysql_fetch_array($rsx);
+			$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
+			$rowx2=mysql_fetch_array($rsx);
+			if(!isset($cmd[1])){$irc->SendPriv($chn,"Sintaxis: !plata <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
+			if(!isset($cmd[2])){$irc->SendPriv($chn,"Sintaxis: !plata <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
+			switch($cmd[1]){
+				case "comprar":
+					if(!is_numeric($cmd[2])){$irc->SendPriv($chn,"Sintaxis: !plata <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
+					$cmd[2]=abs($cmd[2]);
+					switch($rowx['caja']){
+						case 1:$bmax=0;break;
+						case 2:$bmax=0;break;
+						case 3:$bmax=1;break;
+						case 4:$bmax=3;break;
+					}
+					if($rowx2['plata']>=$cmd[2]){
+						if(($cmd[2]+$rowx['plata'])<=$bmax){
+							$i=0;while($i==$cmd[2]){$i++;$this->user2bank($irc,$nick,500000);}
+							$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']+$cmd[2])."' WHERE nick='$nick'",$myconn);
+							$rsx = mysql_query("UPDATE games_banco SET plat='".($rowx2['plata']-$cmd[2])."' WHERE plat='$rowx2[plat]'",$myconn);
+							$irc->SendPriv($chn, "Has comprado $cmd[2] medidas de plata ");
+						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax medidas de plata");return 0;}
+					}else{$irc->SendPriv($chn,"05Error: No hay suficiente stock de cobres como para que puedas comprar tantos..");return 0;}
+					break;
+				case "transferir":
+					if(!isset($cmd[3])){$irc->SendPriv($chn,"Sintaxis: !plata <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
+					$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$cmd[2]'",$myconn);if(mysql_num_rows($rsx)==0){$irc->SendPriv($chn, "05Error: El usuario $cmd[2] no existe");}
+					$rowx3=mysql_fetch_array($rsx);
+					$cant=abs($cmd[3]);
+					switch($rowx3['caja']){
+						case 1:$bmax=0;break;
+						case 2:$bmax=0;break;
+						case 3:$bmax=1;break;
+						case 4:$bmax=3;break;
+					}
+					if(($rowx3['plata']+$cant)<=$bmax){
+						if($rowx['plata']>=$cant){
+							$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']-$cant)."' WHERE nick='$nick'",$myconn);
+							$rsx = mysql_query("UPDATE games_users SET plata='".($rowx3['plata']+$cant)."' WHERE nick='$rowx3[nick]'",$myconn);
+							$irc->SendPriv($chn,"Se han transferido $cant medidas de plata a $cmd[2]");
+						}else{$irc->SendPriv($chn,"05Error: No tienes suficiente plata!!");return 0;}
+					}else{$irc->SendPriv($chn,"05Error: La caja de $cmd[2] solo soporta hasta $bmax medidas de plata");return 0;}
+					
+					break; 
+				case "vender":
+					if(!is_numeric($cmd[2])){$irc->SendPriv($chn,"Sintaxis: !plata <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
+					$cant=abs($cmd[2]);
+					if($rowx['cobre']>=$cant){
+						$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']-$cant)."' WHERE nick='$nick'",$myconn);
+						$rsx = mysql_query("UPDATE games_banco SET plat='".($rowx2['plat']+$cant)."' WHERE plat='$rowx2[plat]'",$myconn);
+						$i=0;while($i==$cant){$i++;$this->user2bank($irc,$nick,-500000);}
+
+						$irc->SendPriv($chn,"Has vendido $cant medidas de plata.");
+
+					}else{$irc->SendPriv($chn,"05Error: No tienes suficiente plata!!");return 0;}
+					break;
+				default:
+					$irc->SendPriv($chn,"Sintaxis: !plata <comprar|transferir|vender> [nick] <cantidad>.");return 0;
 			}
 			mysql_close($myconn);
 		}
