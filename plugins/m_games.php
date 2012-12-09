@@ -1007,9 +1007,9 @@ $a=0;
 					}
 					if($rowx2['cobre']>=$cmd[2]){
 						if(($cmd[2]+$rowx['cobre'])<=$bmax){
-							$i=0;while($i==$cmd[2]){$i++;$this->user2bank($irc,$nick,500000);}
+							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,500000);}
 							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']+$cmd[2])."' WHERE nick='$nick'",$myconn);
-							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx3['cobre']+$cant)."' WHERE nick='$rowx3[nick]'",$myconn);
+							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']-$cant)."' WHERE cobre='$rowx[cobre]'",$myconn);
 							$irc->SendPriv($chn, "Has comprado $cmd[2] cobres");
 						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax cobres");return 0;}
 					}else{$irc->SendPriv($chn,"05Error: No hay suficiente stock de cobres como para que puedas comprar tantos..");return 0;}
@@ -1040,7 +1040,7 @@ $a=0;
 					if($rowx['cobre']>=$cant){
 						$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']-$cant)."' WHERE nick='$nick'",$myconn);
 						$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']+$cant)."' WHERE cobre='$rowx2[cobre]'",$myconn);
-						$i=0;while($i==$cant){$i++;$this->user2bank($irc,$nick,-500000);}
+						$i=0;while($i!=$cant){$i++;$this->user2bank($irc,$nick,500000,true);}
 
 						$irc->SendPriv($chn,"Has vendido $cant cobres.");
 
@@ -1072,7 +1072,7 @@ $a=0;
 					}
 					if($rowx2['plata']>=$cmd[2]){
 						if(($cmd[2]+$rowx['plata'])<=$bmax){
-							$i=0;while($i==$cmd[2]){$i++;$this->user2bank($irc,$nick,1000000);}
+							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,1000000);}
 							$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']+$cmd[2])."' WHERE nick='$nick'",$myconn);
 							$rsx = mysql_query("UPDATE games_banco SET plat='".($rowx2['plata']-$cmd[2])."' WHERE plat='$rowx2[plat]'",$myconn);
 							$irc->SendPriv($chn, "Has comprado $cmd[2] medidas de plata ");
@@ -1105,7 +1105,7 @@ $a=0;
 					if($rowx['cobre']>=$cant){
 						$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']-$cant)."' WHERE nick='$nick'",$myconn);
 						$rsx = mysql_query("UPDATE games_banco SET plat='".($rowx2['plat']+$cant)."' WHERE plat='$rowx2[plat]'",$myconn);
-						$i=0;while($i==$cant){$i++;$this->user2bank($irc,$nick,-1000000);}
+						$i=0;while($i!=$cant){$i++;$this->user2bank($irc,$nick,1000000,true);}
 
 						$irc->SendPriv($chn,"Has vendido $cant medidas de plata.");
 
@@ -1123,7 +1123,7 @@ $a=0;
 		#	-2 = el usuario tiene infinito (no se hace nada)
 		#	-3 = el usuario no tiene dinero suficiente
 		#	0  = Todo bien
-		private function user2bank(&$irc,$usuario,$cantidad){
+		private function user2bank(&$irc,$usuario,$cantidad,$inv=false){
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
 
 			$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$usuario'",$myconn);if(mysql_num_rows($rsx)==0){mysql_close($myconn);return -1;}
@@ -1133,10 +1133,15 @@ $a=0;
 			$rowx2=mysql_fetch_array($rsx);
 			
 			if($rowx["dinero"]!="*"){
-				if($rowx["dinero"]<$cantidad){mysql_close($myconn);return -3;
+				if(($rowx["dinero"]<$cantidad)&&($inv==false)){mysql_close($myconn);return -3;
 				}else{
-					$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-$cantidad)."' WHERE nick='$usuario'",$myconn);
-					$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+$cantidad)."' WHERE  plata=$rowx2[plata]",$myconn);
+					if($inv==false){
+						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-$cantidad)."' WHERE nick='$usuario'",$myconn);
+						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+$cantidad)."' WHERE  plata=$rowx2[plata]",$myconn);
+					}else{
+						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]+$cantidad)."' WHERE nick='$usuario'",$myconn);
+						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]-$cantidad)."' WHERE  plata=$rowx2[plata]",$myconn);
+					}
 					mysql_close($myconn);
 				}
 			}else{return -2;}
