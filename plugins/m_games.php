@@ -1007,6 +1007,7 @@ $a=0;
 					if($rowx2['cobre']>=$cmd[2]){
 						if(($cmd[2]+$rowx['cobre'])<=$bmax){
 							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,500000);}
+							if(!$rowx['cobre']){$rowx['cobre']=0;}
 							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']+$cmd[2])."' WHERE nick='$nick'",$myconn);
 							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']-$cant)."' WHERE cobre='$rowx[cobre]'",$myconn);
 							$irc->SendPriv($chn, "Has comprado $cmd[2] cobres");
