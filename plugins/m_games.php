@@ -416,7 +416,6 @@ $key="ee111t1t1172";
 				if($rowx["imp"]==2){$flags.="[11I] ";} //flag hiperimpuesto
 				if($rowx["frozen"]==1){$flags.="[04F] ";} // flag congelado
 				$rsx = mysql_query("SELECT * FROM users WHERE user='$cmd[1]'",$myconn);
-				if($rowx["caja"]>0){$flags.="[06C ".$rowx["caja"]."]";}
 				if(mysql_num_rows($rsx)!=0){
 					$rowx2=mysql_fetch_array($rsx);
 					$pr2=explode("|",$rowx2["rng"]);
