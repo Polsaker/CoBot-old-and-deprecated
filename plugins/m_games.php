@@ -1073,6 +1073,8 @@ $a=0;
 					if($rowx2['plata']>=$cmd[2]){
 						if(($cmd[2]+$rowx['plata'])<=$bmax){
 							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,1000000);}
+							if(!$rowx['plata']){$rowx['plata']=0;}
+
 							$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']+$cmd[2])."' WHERE nick='$nick'",$myconn);
 							$rsx = mysql_query("UPDATE games_banco SET plat='".($rowx2['plat']-$cmd[2])."' WHERE plat='$rowx2[plat]'",$myconn);
 							$irc->SendPriv($chn, "Has comprado $cmd[2] medidas de plata ");
