@@ -1028,7 +1028,7 @@ $a=0;
 					if(($rowx3['cobre']+$cant)<=$bmax){
 						if($rowx['cobre']>=$cant){
 							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']-$cant)."' WHERE nick='$nick'",$myconn);
-							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']+$cant)."' WHERE cobre='$rowx2[cobre]'",$myconn);
+							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx3['cobre']+$cant)."' WHERE cobre='$rowx3[cobre]'",$myconn);
 							$irc->SendPriv($chn,"Se han transferido $cant cobres a $cmd[2]");
 						}else{$irc->SendPriv($chn,"05Error: No tienes suficiente cobre!!");return 0;}
 					}else{$irc->SendPriv($chn,"05Error: La caja de $cmd[2] solo soporta hasta $bmax cobres");return 0;}
