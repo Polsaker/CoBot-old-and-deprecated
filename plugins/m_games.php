@@ -16,6 +16,7 @@ $key="ee111t1t1172";
 			$irc->addcmd($this, 'pptj', 'games');	
 			$irc->addcmd($this, 'infinity', 'games');	
 			$irc->addcmd($this, 'delgameuser', 'games');	
+			$irc->addcmd($this, 'dist', 'games');	
 			$this->help['enablegame']='Activa los juegos en un canal';
 			$this->help['enablegame_l']=4;
 			$this->help['disablegame']='Desactiva los juegos en un canal';
@@ -33,8 +34,8 @@ $key="ee111t1t1172";
 			$this->help['delgameuser']='Elimina una cuenta de los juegos.';
 			$this->help['delgameuser_l']=4;
 			$this->help['piedrapapelotijeras']='Invita a alguien a jugar a piedra papel o tijeras. Sintaxis: piedrapapelotijeras <NICK>';
-			$this->help['infinity']='Regula las opciones de dinero infinito.';
-			$this->help['infinity_l']=8;
+			$this->help['infinity']='Regula las opciones de dinero infinito.';$this->help['infinity_l']=8;
+			$this->help['dist']='Nombra un a un usuario como distinguido.';$this->help['dist_l']=8;
 			$this->help['ppt_l']=11;$this->help['pptj_l']=11; // "truco" para que no se muestren esos comandos
 			if(!@isset($irc->hdf['PRIVMSG'])){$irc->hdf['PRIVMSG']=array();}
 			array_push($irc->hdf['PRIVMSG'],array("games","comecom")); 
@@ -97,6 +98,14 @@ $key="ee111t1t1172";
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 			mysql_select_db($irc->conf['db']['name']);
 			$rsx = mysql_query("UPDATE  games_users SET imp='".$param[2]."' WHERE nick='".$param[1]."'",$myconn);
+			mysql_close($myconn);
+		}
+		
+		public function dist(&$irc,$msg,$channel,$param,$who){
+			if($irc->checkauth($who,8,"games")!=1){$irc->SendCommand("PRIVMSG ".$channel." :05Error: No tienes permisos suficientes como para ejecutar esta funciÃ³n.");return 0;}
+			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
+			mysql_select_db($irc->conf['db']['name']);
+			$rsx = mysql_query("UPDATE  games_users SET dist='".$param[2]."' WHERE nick='".$param[1]."'",$myconn);
 			mysql_close($myconn);
 		}
 		
@@ -426,6 +435,8 @@ $key="ee111t1t1172";
 					if($o){$flags.="[10O] ";} //flag dueño
 					$flags.="[07R] "; // flag registrado
 				}
+				if($rowx["dist"]!=0){$flags.="[03D] ";}
+
 				if($rowx["caja"]>0){$flags.="[06C ".$rowx["caja"]."] ";}
 				if($rowx["cobre"]>0){$flags.="[04Co ".$rowx["cobre"]."] ";}
 				if($rowx["plata"]>0){$flags.="[15Pl ".$rowx["plata"]."] ";}
@@ -433,7 +444,7 @@ $key="ee111t1t1172";
 
 				$flags=trim($flags);
 				if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',  'HTML-ENTITIES')." (infinito)";}
-				$irc->SendCommand("PRIVMSG ".$chn." :En la cuenta de $cmd[1] hay $$rowx[dinero] $flags [N $rowx[nivel]]");
+				$irc->SendCommand("PRIVMSG ".$chn." :En la cuenta de ".($rowx["dist"]?"":"")."$cmd[1]".($rowx["dist"]?"":"")." hay $$rowx[dinero] $flags [N $rowx[nivel]]");
 			}else{
 				$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$nick'",$myconn);
 				$rowx=mysql_fetch_array($rsx);
@@ -469,6 +480,9 @@ $key="ee111t1t1172";
 					$flags.="[07R] "; // flag registrado
 					
 				}
+				if($rowx["dist"]!=0){$flags.="[03D] ";}
+
+				
 				if($rowx["caja"]>0){$flags.="[06C ".$rowx["caja"]."] ";}
 				if($rowx["cobre"]>0){$flags.="[04Co ".$rowx["cobre"]."] ";}
 				if($rowx["plata"]>0){$flags.="[15Pl ".$rowx["plata"]."] ";}
@@ -477,7 +491,7 @@ $key="ee111t1t1172";
 
 				$flags=trim($flags);
 if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',  'HTML-ENTITIES')." (infinito)";}
-				$irc->SendCommand("PRIVMSG ".$chn." :$nick: en tu cuenta tienes $$rowx[dinero] $flags [N $rowx[nivel]]");
+				$irc->SendCommand("PRIVMSG ".$chn." :".($rowx["dist"]?"":"")."$nick".($rowx["dist"]?"":"").": en tu cuenta tienes $$rowx[dinero] $flags [N $rowx[nivel]]");
 			}
 			$rowx=mysql_fetch_array($rsx);
 			
