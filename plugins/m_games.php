@@ -199,7 +199,7 @@ $key="ee111t1t1172";
 			if(mysql_num_rows($rsx)==0){$irc->SendCommand("PRIVMSG $channel :".$irc->mask2nick($who).": 05Error: Parece que no estás registrado en los juegos del bot! Date de alta escribiendo !alta"); return 0;}
 			$rowx=mysql_fetch_array($rsx);
 			if($rowx['nivel']<3){ $irc->SendCommand("05Error: Debes ser nivel 3 o superior para jugar a este juego!!"); return 0; }
-			if($rowx['frozen']==1){ $irc->SendCommand("05Error: Esta cuenta ha sido congelada por un administrador!!"); return 0; }
+			if($rowx['frozen']!=0){ $irc->SendCommand("05Error: Esta cuenta ha sido congelada por un administrador!!"); return 0; }
 			if($rowx["dinero"]!="*"){if($rowx['dinero']<100011500){ $irc->SendCommand("PRIVMSG $channel :05Error: Debes tener al menos $100011500 para jugar a este juego!!"); return 0; }}
 			$rsx = mysql_query("SELECT * FROM games_users WHERE nick='".$param[1]."'",$myconn);
 			if(mysql_num_rows($rsx)==0){$irc->SendCommand("PRIVMSG $channel :".$irc->mask2nick($who).": 05Error: Parece que el nick $param[1] no está registrado en el juego!"); return 0;}$rowx2=mysql_fetch_array($rsx);
@@ -326,7 +326,7 @@ $key="ee111t1t1172";
 					$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$ppl'",$myconn);
 					if(mysql_num_rows($rsx)==0){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$chn." :05Error: No estas dado de alta, date de alta con el comando !alta");return 0;}
 					$rowu=mysql_fetch_array($rsx);
-					if($rowu["frozen"]==1){	mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$chn." :05Error: Esta cuenta ha sido congelada por un administrador.");return 0; }
+					if($rowu["frozen"]!=0){	mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$chn." :05Error: Esta cuenta ha sido congelada por un administrador.");return 0; }
 					mysql_close($myconn);
 					$cmd=explode(" ", $cmd);
 					//print_r($cmd);
@@ -412,7 +412,7 @@ $key="ee111t1t1172";
 				}else{$flags.="[03M] [05M] [02M+] ";}
 				if($rowx["imp"]==1){$flags.="[05I] ";} //flag exento
 				if($rowx["imp"]==2){$flags.="[11I] ";} //flag hiperimpuesto
-				if($rowx["frozen"]==1){$flags.="[04F] ";} // flag congelado
+				if($rowx["frozen"]!=0){$flags.="[04F] ";} // flag congelado
 				$rsx = mysql_query("SELECT * FROM users WHERE user='$cmd[1]'",$myconn);
 				if(mysql_num_rows($rsx)!=0){
 					$rowx2=mysql_fetch_array($rsx);
@@ -456,7 +456,7 @@ $key="ee111t1t1172";
 				}else{$flags.="[03M] [05M] [02M+] ";}
 				if($rowx["imp"]==1){$flags.="[05I] ";} //flag exento
 				if($rowx["imp"]==2){$flags.="[11I] ";} 
-				if($rowx["frozen"]==1){$flags.="[04F] ";} // flag congelado
+				if($rowx["frozen"]!=0){$flags.="[04F] ";} // flag congelado
 								$rsx = mysql_query("SELECT * FROM users WHERE user='$nick'",$myconn);
 							if(mysql_num_rows($rsx)!=0){
 					$rowx2=mysql_fetch_array($rsx);
@@ -512,7 +512,7 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 				
 				if(mysql_num_rows($rsx)==0){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$chn." :05Error: El nick $cmd[1] no esta registrado o no existe.");return 0;}
 				$rowx2=mysql_fetch_array($rsx);
-				if($cmd[1]!="banco"){if($rowx2["frozen"]==1){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$chn." :05Error: No puedes enviarle dinero a una cuenta congelada");return 0;}}
+				if($cmd[1]!="banco"){if($rowx2["frozen"]!=0){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$chn." :05Error: No puedes enviarle dinero a una cuenta congelada");return 0;}}
 				if($rowx["dinero"]!="*"){
 					if($rowx["dinero"]<$cmd[2]){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$chn." :05Error: No posees dinero suficiente como para hacer eso!!");return 0;}
 					if(($rowx["dinero"]-$cmd[2])<5000){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$chn." :05Error: NO DEBES transferir todo tu dinero!!! SIEMPRE deben quedarte por lo menos $5000");return 0;}
@@ -887,43 +887,28 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 			
 		private function top(&$irc,$nick,$chn, $cmd,$num){
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
-			$rsx = mysql_query("SELECT * FROM games_users",$myconn);
-			$val=array();$i=0;$val2=array();
-			while($rowx=mysql_fetch_array($rsx)){
-				array_push($val,$rowx["dinero"]);
-				$val2[$rowx["dinero"]]=$rowx["nick"];
-				$val3[$rowx["dinero"]]=$rowx["nivel"];
+			$q = mysql_query("SELECT * FROM games_users",$myconn);
+
+			$din=array();
+			while(@$a=mysql_fetch_array($q)){
+				if($a['dinero']=="*"){if($param[1]=="*"){$dinero=1000000000000000000000000123;}else{$dinero="*";}}else{$dinero=$a['dinero'];}
+				array_push($din,array('din'=>$dinero,'niv'=>$a['nivel'],'nick'=>$a['nick'],'c'=>$a['frozen'],'d'=>$a['dist']));
 			}
+			rsort($din);
 			$irc->SendCommand("PRIVMSG $chn :07TOP $num DEL JUEGO:");
 			$irc->SendCommand("PRIVMSG $chn :     Nick                Nivel   Dinero");
 			
-			time_nanosleep(0,5000000);
-			rsort($val);
-$a=0;
-			foreach ($val as $key => $din) { 
-	
+			$i=0;
+			foreach($din as $key=>$val){if($val['c']!=2){$i++;}else{continue;}
 				time_nanosleep(0,500000000);
 				$s="                  "; $s2="           ";
-				$s=substr($s,0,(strlen($s)-strlen($val2[$din])));
-				if(!($val3[$din]>=10)){$s2="       ";}else{$s2="      ";}
-				//$s2=substr($s2,0,(strlen($s2)-strlen($din)));
-				if($din=="*"){$din2=mb_convert_encoding("&#8734;", 'UTF-8',  'HTML-ENTITIES')." (infinito)";}else{$din2=round($din);}
-				$rsx = mysql_query("SELECT * FROM users WHERE user='$val2[$din]'",$myconn);
-				if(mysql_num_rows($rsx)!=0){
-					$rowx2=mysql_fetch_array($rsx);
-					if(($rowx2["rng"]<4)){ $a++;
-						$irc->SendCommand("PRIVMSG $chn :".($a)." -  ".$val2[$din]." $s ".$val3[$din]."$s2".$din2);
-						if($a>=$num){break;}
-					}
-					if(($rowx2["rng"]>=4)&&($cmd[1]=="*")){ $a++;
-						$irc->SendCommand("PRIVMSG $chn :".($a)." -  ".$val2[$din]." $s ".$val3[$din]."$s2".$din2);
-						if($a>=$num){break;}
-					}
-				}else{ $a++;
-					$irc->SendCommand("PRIVMSG $chn :".($a)." -  ".$val2[$din]." $s ".$val3[$din]."$s2".$din2);
-					if($a>=$num){break;}
-				}
+				$s=substr($s,0,(strlen($s)-strlen($val['nick'])));
+				if(!($val['niv']>=10)){$s2="       ";}else{$s2="      ";}
+				$irc->SendCommand("PRIVMSG $chn :".($i)." -  ".($val["c"]?"05":"").($val["d"]?"":"").$val['nick'].($val["d"]?"":"").($val["c"]?"05":""). $s .$val['niv']."$s2".$val['din']);
+				if($i==$num){break;}
+
 			}
+			
 			mysql_close($myconn);
 		}
 		
