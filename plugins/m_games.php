@@ -921,7 +921,6 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 			switch($cmd[1]){
 				case "noimp":
 					if((($rowx["dinero"]>50000000)&&($rowx["nivel"]>=8))||($rowx["dinero"]=="*")){
-						if($rowx["dinero"]!="*"){
 						$this->user2bank($irc,$nick,50000000);
 						$rsx = mysql_query("UPDATE  games_users SET imp='1' WHERE nick='$nick'",$myconn);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora no pagarás mas impuestos.");
@@ -929,7 +928,6 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					break;
 				case "nimp":
 					if(($rowx["dinero"]>10000000)&&($rowx["nivel"]>=5)||($rowx["dinero"]=="*")){
-						if($rowx["dinero"]!="*"){
 						$this->user2bank($irc,$nick,10000000);
 						$rsx = mysql_query("UPDATE  games_users SET imp='0' WHERE nick='$nick'",$myconn);
 						
