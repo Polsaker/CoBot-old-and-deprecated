@@ -892,7 +892,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 			$din=array();
 			while(@$a=mysql_fetch_array($q)){
 				if($a['dinero']=="*"){if($param[1]=="*"){$dinero=1000000000000000000000000123;}else{$dinero="*";}}else{$dinero=$a['dinero'];}
-				array_push($din,array('din'=>$dinero,'niv'=>$a['nivel'],'nick'=>$a['nick'],'c'=>$a['frozen'],'d'=>$a['dist']));
+				array_push($din,array('din'=>round($dinero),'niv'=>$a['nivel'],'nick'=>$a['nick'],'c'=>$a['frozen'],'d'=>$a['dist']));
 			}
 			rsort($din);
 			$irc->SendCommand("PRIVMSG $chn :07TOP $num DEL JUEGO:");
