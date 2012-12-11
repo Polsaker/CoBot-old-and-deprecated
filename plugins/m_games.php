@@ -922,17 +922,15 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 				case "noimp":
 					if((($rowx["dinero"]>50000000)&&($rowx["nivel"]>=8))||($rowx["dinero"]=="*")){
 						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-50000000)."' WHERE nick='$nick'",$myconn);}
+						$this->user2bank($irc,$nick,50000000);
 						$rsx = mysql_query("UPDATE  games_users SET imp='1' WHERE nick='$nick'",$myconn);
-						
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+50000000)."' WHERE  plata=$rowx2[plata]",$myconn);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora no pagarás mas impuestos.");
 					}else{ if($rowx["nivel"]<=8){$irc->SendCommand("PRIVMSG $chn :05Error: Debes ser nivel 8 o superior para comprar este articulo!");}else{$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas $50000000 para comprar este articulo!");}mysql_close($myconn); return 0;}
 					break;
 				case "nimp":
 					if(($rowx["dinero"]>10000000)&&($rowx["nivel"]>=5)||($rowx["dinero"]=="*")){
 						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-10000000)."' WHERE nick='$nick'",$myconn);}
+						$this->user2bank($irc,$nick,10000000);
 						$rsx = mysql_query("UPDATE  games_users SET imp='0' WHERE nick='$nick'",$myconn);
 						
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora podrás pagar impuestos normalmente.");
