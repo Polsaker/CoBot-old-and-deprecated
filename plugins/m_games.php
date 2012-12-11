@@ -1012,7 +1012,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						if(($cmd[2]+$rowx['cobre'])<=$bmax){
 							if(!$rowx['cobre']){$rowx['cobre']=0;}
 							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']+$cmd[2])."' WHERE nick='$nick'",$conn);
-							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']-$cmd[2])."' WHERE cobre='$rowx[cobre]'",$conn);
+							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']-$cmd[2])."' WHERE cobre='$rowx2[cobre]'",$conn);
 							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,500000);}
 							$irc->SendPriv($chn, "Has comprado $cmd[2] cobres");
 						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax cobres");return 0;}
