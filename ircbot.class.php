@@ -205,7 +205,7 @@ class IRCBot{
 		}
 		foreach($this->hdf as $c=>$v){
 			foreach($this->hdf[$c] as $a=>$k){
-				if($this->hdf[$c][$a][0]==$name){ unset($this->hdf[$c]); break;}
+				if($this->hdf[$c][$a][0]==$name){ unset($this->hdf[$c][$a]); break;}
 			}
 		}
 		echo "  - Des-cargando plugin ". $name. " ";
