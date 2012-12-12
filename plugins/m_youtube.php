@@ -17,7 +17,7 @@ class ee111t1t1172{
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 			mysql_select_db($irc->conf['db']['name']);
 			$rsx = mysql_query("SELECT * FROM linkchans",$myconn);
-			while($rowx=mysql_fetch_array($rsx)){$this->chans[$rowx['chan']]=1;}
+			while($rowx=mysql_fetch_array($rsx)){$this->chans[strtolower($rowx['chan'])]=1;}
 			mysql_close($myconn);
 			
 		}
