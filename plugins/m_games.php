@@ -502,7 +502,7 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 				$cmd[2]=abs($cmd[2]);
 				$cmd[2]=trim($cmd[2],"+-*/");
 				if(!is_numeric($cmd[2])){return 0;}
-				if($cmd[1]==$nick){return 0;}
+				if(strtolower($cmd[1])==strtolower($nick)){return 0;}
 				if(!is_numeric(substr($cmd[2],0,1))){return 0;}
 				$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
 				$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$nick'",$myconn);
