@@ -620,28 +620,29 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 			$d3=rand(1,3);
 			$n1=0;$n2=0;$r=0;
 			switch($rowx["nivel"]){
-				case 1:	$atv=100;$ptv=500;$xtv=1000;break;
-				case 2:	$atv=200;$ptv=750;$xtv=1250;break;
-				case 3:$atv=400;$ptv=1000;$xtv=5000;break;
-				case 4:$atv=500;$ptv=2000;$xtv=7000;break;
+				case 1:	$atv=100;$ptv=500;$xtv=1000;$ca=0;break;
+				case 2:	$atv=200;$ptv=750;$xtv=1250;$ca=1;break;
+				case 3:$atv=400;$ptv=1000;$xtv=5000;$ca=2;break;
+				case 4:$atv=500;$ptv=2000;$xtv=7000;$ca=3;break;
 			}
 			$q1=mysql_query("SELECT * FROM games_stats WHERE nick='$nick'");$n=mysql_fetch_array($q1);
 			$q2=mysql_query("UPDATE games_stats SET traga ='".($n["traga"]+1)."' WHERE  nick='$nick'",$myconn);
 
-			if($rowx["nivel"]>3){$atv=500;$ptv=2000;$xtv=7000;}
+			if($rowx["nivel"]>4){$atv=500;$ptv=2000;$xtv=7000;$ca=5;}
 			switch($d1){case 1:$fig ="[03@] ";$n1=$atv;break;case 2:$fig ="[07%] ";$n1=$ptv;break;case 3:$fig ="[04$] ";$n1=$xtv;break;}
 			switch($d2){case 1:$fig.="[03@] ";break;         case 2:$fig.="[07%] ";break;         case 3:$fig.="[04$] ";break;          case 4:$fig.="[11Q] ";break;case 5:$fig.="[13X] ";break;}
 			switch($d3){case 1:$fig.="[03@] ";$n2=100;break;case 2:$fig.="[07%] ";$n2=500;break;case 3:$fig.="[04$] ";$n2=5000;break;}
 			
-			switch($d2){case 1:$r=$n1+$n2;break;case 2:$r=$n1-$n2;break;case 3:$r=$n1*$n2;break;case 4:$r=$n1/$n2;break;case 5:$r=($n1-$n2)-10000;break;}
-			if($rowx["nivel"]<2){if($r>10000){if($rowx["nivel"]<1){$r=10000;}else{$r=50000;}}}
-			if($rowx["nivel"]<2){if($r<-10000){if($rowx["nivel"]<1){$r=10000;}else{$r=30000;}}}
+			switch($d2){case 1:$r=$n1+$n2;break;case 2:$r=$n1-$n2;break;case 3:$r=$n1*$n2;break;case 4:$r=$n1/$n2;break;case 5:if($ca==0){$r=0-$n1;}elseif(($ca==1)||($ca==2)){$r=0-($n1+$n2);}else{$r=0-($n1*$n2);}break;}
+		//	if($rowx["nivel"]<2){if($r>10000){if($rowx["nivel"]<1){$r=10000;}else{$r=50000;}}}
+		//	if($rowx["nivel"]<2){if($r<-10000){if($rowx["nivel"]<1){$r=10000;}else{$r=30000;}}}
 			if(($d1==1)&&($d2==1)&&($d3==1)){if($rowx["nivel"]<1){$r=25000;}else{$r=50000;}}
 			if(($d1==2)&&($d2==2)&&($d3==2)){if($rowx["nivel"]<1){$r=25000;}else{$r=50000;}}
 			if(($d1==3)&&($d2==3)&&($d3==3)){if($rowx["nivel"]<1){$r=25000;}else{$r=50000;}}
 			if(($r>=0)&&($r<50)){$r=50;}
 		
 			if($r<0){
+				if(($rowx["dinero"]-abs($r))<5000){$r=$rowx["dinero"]-($rowx["dinero"]-5000);}
 				$irc->SendCommand("PRIVMSG ".$chn." :$nick: $fig : Has perdido 03$".abs($r)."!!!");
 				
 				$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+abs($r))."' WHERE  plata=$rowx2[plata]",$myconn);
@@ -771,9 +772,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						if($rowx['nivel']>1){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Ya estas en un nivel superior al 1!!");return 0;}
 
 						$rsx = mysql_query("UPDATE  games_users SET nivel=1 WHERE nick='$nick'",$myconn);
-						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-25000)."' WHERE nick='$nick'",$myconn);	}
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+25000)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$this->user2bank($irc,$nick,25000);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 1!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 35000 para poder pasar al nivel 1!!");return 0;}
 					break;
@@ -782,9 +781,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						if($rowx['nivel']>2){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Ya estas en un nivel superior al 2!!");return 0;}
 						if($rowx['nivel']!=1){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Tienes que pasar por el nivel 1 antes de ir al 2!");return 0;}
 						$rsx = mysql_query("UPDATE  games_users SET nivel=2 WHERE nick='$nick'",$myconn);
-						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-75000)."' WHERE nick='$nick'",$myconn);}
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+75000)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$this->user2bank($irc,$nick,75000);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 2!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 100000 para poder pasar al nivel 2!!");return 0;}
 					break;
@@ -794,9 +791,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						if($rowx['nivel']!=2){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Tienes que pasar por el nivel 2 antes de ir al 3!");return 0;}
 						
 						$rsx = mysql_query("UPDATE  games_users SET nivel=3 WHERE nick='$nick'",$myconn);
-						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-200000)."' WHERE nick='$nick'",$myconn);}
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+200000)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$this->user2bank($irc,$nick,200000);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 3!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 250000 para poder pasar al nivel 3!!");return 0;}
 					break;
@@ -806,9 +801,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						if($rowx['nivel']!=3){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Tienes que pasar por el nivel 3 antes de ir al 4!");return 0;}
 						
 						$rsx = mysql_query("UPDATE  games_users SET nivel=4 WHERE nick='$nick'",$myconn);
-						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-500000)."' WHERE nick='$nick'",$myconn);}
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+500000)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$this->user2bank($irc,$nick,500000);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 4!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 600000 para poder pasar al nivel 4!!");return 0;}
 					break;
@@ -818,9 +811,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						if($rowx['nivel']!=4){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Tienes que pasar por el nivel 4 antes de ir al 5!");return 0;}
 						
 						$rsx = mysql_query("UPDATE  games_users SET nivel=5 WHERE nick='$nick'",$myconn);
-						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-1000000)."' WHERE nick='$nick'",$myconn);}
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+1000000)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$this->user2bank($irc,$nick,1000000);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 5!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 1100000 para poder pasar al nivel 5!!");return 0;}
 					break;
@@ -830,9 +821,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						if($rowx['nivel']!=5){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Tienes que pasar por el nivel 5 antes de ir al 6!");return 0;}
 						
 						$rsx = mysql_query("UPDATE  games_users SET nivel=6 WHERE nick='$nick'",$myconn);
-						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-5000000)."' WHERE nick='$nick'",$myconn);}
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+5000000)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$this->user2bank($irc,$nick,5000000);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 6!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 6000000 para poder pasar al nivel 6!!");return 0;}
 					break;
@@ -842,9 +831,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						if($rowx['nivel']!=6){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Tienes que pasar por el nivel 6 antes de ir al 7!");return 0;}
 						
 						$rsx = mysql_query("UPDATE  games_users SET nivel=7 WHERE nick='$nick'",$myconn);
-						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-10000000)."' WHERE nick='$nick'",$myconn);}
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+10000000)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$this->user2bank($irc,$nick,10000000,false,$myconn);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 7!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 11000000 para poder pasar al nivel 7!!");return 0;}
 					break;
@@ -864,9 +851,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						if($rowx['nivel']!=8){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Tienes que pasar por el nivel 8 antes de ir al 9!");return 0;}
 						
 						$rsx = mysql_query("UPDATE  games_users SET nivel=9 WHERE nick='$nick'",$myconn);
-						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-500000000)."' WHERE nick='$nick'",$myconn);}
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+500000000)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$this->user2bank($irc,$nick,500000000,false,$myconn);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 9!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 700000000 para poder pasar al nivel 9!!");return 0;}
 					break;
@@ -874,9 +859,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					if(($rowx["dinero"]>7000000000)||($rowx["dinero"]=="*")){
 						if($rowx['nivel']!=9){mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Tienes que pasar por el nivel 9 antes de ir al 10!");return 0;}
 						$rsx = mysql_query("UPDATE  games_users SET nivel=10 WHERE nick='$nick'",$myconn);
-						if($rowx["dinero"]!="*"){
-						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-5000000000)."' WHERE nick='$nick'",$myconn);}
-						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+5000000000)."' WHERE  plata=$rowx2[plata]",$myconn);
+						$this->user2bank($irc,$nick,5000000000,false,$myconn);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora eres Nivel 10!!");
 					}else{mysql_close($myconn);$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas 7000000000 para poder pasar al nivel 10!!");return 0;}
 					break;
@@ -921,14 +904,14 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 			switch($cmd[1]){
 				case "noimp":
 					if((($rowx["dinero"]>50000000)&&($rowx["nivel"]>=8))||($rowx["dinero"]=="*")){
-						$this->user2bank($irc,$nick,50000000);
+						$this->user2bank($irc,$nick,false,$myconn);
 						$rsx = mysql_query("UPDATE  games_users SET imp='1' WHERE nick='$nick'",$myconn);
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora no pagarás mas impuestos.");
 					}else{ if($rowx["nivel"]<=8){$irc->SendCommand("PRIVMSG $chn :05Error: Debes ser nivel 8 o superior para comprar este articulo!");}else{$irc->SendCommand("PRIVMSG $chn :05Error: Necesitas $50000000 para comprar este articulo!");}mysql_close($myconn); return 0;}
 					break;
 				case "nimp":
 					if(($rowx["dinero"]>10000000)&&($rowx["nivel"]>=5)||($rowx["dinero"]=="*")){
-						$this->user2bank($irc,$nick,10000000);
+						$this->user2bank($irc,$nick,10000000,false,$myconn);
 						$rsx = mysql_query("UPDATE  games_users SET imp='0' WHERE nick='$nick'",$myconn);
 						
 						$irc->SendCommand("PRIVMSG $chn :$nick: Ahora podrás pagar impuestos normalmente.");
@@ -1206,8 +1189,8 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 		#	-2 = el usuario tiene infinito (no se hace nada)
 		#	-3 = el usuario no tiene dinero suficiente
 		#	0  = Todo bien
-		private function user2bank(&$irc,$usuario,$cantidad,$inv=false){
-			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);
+		private function user2bank(&$irc,$usuario,$cantidad,$inv=false,$myconn=false){
+			if($myconn==false){$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);mysql_select_db($irc->conf['db']['name']);}
 
 			$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$usuario'",$myconn);if(mysql_num_rows($rsx)==0){mysql_close($myconn);return -1;}
 			$rowx=mysql_fetch_array($rsx);
@@ -1226,7 +1209,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]+$cantidad)."' WHERE nick='$usuario'",$myconn);
 						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]-$cantidad)."' WHERE  plata=$rowx2[plata]",$myconn);
 					}
-					mysql_close($myconn);
+					//mysql_close($myconn);
 				}
 			}else{return -2;}
 			
