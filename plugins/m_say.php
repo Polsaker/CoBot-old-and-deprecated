@@ -15,7 +15,7 @@ class ee111t1t1172{
 
 	public function say(&$irc,$msg,$channel,$param,$who)
 	{
-		if($irc->checkauth($who,1,trim($channel))==1){
+		if($irc->checkauth($who,1,trim($param[1]))==1){ 
 			$i=2;
 			$ts="";
 			while(@isset($param[$i])){
