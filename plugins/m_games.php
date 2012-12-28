@@ -1137,7 +1137,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 							if(!$rowx['oro']){$rowx['oro']=0;}
 							$rsx = mysql_query("UPDATE games_users SET oro='".($rowx['oro']+$cmd[2])."' WHERE nick='$nick'",$myconn);
 							$rsx = mysql_query("UPDATE games_banco SET oro='".($rowx2['oro']-$cmd[2])."' WHERE oro='$rowx2[oro]'",$myconn);
-							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,1000000,false,$myconn);}
+							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,1000000);}
 
 							$irc->SendPriv($chn, "Has comprado $cmd[2] medidas de oro ");
 						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax medidas de oro");return 0;}
