@@ -1061,7 +1061,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 						case 5:$bmax=10;break;
 						case 6:$bmax=10;break;
 					}
-					if($rowx2['plata']>=$cmd[2]){
+					if($rowx2['plat']>=$cmd[2]){
 						if(($cmd[2]+$rowx['plata'])<=$bmax){
 							if(!$rowx['plata']){$rowx['plata']=0;}
 							$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']+$cmd[2])."' WHERE nick='$nick'",$myconn);
@@ -1070,7 +1070,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 
 							$irc->SendPriv($chn, "Has comprado $cmd[2] medidas de plata ");
 						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax medidas de plata");return 0;}
-					}else{$irc->SendPriv($chn,"05Error: No hay suficiente stock de cobres como para que puedas comprar tantos..");return 0;}
+					}else{$irc->SendPriv($chn,"05Error: No hay suficiente stock de plata como para que puedas comprar tantos..");return 0;}
 					break;
 				case "transferir":
 					if(!isset($cmd[3])){$irc->SendPriv($chn,"Sintaxis: !plata <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
@@ -1137,7 +1137,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 							if(!$rowx['oro']){$rowx['oro']=0;}
 							$rsx = mysql_query("UPDATE games_users SET oro='".($rowx['oro']+$cmd[2])."' WHERE nick='$nick'",$myconn);
 							$rsx = mysql_query("UPDATE games_banco SET oro='".($rowx2['oro']-$cmd[2])."' WHERE oro='$rowx2[oro]'",$myconn);
-							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,1000000);}
+							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,1000000,false,$myconn);}
 
 							$irc->SendPriv($chn, "Has comprado $cmd[2] medidas de oro ");
 						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax medidas de oro");return 0;}
