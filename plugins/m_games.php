@@ -1202,7 +1202,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 				if(($rowx["dinero"]<$cantidad)&&($inv==false)){mysql_close($myconn);return -3;
 				}else{
 					if($inv==false){
-						if($rowx['dist']==1){$cantidad=$cantidad-($cantidad * 5/100);} //descuento del 5% a algunos privilegiados
+						//if($rowx['dist']==1){$cantidad=$cantidad-($cantidad * 5/100);} //descuento del 5% a algunos privilegiados
 						$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-$cantidad)."' WHERE nick='$usuario'",$myconn);
 						$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+$cantidad)."' WHERE  plata=$rowx2[plata]",$myconn);
 					}else{
