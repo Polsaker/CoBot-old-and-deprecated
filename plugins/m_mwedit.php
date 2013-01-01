@@ -23,7 +23,7 @@ class ee111t1t1172{
 		$dicc=array();
 		$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 		mysql_select_db($irc->conf['db']['name']);
-		$rsx = mysql_query("SELECT * FROM wikichans WHERE `chan`=".strtolower($channel),$myconn);
+		$rsx = mysql_query("SELECT * FROM wikichans WHERE `chan`='".strtolower($channel)."'",$myconn);
 		if(mysql_num_rows($rsx)==0){$irc->SendCommand("PRIVMSG $channel :\00305Error\003: Esta función no esta habilitada aqui!");return 0;}
 		
 		$rowx=mysql_fetch_array($rsx);$wiki=$rowx['chan'];
