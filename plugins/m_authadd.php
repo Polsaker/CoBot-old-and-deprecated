@@ -55,9 +55,9 @@ class ee111t1t1172{
 	{
 		if($irc->checkauth($who,9)!=1){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 No autorizado."); return 0;}
 		if(!@isset($param[1])){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Faltan parametros."); return 0;}
-		$sqlx="DELETE FROM `users` WHERE  `user`='".$param[1]."' AND `rng`<9";
+		$sqlx="DELETE FROM `users` WHERE `user`='".$param[1]."'";
 		if(!$rsx = mysql_query($sqlx,$myconn)){ $irc->SendCommand("PRIVMSG ".$channel." :\00305Error:\003 no se pudo concretar la operacion."); return 0;}
-		$irc->sendCommand("PRIVMSG ".$channel." :[Talvez] Se ha borrado el usuario.");
+		$irc->sendCommand("PRIVMSG ".$channel." :Se ha borrado el usuario.");
 	}
 	public function listusers(&$irc,$msg,$channel,$param,$who)
 	{
