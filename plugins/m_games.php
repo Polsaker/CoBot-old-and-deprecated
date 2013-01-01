@@ -994,7 +994,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					if($rowx2['cobre']>=$cmd[2]){
 						if(($cmd[2]+$rowx['cobre'])<=$bmax){
 							if(!$rowx['cobre']){$rowx['cobre']=0;}
-							if($rowx['dinero']<(500000 . $cmd[2])){$irc->SendPriv($chn,"05Error: No tienes dinero suficiente como para hacer esto!!");return 0;}
+							if($rowx['dinero']<(500000 . $cmd[2]) && $rowx['dinero']!="*"){$irc->SendPriv($chn,"05Error: No tienes dinero suficiente como para hacer esto!!");return 0;}
 
 							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']+$cmd[2])."' WHERE nick='$nick'",$conn);
 							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']-$cmd[2])."' WHERE cobre='$rowx2[cobre]'",$conn);
@@ -1066,7 +1066,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					if($rowx2['plat']>=$cmd[2]){
 						if(($cmd[2]+$rowx['plata'])<=$bmax){
 							if(!$rowx['plata']){$rowx['plata']=0;}
-							if($rowx['dinero']<(1000000 . $cmd[2])){$irc->SendPriv($chn,"05Error: No tienes dinero suficiente como para hacer esto!!");return 0;}
+							if($rowx['dinero']<(1000000 . $cmd[2]) && $rowx['dinero']!="*"){$irc->SendPriv($chn,"05Error: No tienes dinero suficiente como para hacer esto!!");return 0;}
 
 							$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']+$cmd[2])."' WHERE nick='$nick'",$myconn);
 							$rsx = mysql_query("UPDATE games_banco SET plat='".($rowx2['plat']-$cmd[2])."' WHERE plat='$rowx2[plat]'",$myconn);
@@ -1139,7 +1139,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					if($rowx2['oro']>=$cmd[2]){
 						if(($cmd[2]+$rowx['oro'])<=$bmax){
 							if(!$rowx['oro']){$rowx['oro']=0;}
-							if($rowx['dinero']<(1000000 . $cmd[2])){$irc->SendPriv($chn,"05Error: No tienes dinero suficiente como para hacer esto!!");return 0;}
+							if($rowx['dinero']<(1000000 . $cmd[2]) && $rowx['dinero']!="*"){$irc->SendPriv($chn,"05Error: No tienes dinero suficiente como para hacer esto!!");return 0;}
 							$rsx = mysql_query("UPDATE games_users SET oro='".($rowx['oro']+$cmd[2])."' WHERE nick='$nick'",$myconn);
 							$rsx = mysql_query("UPDATE games_banco SET oro='".($rowx2['oro']-$cmd[2])."' WHERE oro='$rowx2[oro]'",$myconn);
 							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,1000000);}
