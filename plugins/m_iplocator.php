@@ -15,8 +15,6 @@ class ee111t1t1172{
 			$this->help['ip']='Geolocaliza una IP. Sintaxis: ip <IP/IPv6> [p] (si el segundo aprametro es "p", se buscarán proxys en la ip)';
 			$this->gi = geoip_open("plugins/GeoLiteCity.dat",GEOIP_STANDARD);
 			$this->gi6 = geoip_open("plugins/GeoLiteCityv6.dat",GEOIP_STANDARD);
-			include("plugins/proxy.php");
-
 		}
 
 		public function ip(&$irc,$msg,$channel,$param,$who)
