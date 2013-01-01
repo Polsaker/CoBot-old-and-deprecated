@@ -42,7 +42,7 @@ class ee111t1t1172{
 			if($res[1]==0){$irc->SendPriv($channel,"No se han encontrado errores de ortografía en el artículo.");return 0;}
 			time_nanosleep(0, 250000000);
 			$edittoken=$api->get_token("edit");
-			$post = "title=".urlencode($ts)."&action=edit&text=".urlencode($res[0])."&token=$edittoken&summary=".urlencode("Corrección ortográfica")."&bot=true";
+			$post = "title=".urlencode($ts)."&action=edit&text=".urlencode($res[0])."&token=$edittoken&summary=".urlencode("Corrección ortográfica ordenada por ".$who." en ".$channel)."&bot=true";
 			time_nanosleep(0, 250000000);
 
 			$r=$api->callApi($post,0);
