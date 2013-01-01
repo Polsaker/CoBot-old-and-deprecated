@@ -12,7 +12,7 @@ class IRCBot{
 	public $initscript=array();
 	public $connscript=array();
 	public $joinscript=array();
-	private $authd;
+	private $authd=array();
 	private $plugins;
 	private $pcomms;
 	private $chanlst=array();
@@ -305,7 +305,6 @@ class IRCBot{
 						$i=0;
 						while($rowx=mysql_fetch_array($rsx)){$i++;
 							$this->SendCommand("PRIVMSG ".$nk[0]." :Autenticado exitosamente.");
-							if(!is_array($this->authd[count($this->authd)])){$this->authd[count($this->authd)]=array();}
 							array_push($this->authd,array('rng'=>$rowx['rng'],'hst'=>$guy));
 							return 0;
 						}
