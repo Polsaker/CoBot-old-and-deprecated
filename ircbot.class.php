@@ -14,7 +14,7 @@ class IRCBot{
 	public $joinscript=array();
 	private $authd=array();
 	private $plugins;
-	private $pcomms;
+	private $pcomms=array();
 	private $chanlst=array();
 	public $disconn=0;
 	public function __construct($config){
@@ -215,12 +215,9 @@ class IRCBot{
 	}
 	
 	public function addcmd($oplugin,$command,$plugin,$alias=array()){
-		if(!is_array($this->pcomms)){$this->pcomms=array();}
-		$this->pcomms[count($this->pcomms)]=array();
 		array_push($this->pcomms,array('pgin'=>$plugin, 'comm'=>$command, 'ali'=>0));
 		if(!@isset($alias[0])){return 0;}
 		$i=0;while(@isset($alias[$i])){
-			$this->pcomms[count($this->pcomms)]=array();
 			array_push($this->pcomms,array('pgin'=>$plugin, 'comm'=>$alias[$i], 'ali'=>1, 'alifn' => $command));
 			$i++;
 		}
