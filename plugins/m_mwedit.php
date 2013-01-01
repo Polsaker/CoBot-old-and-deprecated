@@ -1,3 +1,4 @@
+.php
 <?php 
 	$name="mwedit"; 
 	$key="ee111t1t1172";
@@ -34,15 +35,19 @@ class ee111t1t1172{
 		mysql_close($myconn);
 		
 		$api=new mwApi($irc->conf['m_mwedit']['mwuser'],$irc->conf['m_mwedit']['mwpass'],$wiki,"CoBot, IRC Bot");
-			
-			$pc=$api->callApi("api.php?action=query&prop=revisions&titles=".urlencode($ts)."&rvprop=content");
+			time_nanosleep(0, 250000000);			
+			$pc=$api->callApi("action=query&prop=revisions&titles=".urlencode($ts)."&rvprop=content");
 			foreach($pc['query']['pages'] as $key => $val){	$cont=$val['revisions'][0]["*"];}
 			$res = $this->corrector($cont,$dicc);
 			if($res[1]==0){$irc->SendPriv($channel,"No se han encontrado errores de ortografía en el artículo.");return 0;}
+			time_nanosleep(0, 250000000);
 			$edittoken=$api->get_token("edit");
 			$post = "title=".urlencode($ts)."&action=edit&text=".urlencode($res[0])."&token=$edittoken&summary=".urlencode("Corrección ortográfica")."&bot=true";
-			$r=$api->callApi($post,1);
-			if($r['edit']['result']=="Success"){$resp="Se han encontrado y corregido $res[1] errores ortográficos";}else{$resp="Se han encontrado $res[1] errores ortográficos, pero no se han podido corregir: $r[edit][result]";}
+			time_nanosleep(0, 250000000);
+
+			$r=$api->callApi($post,0);
+			print_r($r);
+			if($r['edit']['result']=="Success"){$resp="Se han encontrado y corregido $res[1] errores ortográficos";}else{$resp="Se han encontrado $res[1] errores ortográficos, pero no se han podido corregir. ".$r['edit']['result'];}
 			$irc->SendPriv($channel,$resp);
 		unset($api);
 	}
@@ -81,3 +86,4 @@ class ee111t1t1172{
 
 }
 	?>
+
