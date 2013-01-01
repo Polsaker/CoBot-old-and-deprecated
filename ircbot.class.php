@@ -351,7 +351,8 @@ class IRCBot{
 			$this->SendCommand("USER " . $this->nick. " * * :CoBOT, IRC Bot");
 			foreach($this->initscript as $key => $val){@$this->SendCommand($val);}
 			while(!@feof($this->serv['socket'])){
-				$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"latin1"); 
+				//$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"latin1"); 
+				$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"utf8"); 
 				echo $this->serv['rbuffer'];
 				if(empty($this->serv['rbuffer'])){sleep(1);continue;}	
 				preg_match('@^(?:\:.*? )?(.*?) @', $this->serv['rbuffer'], $coi);
