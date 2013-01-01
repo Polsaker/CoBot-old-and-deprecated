@@ -35,7 +35,7 @@ class ee111t1t1172{
 		mysql_close($myconn);
 		
 		$api=new mwApi($irc->conf['m_mwedit']['mwuser'],$irc->conf['m_mwedit']['mwpass'],$wiki,"CoBot, IRC Bot");
-			time_nanosleep(0, 250000000);			
+			time_nanosleep(0, 250000000); // Sleep para evitar accionar los mecanismos anti-DoS en algunos servidores (opcional)
 			$pc=$api->callApi("action=query&prop=revisions&titles=".urlencode($ts)."&rvprop=content");
 			foreach($pc['query']['pages'] as $key => $val){	$cont=$val['revisions'][0]["*"];}
 			$res = $this->corrector($cont,$dicc);
