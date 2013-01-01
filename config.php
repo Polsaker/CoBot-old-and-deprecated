@@ -32,4 +32,7 @@
 	$conf['m_google']['api_key']=""; // google api key
 	$conf['m_short']['bitly-api']=""; //Bit.ly api key
 	$conf['m_weather']['api_key']=""; //wunderground.com api key
+	
+	$conf['m_mwedit']['mwuser']=""; // Usuario wiki
+	$conf['m_mwedit']['mwpass']=""; // Contraseña wiki
 ?>
