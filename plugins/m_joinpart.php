@@ -21,7 +21,16 @@ class ee111t1t1172{	public $help;
 	}
 	public function part(&$irc,$msg,$channel,$param,$who)
 	{
-		if($irc->checkauth($who,4)==1){$irc->SendCommand("PART ".$param[1]." :Salida ordenada por un administrador");}
+		if($irc->checkauth($who,4)!=1){$irc->SendPriv($channel,"05Error: No tienes los privilegios suficientes como para realizar esta operación"); return 0;}
+		$partmsg="Salida ordenada por un administrador";$i=2;
+		if(!isset($param[1]) || substr($param[1],0,1)!="#"){$chanout=$channel;$i=1;}else{$chanout=$param[1];}
+		if((isset($param[1]) && substr($param[1],0,1)!="#")||isset($param[2])){
+			$ts="";
+			while(@isset($param[$i])){$ts.=$param[$i]. " ";$i++;}
+			$partmsg=trim($ts);
+			
+		}
+		$irc->SendCommand("PART $chanout :$partmsg");
 	}
 }
 	?>
