@@ -61,7 +61,6 @@ class ee111t1t1172{
 		
 
 		$jsn = file_get_contents("http://".$this->chans[$channel]."/api.php?action=query&list=users&ususers=".urlencode(str_replace(" ", "_",$ts))."&format=json&usprop=blockinfo|editcount|registration|gender|groups");		
-		//$result = xml2array($xml);
 		if($jsn==""){$irc->SendCommand("PRIVMSG ".$channel." :Error interno \002001\002. Notifique al administrador.");return 0;}
 		$result=json_decode($jsn);
 				
@@ -69,15 +68,10 @@ class ee111t1t1172{
 			if($result->query->users[0]->registration){
 				$registration=date("d/m/Y H:i",strtotime(substr($result->query->users[0]->registration,0,strlen($result->query->users[0]->registration)-1)));
 			}else{$registration="04N/D";}
-			/*$xml = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=".$param[1]."&format=json");		
-		$result = xml2array($xml);
-		if(!$xml){$irc->SendCommand("PRIVMSG ".$channel." :\00305Error\003 al procesar el comando");return 0;}
-		$irc->SendCommand("PRIVMSG ".$channel." :Contribuciones del usuario \002".$ts."\002 en los últimos ".$param[1]." dia(s): \002".$result['api']['userdailycontribs']['attr']['timeFrameEdits']."\002 de \002".$result['api']['userdailycontribs']['attr']['totalEdits']."\002 contribuciones en total.");
-*/
+
 			$w2 = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=7&format=json"); $r2=json_decode($w2);
 			$w3 = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=30&format=json"); $r3=json_decode($w3);
 			$w4 = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=180&format=json"); $r4=json_decode($w4);
-			
 			
 			$resp="Usuario ".$result->query->users[0]->name." - Registrado: ". $registration. " - Ediciones: ".$result->query->users[0]->editcount ." (Semana: ".$r2->userdailycontribs->timeFrameEdits.", Mes: ".$r3->userdailycontribs->timeFrameEdits.", ~6 meses:".$r4->userdailycontribs->timeFrameEdits.") - ";
 			$i=0;
