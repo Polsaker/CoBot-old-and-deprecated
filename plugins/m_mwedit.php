@@ -26,7 +26,7 @@ class ee111t1t1172{
 		$rsx = mysql_query("SELECT * FROM wikichans WHERE `chan`='".strtolower($channel)."'",$myconn);
 		if(mysql_num_rows($rsx)==0){$irc->SendCommand("PRIVMSG $channel :\00305Error\003: Esta función no esta habilitada aqui!");return 0;}
 		
-		$rowx=mysql_fetch_array($rsx);$wiki=$rowx['chan'];
+		$rowx=mysql_fetch_array($rsx);$wiki="http://".$rowx['chan']."/";
 		$rsx = mysql_query("SELECT * FROM ortoerr",$myconn);
 		while($rowx=mysql_fetch_array($rsx)){
 			$dicc[$rowx['b']]=$rowx['g'];
