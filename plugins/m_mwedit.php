@@ -42,7 +42,7 @@ class ee111t1t1172{
 			$edittoken=$api->get_token("edit");
 			$post = "title=".urlencode($ts)."&action=edit&text=".urlencode($res[0])."&token=$edittoken&summary=".urlencode("Corrección ortográfica")."&bot=true";
 			$r=$api->callApi($post,1);
-			if($r['edit']['result']=="Success"){$resp="Se han encontrado y corregido $res[1] errores ortográficos"}else{$resp="Se han encontrado $res[1] errores ortográficos, pero no se han podido corregir: $r[edit][result]";}
+			if($r['edit']['result']=="Success"){$resp="Se han encontrado y corregido $res[1] errores ortográficos";}else{$resp="Se han encontrado $res[1] errores ortográficos, pero no se han podido corregir: $r[edit][result]";}
 			$irc->SendPriv($channel,$resp);
 		unset($api);
 	}
