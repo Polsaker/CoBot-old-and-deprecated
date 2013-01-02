@@ -24,8 +24,7 @@ class ee111t1t1172{
 		$this->help['chgpass']='Modifica la contraseña de un usuario. Sintaxis: chgpass <usuario> <antigua contraseña> <nueva contraseña>';
 	}
 
-	public function register(&$irc,$msg,$channel,$param,$who)
-	{
+	public function register(&$irc,$msg,$channel,$param,$who){
 		
 #		if(substr(trim($channel),0,1)!="#"){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Este comando no se debe usar desde un canal."); return 0;}
 		if(!@isset($param[2])){$irc->sendCommand("PRIVMSG ".$irc->mask2nick($who)." :\00305Error:\003 Faltan parametros."); return 0;}
