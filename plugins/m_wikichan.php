@@ -22,8 +22,7 @@ class ee111t1t1172{
 		$this->help['chwadd_l']=5;
 		$this->help['chwrem_l']=5;
 		
-			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
-			mysql_select_db($irc->conf['db']['name']);
+			$myconn=$irc->myConn();
 			$rsx = mysql_query("SELECT * FROM wikichans",$myconn);
 			while($rowx=mysql_fetch_array($rsx)){$this->chans[$rowx['chan']]=$rowx['wiki'];}
 			mysql_close($myconn);
@@ -33,8 +32,7 @@ class ee111t1t1172{
 	{
 		if(!@isset($this->chans[strtolower($channel)])){$irc->SendCommand("PRIVMSG $channel :\00305Error\003: Esta función no esta habilitada aqui!");return 0;}
 		if((!@isset($param[1]))||(@$param[1]=="")){
-			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
-			mysql_select_db($irc->conf['db']['name']);
+			$myconn=$irc->myConn();
 			$sqlx="SELECT * FROM nickassoc WHERE ircnick='".$irc->mask2nick($who)."' AND chn='$channel'";
 			$rsx = mysql_query($sqlx,$myconn) or die(exit("  - ERROR: verifique que las tablas mysql esten creadas."));
 			$i=0;
@@ -42,8 +40,7 @@ class ee111t1t1172{
 			if($i==0){$param[1]=$irc->mask2nick($who);}
 			mysql_close($myconn);
 		}else{
-			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
-			mysql_select_db($irc->conf['db']['name']);
+			$myconn=$irc->myConn();
 			$sqlx="SELECT * FROM nickassoc WHERE ircnick='".$param[1]."' AND chn='$channel'";
 			$rsx = mysql_query($sqlx,$myconn) or die(exit("  - ERROR: verifique que las tablas mysql esten creadas."));
 			while($rowx=mysql_fetch_array($rsx)){
