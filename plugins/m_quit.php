@@ -38,7 +38,8 @@ class ee111t1t1172{
 		if($irc->checkauth($who,10)!=1){$irc->SendCommand("PRIVMSG ".$channel." :05Error: No tienes permisos suficientes como para ejecutar esta función.");return 0;}
 		$irc->disconn=$irc->conf['conn']['reconnect']+2;
 		$irc->SendCommand("QUIT :[RESTART] Salida ordenada por un administrador");
-		exec("php restart.php");
+		exec("php restart.php &");
+		die("Fin.");
 	}
 }
 	?>
