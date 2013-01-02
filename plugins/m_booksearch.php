@@ -14,13 +14,7 @@ class ee111t1t1172{
 
 		public function book(&$irc,$msg,$channel,$param,$who)
 		{
-			$i=1;
-			$ts="";
-			while(@isset($param[$i])){
-				$ts.=$param[$i]. " ";
-				$i++;
-			}
-			$ts=substr($ts,0,strlen($ts)-1);
+			$ts=$irc->jparam($param,1);
 			if(preg_match("#.*isbn\:.*#",$ts,$m)){
 				$ts=str_replace("-","",$ts);
 			}
@@ -29,8 +23,7 @@ class ee111t1t1172{
 			if($jao->totalItems==0){$resp="No se encontraron resultados..";}else{
 				$i=0; 
 				while(($i<3) && (@$jao->items[$i])){
-					@$resp="".$jao->items[$i]->volumeInfo->title.", Autor: ".$jao->items[$i]->volumeInfo->authors[0].", ".$jao->items[$i]->volumeInfo->pageCount." páginas. ISBN-10: ".$jao->items[$i]->volumeInfo->industryIdentifiers[$i]->identifier.", ISBN-13 ".$jao->items[$i]->volumeInfo->industryIdentifiers[1]->identifier.". ";
-					if(preg_match("#.*isbn:.*#",$ts,$m)){$resp.="10http://books.google.com/books?id=".$jao->items[$i]->id."";}
+					@$resp="".$jao->items[$i]->volumeInfo->title.", Autor: ".$jao->items[$i]->volumeInfo->authors[0].", ".$jao->items[$i]->volumeInfo->pageCount." páginas. ISBN-10: ".$jao->items[$i]->volumeInfo->industryIdentifiers[$i]->identifier.", ISBN-13 ".$jao->items[$i]->volumeInfo->industryIdentifiers[1]->identifier.". 10http://books.google.com.mx/books?id=".$jao->items[$i]->id."";
 					$irc->SendCommand("PRIVMSG ".$channel." :".$resp);
 					$i++;
 				}
