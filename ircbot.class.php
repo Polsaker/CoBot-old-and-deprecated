@@ -27,8 +27,7 @@ class IRCBot{
 		if($this->serv['ip']==false){die(" [ERR]\n");}
 		 echo " [OK] ".$this->serv['ip'][0]."\n";
 		
-		$myconn=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass'])or die (exit(mysql_error()));
-		mysql_select_db($this->conf['db']['name']);
+		$myconn=$this->myConn();
 		$sqlx="select * from users";
 		$rsx = mysql_query($sqlx) or die(exit("  - ERROR: verifique que las tablas mysql esten creadas."));
 		mysql_close($myconn);
@@ -70,6 +69,12 @@ class IRCBot{
 		}
 	}
 	
+	public function myConn(){
+		$myconn=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass']);
+		mysql_select_db($this->conf['db']['name']);
+		return $myconn;
+	}
+	
 	public function CheckUpd($verbose=false,$channel=""){
 		$s=0;$uparr=array();
 		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.class.php"));
@@ -90,8 +95,7 @@ class IRCBot{
 			}else{$s=1;array_push($uparr,array("plugins/".$fe[0],1));if($verbose){$this->SendPriv($channel,"Actualización pendiente de 03plugins/".$fe[0]." 07[Nuevo]");}
 }
 		}
-		
-		
+				
 		if($s==1){return 1;}else{return 2;}
 	}
 	   
@@ -147,9 +151,8 @@ class IRCBot{
 		if($r==0){return 0;}
 		$this->disconn=$this->conf['conn']['reconnect']+2;
 		$this->SendCommand("QUIT :[UPDATE] Aplicando actualizaciones.");
-		exec("php restart.php");
-
-		 
+		exec("php restart.php &");
+		exit;
 	}
 	
 	public function rehash(){
@@ -295,8 +298,7 @@ class IRCBot{
 					$this->helpsys($param,$channel,$guy);return 0;
 				case "auth":
 					if($channel==$this->nick){
-						$this->serv['myconn']=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass']);
-						mysql_select_db($this->conf['db']['name']);
+						$myconn=$this->myConn();
 						$sqlx="select * from users where user='".$param[1]."' AND pass=sha1('".$param[2]."')";
 						$rsx = mysql_query($sqlx) or die(exit("  - ERROR: verifique que las tablas mysql esten creadas."));
 						$i=0;
@@ -305,18 +307,18 @@ class IRCBot{
 							array_push($this->authd,array('rng'=>$rowx['rng'],'hst'=>$guy));
 							return 0;
 						}
-						mysql_close($this->serv['myconn']);
+						mysql_close($myconn);
 
-						if($i==0){$this->SendCommand("PRIVMSG ".$nk[0]." :04ERROR: Usuario/Contraseña incorrectos.");}
-					}else{$this->SendCommand("PRIVMSG ".$channel." :04ERROR: Este comando no debe ser utilizado en un canal.");}
+						if($i==0){$this->SendCommand("PRIVMSG ".$nk[0]." :05ERROR: Usuario/Contraseña incorrectos.");}
+					}else{$this->SendCommand("PRIVMSG ".$channel." :05ERROR: Este comando no debe ser utilizado en un canal.");}
 					return 0;
 				case "ignore":
 					if($this->checkauth($guy,8)){
 						if(!@$param[1]){break;}
-						$this->serv['myconn']=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass']);
-						mysql_select_db($this->conf['db']['name']);
+						$myconn=$this->myConn();
 						$sqlx="INSERT INTO `ignore` (host) VALUES ('$param[1]')";
 						$rsx = mysql_query($sqlx);
+						mysql_close($myconn);
 					}else{	$this->SendCommand("PRIVMSG ".$channel." :04ERROR: No autorizado");}
 					return 0;
 				case "updchk":
@@ -345,9 +347,9 @@ class IRCBot{
 			socket_set_blocking($this->serv['socket'], false);
 			$this->SendCommand("NICK " . $this->nick);
 			$this->SendCommand("USER " . $this->nick. " * * :CoBOT, IRC Bot");
+			$t=0;
 			foreach($this->initscript as $key => $val){@$this->SendCommand($val);}
 			while(!@feof($this->serv['socket'])){
-				//$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"latin1"); 
 				$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"utf8"); 
 				echo $this->serv['rbuffer'];
 				if(empty($this->serv['rbuffer'])){sleep(1);continue;}	
@@ -356,8 +358,13 @@ class IRCBot{
 				switch($this->serv['command']){
 					case "001":
 						foreach($this->connscript as $key => $val){time_nanosleep(0,250000000); @$this->SendCommand($val);}
-						if($this->conf['irc']['nspass']){$this->SendCommand("PRIVMSG NickServ :IDENTIFY ".$this->conf['irc']['nspass']);}
+						if($this->conf['irc']['nspass']){$this->SendCommand("PRIVMSG NickServ :IDENTIFY ".$this->conf['irc']['nsuser']." ".$this->conf['irc']['nspass'] );}
 						foreach($this->conf['irc']['channels'] as $key => $val){$this->SendCommand("JOIN ".$val);}
+						if($t==1){ // Auto-ghost
+							$this->SendCommand("PRIVMSG NickServ :GHOST ".$this->conf['irc']['nick']);
+							$this->nick=$this->conf['irc']['nick'];
+							sleep(1);$this->SendCommand("NICK " .$this->conf['irc']['nick']);
+						}
 						break;
 					case "PING":
 						$this->SendCommand('PONG :' . substr($this->serv['rbuffer'], 6)); 
@@ -383,37 +390,32 @@ class IRCBot{
 						list($channel,$msg) = explode(' :',$msg[1],2);
 						$msg=substr($msg,0,strlen($msg)-2);
 						
-						$this->serv['myconn']=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass']);
-						mysql_select_db($this->conf['db']['name']);
+						$myconn=$this->myConn();
 						$rsx = mysql_query("SELECT * FROM `ignore`");
-						$k=0;
 							while(@$rowx=mysql_fetch_array($rsx)){
-								if(preg_match("#".$rowx['host']."#",$who,$m)){
-									$k=1;
-									break;
-								}
+								if(preg_match("#".$rowx['host']."#",$who,$m)){break;}
 							}
-						
-						if($k!=1){
-						$this->procom($msg,$who,$channel);}
+						mysql_close($myconn);
+						$this->procom($msg,$who,$channel);
 						break;
-					case "433":	$this->nick.="_";return 0;	break; // por si el nick ya está en uso
+					case "433": // 433 numérico: El nick ya está en uso
+						$this->nick.="_";
+						$this->SendCommand("NICK ".$this->nick);
+						if($this->conf['irc']['nspass']){$t=1;} // Activando el ghost
+						break;
 				}
 				
-				$this->serv['myconn']=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass']);
-						mysql_select_db($this->conf['db']['name']);
+				$myconn=$this->myConn();
 						$sqlx="SELECT * FROM `ignore`";
 						$rsx = mysql_query($sqlx);
-						$k=0;
-							while(@$rowx=mysql_fetch_array($rsx)){
-								if(preg_match("#.*".$rowx['host'].".*#",$this->serv['rbuffer'],$m)){$k=1;break;}
-							}
-				if($k!=1){
-					if(@isset($this->hdf[$this->serv['command']])){
-						foreach($this->hdf[$this->serv['command']] as $key => $val){
-							$fn=$val[1];
-							$this->plugins[$val[0]]->$fn($this,$this->serv['rbuffer']);
+						while(@$rowx=mysql_fetch_array($rsx)){
+							if(preg_match("#.*".$rowx['host'].".*#",$this->serv['rbuffer'],$m)){$k=1;continue;}
 						}
+				mysql_close($myconn);
+				if(@isset($this->hdf[$this->serv['command']])){
+					foreach($this->hdf[$this->serv['command']] as $key => $val){
+						$fn=$val[1];
+						$this->plugins[$val[0]]->$fn($this,$this->serv['rbuffer']);
 					}
 				}
 			}
