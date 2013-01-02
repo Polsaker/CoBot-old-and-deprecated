@@ -75,6 +75,16 @@ class IRCBot{
 		return $myconn;
 	}
 	
+	public function jparam($param,$from){
+		$i=$from;
+		$ts="";
+		while(@isset($param[$i])){
+			$ts.=$param[$i]. " ";
+			$i++;
+		}
+		return trim($ts);
+	}
+	
 	public function CheckUpd($verbose=false,$channel=""){
 		$s=0;$uparr=array();
 		$f=trim(file_get_contents("http://upd.cobot.tk/updchk.php?f=ircbot.class.php"));
