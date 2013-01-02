@@ -31,23 +31,19 @@ class ee111t1t1172{
 	public function info(&$irc,$msg,$channel,$param,$who)
 	{
 		if(!@isset($this->chans[strtolower($channel)])){$irc->SendCommand("PRIVMSG $channel :\00305Error\003: Esta función no esta habilitada aqui!");return 0;}
+		$myconn=$irc->myConn();
 		if((!@isset($param[1]))||(@$param[1]=="")){
-			$myconn=$irc->myConn();
 			$sqlx="SELECT * FROM nickassoc WHERE ircnick='".$irc->mask2nick($who)."' AND chn='$channel'";
-			$rsx = mysql_query($sqlx,$myconn) or die(exit("  - ERROR: verifique que las tablas mysql esten creadas."));
 			$i=0;
 			while($rowx=mysql_fetch_array($rsx)){ $param[1]=$rowx["wikinick"];$i=1; }
 			if($i==0){$param[1]=$irc->mask2nick($who);}
-			mysql_close($myconn);
 		}else{
-			$myconn=$irc->myConn();
 			$sqlx="SELECT * FROM nickassoc WHERE ircnick='".$param[1]."' AND chn='$channel'";
-			$rsx = mysql_query($sqlx,$myconn) or die(exit("  - ERROR: verifique que las tablas mysql esten creadas."));
-			while($rowx=mysql_fetch_array($rsx)){
-				$param[1]=$rowx["wikinick"];
-			}
-			mysql_close($myconn);
 		}
+		$rsx = mysql_query($sqlx,$myconn);
+		while($rowx=mysql_fetch_array($rsx)){$param[1]=$rowx["wikinick"];}
+
+		mysql_close($myconn);
 		$i=1;
 		$ts="";
 		while(@isset($param[$i])){
@@ -65,15 +61,18 @@ class ee111t1t1172{
 			if($result->query->users[0]->registration){
 				$registration=date("d/m/Y H:i",strtotime(substr($result->query->users[0]->registration,0,strlen($result->query->users[0]->registration)-1)));
 			}else{$registration="04N/D";}
+		$resp="Usuario ".$result->query->users[0]->name." - Registrado: ". $registration. " - Ediciones: ".$result->query->users[0]->editcount ."";
 
+		$dcontrib=json_decode(file_get_contents("http://".$this->chans[$channel]."/api.php?action=help&modules=userdailycontribs&format=json"));		
+		if(!isset($dcontrib->help[0]->missing)){
 			$w1 = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=1&format=json"); $r1=json_decode($w1);
 			$w2 = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=7&format=json"); $r2=json_decode($w2);
 			$w3 = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=30&format=json"); $r3=json_decode($w3);
 			$w4 = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=180&format=json"); $r4=json_decode($w4);
-			
-			$resp="Usuario ".$result->query->users[0]->name." - Registrado: ". $registration. " - Ediciones: ".$result->query->users[0]->editcount ." (Dia: ".$r1->userdailycontribs->timeFrameEdits.", Semana: ".$r2->userdailycontribs->timeFrameEdits.", Mes: ".$r3->userdailycontribs->timeFrameEdits.", ~6 meses:".$r4->userdailycontribs->timeFrameEdits.") - ";
+			$resp.="(Dia: ".$r1->userdailycontribs->timeFrameEdits.", Semana: ".$r2->userdailycontribs->timeFrameEdits.", Mes: ".$r3->userdailycontribs->timeFrameEdits.", ~6 meses:".$r4->userdailycontribs->timeFrameEdits.")";
+		}
 			$i=0;
-			$resp.="Grupos: ";
+			$resp.=" - Grupos: ";
 			while(@isset($result->query->users[0]->groups[$i+1])){
 				$i++;
 				if($result->query->users[0]->groups[$i]!="*"){
