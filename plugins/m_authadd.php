@@ -53,8 +53,11 @@ class ee111t1t1172{
 	{
 		if($irc->checkauth($who,9)!=1){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 No autorizado."); return 0;}
 		if(!@isset($param[1])){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Faltan parametros."); return 0;}
+		$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
+		mysql_select_db($irc->conf['db']['name']);
 		$sqlx="DELETE FROM `users` WHERE `user`='".$param[1]."'";
 		if(!$rsx = mysql_query($sqlx,$myconn)){ $irc->SendCommand("PRIVMSG ".$channel." :\00305Error:\003 no se pudo concretar la operacion."); return 0;}
+		mysql_close($myconn);
 		$irc->sendCommand("PRIVMSG ".$channel." :Se ha borrado el usuario.");
 	}
 	public function listusers(&$irc,$msg,$channel,$param,$who)
