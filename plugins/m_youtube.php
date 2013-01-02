@@ -14,11 +14,7 @@ class ee111t1t1172{
 			$irc->addcmd($this, 'lchrem', 'youtube');
 			if(!@is_array($irc->hdf['PRIVMSG'])){$irc->hdf['PRIVMSG']=array();}
 			array_push($irc->hdf['PRIVMSG'],array("youtube","captalink"));
-			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
-			mysql_select_db($irc->conf['db']['name']);
-			$rsx = mysql_query("SELECT * FROM linkchans",$myconn);
-			while($rowx=mysql_fetch_array($rsx)){$this->chans[strtolower($rowx['chan'])]=1;}
-			mysql_close($myconn);
+			
 			
 		}
 		
@@ -27,7 +23,12 @@ class ee111t1t1172{
 			if(preg_match('@^:.+ PRIVMSG (.+) :(.+)$@', $txt, $m2)){
 				$chan=$m2[1];
 				$text=$m2[2];
-				if(!@isset($this->chans[strtolower($chan)])){return 0;}
+				
+				$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
+				mysql_select_db($irc->conf['db']['name']);
+				$rsx = mysql_query("SELECT * FROM linkchans ẂHERE `chan`='$chan'",$myconn);
+				if(mysql_num_rows($rsx)==0){return 0;}
+				mysql_close($myconn);
 				//uso dos preg_match para mayor comodidad mia :P
 				// talvez los una algun dia..
 				// si, todo esto parece un poco lioso, pero.. asi me gusta :p
@@ -69,8 +70,6 @@ class ee111t1t1172{
 		$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 		mysql_select_db($irc->conf['db']['name']);
 		$rsx = mysql_query("INSERT INTO linkchans (chan) VALUES ('".strtolower($param[1])."')",$myconn);
-		$rsx = mysql_query("SELECT * FROM linkchans",$myconn);
-		while($rowx=mysql_fetch_array($rsx)){$this->chans[$rowx['chan']]=1;}
 		mysql_close($myconn);
 	}
 	public function lchrem(&$irc,$msg,$channel,$param,$who){
@@ -78,9 +77,6 @@ class ee111t1t1172{
 		$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 		mysql_select_db($irc->conf['db']['name']);
 		$rsx = mysql_query("DELETE FROM linkchans WHERE chan='".strtolower($param[1])."'",$myconn);
-		sleep(1);
-		$rsx = mysql_query("SELECT * FROM linkchans",$myconn);
-		while($rowx=mysql_fetch_array($rsx)){$this->chans=null; $this->chans[strtolower($rowx['chan'])]=1;}
 		mysql_close($myconn);
 }
 	}
