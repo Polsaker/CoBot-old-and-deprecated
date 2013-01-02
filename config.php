@@ -10,6 +10,7 @@
 	$conf['irc']['host']="127.0.0.1";
 	$conf['irc']['port']=6667; //puerto
 	$conf['irc']['nick']="CoBot"; // Nick
+	$conf['irc']['nsuser']=""; // Usuario de nickserv
 	$conf['irc']['nspass']=""; // Contraseña de nickserv
 	$conf['irc']['ssl']=false; // usar SSL para conectarse al servidor IRC.
 	
