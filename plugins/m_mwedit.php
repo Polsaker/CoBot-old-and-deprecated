@@ -1,4 +1,3 @@
-.php
 <?php 
 	$name="mwedit"; 
 	$key="ee111t1t1172";
