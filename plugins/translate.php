@@ -96,7 +96,7 @@ Class HTTPTranslator {
         $curlErrno = curl_errno($ch);
         if ($curlErrno) {
             $curlError = curl_error($ch);
-            throw new Exception($curlError);
+         //   throw new Exception($curlError);
         }
         //Close a cURL session.
         curl_close($ch);
@@ -116,67 +116,9 @@ Class HTTPTranslator {
         if($languageCode) {
             $requestXml .= "<string>$languageCode</string>";
         } else {
-            throw new Exception('Language Code is empty.');
+            //throw new Exception('Language Code is empty.');
         }
         $requestXml .= '</ArrayOfstring>';
         return $requestXml;
     }
 }
-/*
-try {
-    //Client ID of the application.
-    $clientID       = "clientId";
-    //Client Secret key of the application.
-    $clientSecret = "ClientSecret";
-    //OAuth Url.
-    $authUrl      = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/";
-    //Application Scope Url
-    $scopeUrl     = "http://api.microsofttranslator.com";
-    //Application grant type
-    $grantType    = "client_credentials";
-
-    //Create the AccessTokenAuthentication object.
-    $authObj      = new AccessTokenAuthentication();
-    //Get the Access token.
-    $accessToken  = $authObj->getTokens($grantType, $scopeUrl, $clientID, $clientSecret, $authUrl);
-    //Create the authorization Header string.
-    $authHeader = "Authorization: Bearer ". $accessToken;
-    
-    //Create the Translator Object.
-    $translatorObj = new HTTPTranslator();
-    
-    //Input String.
-    $inputStr = 'This is the sample string.';
-    //HTTP Detect Method URL.
-    $detectMethodUrl = "http://api.microsofttranslator.com/V2/Http.svc/Detect?text=".urlencode($inputStr);
-    //Call the curlRequest.
-    $strResponse = $translatorObj->curlRequest($detectMethodUrl, $authHeader);
-    //Interprets a string of XML into an object.
-    $xmlObj = simplexml_load_string($strResponse);
-    foreach((array)$xmlObj[0] as $val){
-        $languageCode = $val;
-    }
-
-
-    $locale = 'en';
-    $getLanguageNamesurl = "http://api.microsofttranslator.com/V2/Http.svc/GetLanguageNames?locale=$locale";
-    //Create the Request XML format.
-    $requestXml = $translatorObj->createReqXML($languageCode);
-    //Call the curlRequest.
-    $curlResponse = $translatorObj->curlRequest($getLanguageNamesurl, $authHeader, $requestXml);
-
-    //Interprets a string of XML into an object.
-    $xmlObj = simplexml_load_string($curlResponse);
-    echo "<table border=2px>";
-    echo "<tr>";
-    echo "<td><b>LanguageCodes</b></td><td><b>Language Names</b></td>";
-    echo "</tr>";
-    foreach($xmlObj->string as $language){
-        echo "<tr><td>".$inputStr."</td><td>". $languageCode."(".$language.")"."</td></tr>";
-    }
-    echo "</table>";
-} catch (Exception $e) {
-    echo "Exception: " . $e->getMessage() . PHP_EOL;
-}
-
-*/
