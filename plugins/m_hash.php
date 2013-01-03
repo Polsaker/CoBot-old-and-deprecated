@@ -15,8 +15,7 @@ class ee111t1t1172{
 	public function hash(&$irc,$msg,$channel,$param,$who)
 	{
 		if(!@isset($param[2])){$irc->SendCommand("PRIVMSG $channel :\00305Error\003: Faltan parรกmetros!");return 0;}
-		$i=2;
-		$ts="";	while(@isset($param[$i])){$ts.=$param[$i]. " ";	$i++;} $ts=trim($ts);
+		$ts=$irc->jparam($param,2);
 		switch($param[1]){
 			case "md5":	$hashed=md5($ts); break;
 			case "sha1": $hashed=sha1($ts); break;
