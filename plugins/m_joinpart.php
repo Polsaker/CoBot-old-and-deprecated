@@ -25,7 +25,7 @@ class ee111t1t1172{	public $help;
 		$partmsg="Salida ordenada por un administrador";$i=2;
 		if(!isset($param[1]) || substr($param[1],0,1)!="#"){$chanout=$channel;$i=1;}else{$chanout=$param[1];}
 		if((isset($param[1]) && substr($param[1],0,1)!="#")||isset($param[2])){
-			$ts=$irc->jparam($param,);
+			$ts=$irc->jparam($param,$i);
 			$partmsg=$ts;
 			
 		}
