@@ -69,7 +69,7 @@ class ee111t1t1172{
 			$w2 = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=7&format=json"); $r2=json_decode($w2);
 			$w3 = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=30&format=json"); $r3=json_decode($w3);
 			$w4 = file_get_contents("http://".$this->chans[$channel]."/api.php?action=userdailycontribs&user=".urlencode(str_replace(" ", "_",$ts))."&daysago=180&format=json"); $r4=json_decode($w4);
-			$resp.="(Dia: ".$r1->userdailycontribs->timeFrameEdits.", Semana: ".$r2->userdailycontribs->timeFrameEdits.", Mes: ".$r3->userdailycontribs->timeFrameEdits.", ~6 meses:".$r4->userdailycontribs->timeFrameEdits.")";
+			$resp.=" (Dia: ".$r1->userdailycontribs->timeFrameEdits.", Semana: ".$r2->userdailycontribs->timeFrameEdits.", Mes: ".$r3->userdailycontribs->timeFrameEdits.", ~6 meses:".$r4->userdailycontribs->timeFrameEdits.")";
 		}
 			$i=0;
 			$resp.=" - Grupos: ";
