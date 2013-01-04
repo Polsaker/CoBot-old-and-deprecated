@@ -893,7 +893,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 									break;
 								case "4":
 									if($rowx["nivel"]<7){$irc->SendPriv($chn,"05Error: Debes ser por lo menos nivel 7 para comprar una caja fuerte nivel 2");return 0;}
-									$r=$this->user2bank($irc,$nick,500000000,$myconn);
+									$r=$this->user2bank($irc,$nick,300000000,$myconn);
 									if($r==-3){$irc->SendPriv($chn,"05Error: Necesitas por lo menos $500000000 para comprar este producto");return 0;}
 									$rsx = mysql_query("UPDATE  games_users SET caja='4' WHERE nick='$nick'",$myconn);
 									$irc->SendPriv($chn,"Has comprado una caja fuerte nivel 4");
