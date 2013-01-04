@@ -20,7 +20,7 @@ class ee111t1t1172{
 		public function captalink(&$irc,$txt){
 		
 			if(preg_match('@^:.+ PRIVMSG (.+) :(.+)$@', $txt, $m2)){
-				$chan=$m2[1];
+				$chan=strtolower($m2[1]);
 				$text=$m2[2];
 				
 				$myconn=$irc->myConn();
