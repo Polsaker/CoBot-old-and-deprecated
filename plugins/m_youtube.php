@@ -24,7 +24,7 @@ class ee111t1t1172{
 				$text=$m2[2];
 				
 				$myconn=$irc->myConn();
-				$rsx = mysql_query("SELECT * FROM linkchans ẂHERE `chan`='$chan'",$myconn);
+				$rsx = mysql_query("SELECT * FROM `linkchans` WHERE `chan`='$chan'",$myconn);
 				if(mysql_num_rows($rsx)==0){return 0;}
 				mysql_close($myconn);
 				if(preg_match('/youtube\.com\/watch\?v=([A-Za-z0-9._%-]*)[&\w;=\+_\-]*/',$text,$m2)){
