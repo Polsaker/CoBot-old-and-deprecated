@@ -922,9 +922,9 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 		
 		private function cobre(&$irc,$nick,$chn, $cmd){
 			$myconn=$irc->myConn();
-			$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$nick'",$conn);
+			$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$nick'",$myconn);
 			$rowx=mysql_fetch_array($rsx);
-			$rsx = mysql_query("SELECT * FROM games_banco",$conn);
+			$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
 			$rowx2=mysql_fetch_array($rsx);
 
 			if(!isset($cmd[1])){$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
@@ -946,8 +946,8 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 							if(!$rowx['cobre']){$rowx['cobre']=0;}
 							if($rowx['dinero']<(500000 . $cmd[2]) && $rowx['dinero']!="*"){$irc->SendPriv($chn,"05Error: No tienes dinero suficiente como para hacer esto!!");return 0;}
 
-							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']+$cmd[2])."' WHERE nick='$nick'",$conn);
-							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']-$cmd[2])."' WHERE cobre='$rowx2[cobre]'",$conn);
+							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']+$cmd[2])."' WHERE nick='$nick'",$myconn);
+							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']-$cmd[2])."' WHERE cobre='$rowx2[cobre]'",$myconn);
 							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,500000);}
 							$irc->SendPriv($chn, "Has comprado $cmd[2] cobres");
 						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax cobres");return 0;}
@@ -955,7 +955,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					break;
 				case "transferir":
 					if(!isset($cmd[3])){$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
-					$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$cmd[2]'",$conn);if(mysql_num_rows($rsx)==0){$irc->SendPriv($chn, "05Error: El usuario $cmd[2] no existe");}
+					$rsx = mysql_query("SELECT * FROM games_users WHERE nick='$cmd[2]'",$myconn);if(mysql_num_rows($rsx)==0){$irc->SendPriv($chn, "05Error: El usuario $cmd[2] no existe");}
 					$rowx3=mysql_fetch_array($rsx);
 					$cant=abs($cmd[3]);
 					switch($rowx3['caja']){
@@ -968,8 +968,8 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					}
 					if(($rowx3['cobre']+$cant)<=$bmax){
 						if($rowx['cobre']>=$cant){
-							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']-$cant)."' WHERE nick='$nick'",$conn);
-							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx3['cobre']+$cant)."' WHERE cobre='$rowx3[cobre]'",$conn);
+							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']-$cant)."' WHERE nick='$nick'",$myconn);
+							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx3['cobre']+$cant)."' WHERE cobre='$rowx3[cobre]'",$myconn);
 							$irc->SendPriv($chn,"Se han transferido $cant cobres a $cmd[2]");
 						}else{$irc->SendPriv($chn,"05Error: No tienes suficiente cobre!!");return 0;}
 					}else{$irc->SendPriv($chn,"05Error: La caja de $cmd[2] solo soporta hasta $bmax cobres");return 0;}	
@@ -978,8 +978,8 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					if(!is_numeric($cmd[2])){$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;}
 					$cant=abs($cmd[2]);
 					if($rowx['cobre']>=$cant){
-						$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']-$cant)."' WHERE nick='$nick'",$conn);
-						$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']+$cant)."' WHERE cobre='$rowx2[cobre]'",$conn);
+						$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']-$cant)."' WHERE nick='$nick'",$myconn);
+						$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']+$cant)."' WHERE cobre='$rowx2[cobre]'",$myconn);
 						$i=0;while($i!=$cant){$i++;$this->user2bank($irc,$nick,450000,true);}
 						$irc->SendPriv($chn,"Has vendido $cant cobres.");
 					}else{$irc->SendPriv($chn,"05Error: No tienes suficiente cobre!!");return 0;}
@@ -987,7 +987,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 				default:
 					$irc->SendPriv($chn,"Sintaxis: !cobre <comprar|transferir|vender> [nick] <cantidad>.");return 0;
 			}
-			mysql_close($conn);
+			mysql_close($myconn);
 		}
 		// y se siigue repitiendo
 		private function plata(&$irc,$nick,$chn, $cmd){
