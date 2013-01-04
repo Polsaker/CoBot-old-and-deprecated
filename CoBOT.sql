@@ -8,11 +8,14 @@ CREATE TABLE IF NOT EXISTS `defs` (
 
 CREATE TABLE IF NOT EXISTS `games_banco` (
   `plata` int(255) NOT NULL DEFAULT '100000'
+  `cobre` int(255) NOT NULL,
+  `plat` int(255) NOT NULL,
+  `oro` int(255) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 
-INSERT INTO `games_banco` (`plata`) VALUES
-(100000000);
+INSERT INTO `games_banco` (`plata`,`cobre`,`plat`,`oro`) VALUES
+(100000000,100,100,100);
 
 
 
@@ -48,6 +51,11 @@ CREATE TABLE IF NOT EXISTS `games_users` (
   `nivel` int(20) NOT NULL,
   `imp` int(5) NOT NULL DEFAULT '0',
   `frozen` int(5) NOT NULL DEFAULT '0',
+  `cobre` int(255) NOT NULL,
+  `caja` int(4) NOT NULL,
+  `plata` int(255) NOT NULL,
+  `oro` int(255) NOT NULL,
+  `dist` int(3) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 ;
 
