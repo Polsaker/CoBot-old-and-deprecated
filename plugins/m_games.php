@@ -832,7 +832,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 			rsort($din);
 			$irc->SendCommand("PRIVMSG $chn :07TOP $num DEL JUEGO:");
 			$irc->SendCommand("PRIVMSG $chn :     Nick                Nivel   Dinero");
-			
+			time_nanosleep(0,500000000);
 			$i=0;
 			foreach($din as $key=>$val){if($val['c']!=2){$i++;}else{continue;}
 				time_nanosleep(0,500000000);
@@ -842,6 +842,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 				$irc->SendCommand("PRIVMSG $chn :".($i)." -  ".($val["c"]?"05":"").($val["d"]?"":"").$val['nick'].($val["d"]?"":"").($val["c"]?"05":""). $s .$val['niv']."$s2".$val['din']);
 				if($i==$num){break;}
 			}
+			sleep(1);
 			mysql_close($myconn);
 		}
 		
