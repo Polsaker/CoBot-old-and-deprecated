@@ -27,7 +27,7 @@ class ee111t1t1172{
 				$rsx = mysql_query("SELECT * FROM `linkchans` WHERE `chan`='$chan'",$myconn);
 				if(mysql_num_rows($rsx)==0){return 0;}
 				mysql_close($myconn);
-				if(preg_match('/youtube\.com\/watch\?v=([A-Za-z0-9._%-]*)[&\w;=\+_\-]*/',$text,$m2)){
+				if(preg_match('/youtube\.com\/watch\?.*v=([A-Za-z0-9._%-]*)[&\w;=\+_\-]*/',$text,$m2)){
 					$id=$m2[1];
 					$gap=file_get_contents("https://www.googleapis.com/youtube/v3/videos?id=".$id."&part=id,contentDetails,statistics,snippet&key=".$irc->conf["m_google"]["api_key"]);
 					$jao=json_decode($gap);
