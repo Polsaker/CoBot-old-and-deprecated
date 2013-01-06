@@ -405,7 +405,7 @@ class IRCBot{
 						
 						$myconn=$this->myiConn();
 						$rsx = $myconn->query("SELECT * FROM `ignore`");
-							while(@$rowx=$myconn->fetch_array()){
+							while(@$rowx=$rsx->fetch_array()){
 								if(preg_match("#".$rowx['host']."#",$who,$m)){break;}
 							}
 						$myconn->close();
@@ -420,7 +420,7 @@ class IRCBot{
 				
 				$myconn=$this->myiConn();
 				$rsx = $myconn->query("SELECT * FROM `ignore`");
-				while(@$rowx=$myconn->fetch_array()){
+				while(@$rowx=$rsx->fetch_array()){
 					if(preg_match("#.*".$rowx['host'].".*#",$this->serv['rbuffer'],$m)){$k=1;continue;}
 				}
 				$myconn->close();
