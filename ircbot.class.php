@@ -19,6 +19,7 @@ class IRCBot{
 	public $disconn=0;
 	public function __construct($config){
 		$this->conf=$config;
+		
 		include("errhandler.php");
 		echo "  - Resolviendo '". $this->conf['irc']['host'] ."'";
 		$this->serv['ip']=gethostbynamel($this->conf['irc']['host']);
@@ -27,10 +28,9 @@ class IRCBot{
 		if($this->serv['ip']==false){die(" [ERR]\n");}
 		 echo " [OK] ".$this->serv['ip'][0]."\n";
 		
-		$myconn=$this->myConn();
-		$sqlx="select * from users";
-		$rsx = mysql_query($sqlx) or die(exit("  - ERROR: verifique que las tablas mysql esten creadas."));
-		mysql_close($myconn);
+		$myconn=$this->myiConn();
+		$sqlx=$myconn->query("select * from users")or die("  - ERROR: verifique que las tablas mysql esten creadas.");
+		$myconn->close();
 
 		ini_set('user_agent', 'CoBOT IRC BOT/'.VER);
 		
@@ -73,6 +73,11 @@ class IRCBot{
 		$myconn=mysql_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass']);
 		mysql_select_db($this->conf['db']['name']);
 		return $myconn;
+	}
+	
+	public function myiConn(){
+		$dbobj=mysqli_connect($this->conf['db']['host'],$this->conf['db']['user'],$this->conf['db']['pass'],$this->conf['db']['name']);
+		return $dbobj;
 	}
 	
 	public function jparam($param,$from){
@@ -308,16 +313,15 @@ class IRCBot{
 					$this->helpsys($param,$channel,$guy);return 0;
 				case "auth":
 					if($channel==$this->nick){
-						$myconn=$this->myConn();
-						$sqlx="select * from users where user='".$param[1]."' AND pass=sha1('".$param[2]."')";
-						$rsx = mysql_query($sqlx) or die(exit("  - ERROR: verifique que las tablas mysql esten creadas."));
+						$myconn=$this->myiConn();
+						$sqlx=$myconn->query("select * from users where user='".$param[1]."' AND pass=sha1('".$param[2]."')");
 						$i=0;
-						while($rowx=mysql_fetch_array($rsx)){$i++;
+						while($rowx=$sqlx->fetch_array()){$i++;
 							$this->SendCommand("PRIVMSG ".$nk[0]." :Autenticado exitosamente.");
 							array_push($this->authd,array('rng'=>$rowx['rng'],'hst'=>$guy));
 							return 0;
 						}
-						mysql_close($myconn);
+						$myconn->close();
 
 						if($i==0){$this->SendCommand("PRIVMSG ".$nk[0]." :05ERROR: Usuario/Contraseña incorrectos.");}
 					}else{$this->SendCommand("PRIVMSG ".$channel." :05ERROR: Este comando no debe ser utilizado en un canal.");}
@@ -325,10 +329,9 @@ class IRCBot{
 				case "ignore":
 					if($this->checkauth($guy,8)){
 						if(!@$param[1]){break;}
-						$myconn=$this->myConn();
-						$sqlx="INSERT INTO `ignore` (host) VALUES ('$param[1]')";
-						$rsx = mysql_query($sqlx);
-						mysql_close($myconn);
+						$myconn=$this->myiConn();
+						$sqlx=$myconn->query("INSERT INTO `ignore` (host) VALUES ('$param[1]')");
+						$myconn->close();
 					}else{	$this->SendCommand("PRIVMSG ".$channel." :04ERROR: No autorizado");}
 					return 0;
 				case "updchk":
@@ -400,12 +403,12 @@ class IRCBot{
 						list($channel,$msg) = explode(' :',$msg[1],2);
 						$msg=substr($msg,0,strlen($msg)-2);
 						
-						$myconn=$this->myConn();
-						$rsx = mysql_query("SELECT * FROM `ignore`");
-							while(@$rowx=mysql_fetch_array($rsx)){
+						$myconn=$this->myiConn();
+						$rsx = $myconn->query("SELECT * FROM `ignore`");
+							while(@$rowx=$myconn->fetch_array()){
 								if(preg_match("#".$rowx['host']."#",$who,$m)){break;}
 							}
-						mysql_close($myconn);
+						$myconn->close();
 						$this->procom($msg,$who,$channel);
 						break;
 					case "433": // 433 numérico: El nick ya está en uso
@@ -415,13 +418,12 @@ class IRCBot{
 						break;
 				}
 				
-				$myconn=$this->myConn();
-						$sqlx="SELECT * FROM `ignore`";
-						$rsx = mysql_query($sqlx);
-						while(@$rowx=mysql_fetch_array($rsx)){
-							if(preg_match("#.*".$rowx['host'].".*#",$this->serv['rbuffer'],$m)){$k=1;continue;}
-						}
-				mysql_close($myconn);
+				$myconn=$this->myiConn();
+				$rsx = $myconn->query("SELECT * FROM `ignore`");
+				while(@$rowx=$myconn->fetch_array()){
+					if(preg_match("#.*".$rowx['host'].".*#",$this->serv['rbuffer'],$m)){$k=1;continue;}
+				}
+				$myconn->close();
 				if(@isset($this->hdf[$this->serv['command']])){
 					foreach($this->hdf[$this->serv['command']] as $key => $val){
 						$fn=$val[1];
