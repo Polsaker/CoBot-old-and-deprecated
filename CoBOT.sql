@@ -96,7 +96,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `user` varchar(255) NOT NULL,
   `pass` varchar(255) NOT NULL,
   `rng` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user` (`user`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
 
 
