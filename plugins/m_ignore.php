@@ -16,26 +16,21 @@ class ee111t1t1172{
 		
 	}
 
-	public function deignore(&$irc,$msg,$channel,$param,$who)
-	{
+	public function deignore(&$irc,$msg,$channel,$param,$who){
 		if($irc->checkauth($who,8)!=1){$irc->SendCommand("PRIVMSG ".$channel." :05Error: No tienes permisos suficientes como para ejecutar esta función.");return 0;}
-		$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
-		mysql_select_db($irc->conf['db']['name']);
-		$sql="DELETE FROM `ignore` WHERE `host` = '$param[1]'";
-		$rsx = mysql_query($sql);
+		$myconn=$irc->myiConn();
+		$myconn->query("DELETE FROM `ignore` WHERE `host` = '$param[1]'");
 	}
-	public function ignorelist(&$irc,$msg,$channel,$param,$who)
-	{
-		$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
-		mysql_select_db($irc->conf['db']['name']);
-		$sqlx="SELECT * FROM `ignore`";
-		$rsx = mysql_query($sqlx);
+	public function ignorelist(&$irc,$msg,$channel,$param,$who){
+		$myconn=$irc->myiConn();
+		$rsx=$myconn->query("SELECT * FROM `ignore`");
 		$list="";
-		while(@$rowx=mysql_fetch_array($rsx)){
+		while(@$rowx=$rsx->fetch_array()){
 			$list.=$rowx['host']. ", ";
 		}
 		$list=trim($list);$list=trim($list,",");
 		$irc->SendCommand("PRIVMSG $channel :$list");
+		$myconn->close();
 	}
 }
 	?>
