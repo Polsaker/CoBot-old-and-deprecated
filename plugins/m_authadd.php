@@ -1,15 +1,12 @@
 <?php 
-	/*
-	 * m_authadd.php
-	 * agrega el comando register y givepriv
-	 */
-	 $name="authadd"; 
+	$name="authadd"; 
 	$key="ee111t1t1172";
 class ee111t1t1172{
 	public $help;
 	public function __construct(&$irc){	
 		$irc->addcmd($this, 'register', 'authadd');	
 		$irc->addcmd($this, 'setpriv', 'authadd');	
+		$irc->addcmd($this, 'addpriv', 'authadd');	
 		$irc->addcmd($this, 'listpriv', 'authadd');	
 		$irc->addcmd($this, 'deluser', 'authadd');	
 		$irc->addcmd($this, 'listusers', 'authadd');	
@@ -24,9 +21,8 @@ class ee111t1t1172{
 		$this->help['chgpass']='Modifica la contraseña de un usuario. Sintaxis: chgpass <usuario> <antigua contraseña> <nueva contraseña>';
 	}
 
-	public function register(&$irc,$msg,$channel,$param,$who){
-		
-#		if(substr(trim($channel),0,1)!="#"){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Este comando no se debe usar desde un canal."); return 0;}
+	public function register(&$irc,$msg,$channel,$param,$who){		
+		if(strtolower($channel)!=strtolower($irc->nick)){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Este comando no se debe usar desde un canal."); return 0;}
 		if(!@isset($param[2])){$irc->sendCommand("PRIVMSG ".$irc->mask2nick($who)." :\00305Error:\003 Faltan parametros."); return 0;}
 		$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 		mysql_select_db($irc->conf['db']['name']);
@@ -52,12 +48,9 @@ class ee111t1t1172{
 	{
 		if($irc->checkauth($who,9)!=1){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 No autorizado."); return 0;}
 		if(!@isset($param[1])){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Faltan parametros."); return 0;}
-		$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
-		mysql_select_db($irc->conf['db']['name']);
-		$sqlx="DELETE FROM `users` WHERE `user`='".$param[1]."'";
+		$sqlx="DELETE FROM `users` WHERE  `user`='".$param[1]."' AND `rng`<9";
 		if(!$rsx = mysql_query($sqlx,$myconn)){ $irc->SendCommand("PRIVMSG ".$channel." :\00305Error:\003 no se pudo concretar la operacion."); return 0;}
-		mysql_close($myconn);
-		$irc->sendCommand("PRIVMSG ".$channel." :Se ha borrado el usuario.");
+		$irc->sendCommand("PRIVMSG ".$channel." :[Talvez] Se ha borrado el usuario.");
 	}
 	public function listusers(&$irc,$msg,$channel,$param,$who)
 	{
@@ -83,6 +76,36 @@ class ee111t1t1172{
 		mysql_close($myconn);
 	}
 	
+	//addpriv <usuario> <sector/canal> <privilegio>
+	public function addpriv(&$irc,$msg,$channel,$param,$who)
+	{
+		if(!@isset($param[3])){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Faltan parametros."); return 0;}
+		if($irc->checkauth($who,9)!=1){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 No autorizado."); return 0;}
+		
+		
+		$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
+		mysql_select_db($irc->conf['db']['name']);
+		$rsx = mysql_query("SELECT * FROM `users` WHERE `user`='$param[1]'",$myconn);$rowx=mysql_fetch_array($rsx);
+		$pr2=explode("|",$rowx['rng']);
+		$pr4=array();
+		foreach($pr2 as $key=>$val){
+			$pr3=explode(",",$val);
+			array_push($pr4,$pr3);
+		}
+		foreach($pr4 as $key=>$val){
+			if($val[1]==$param[2]){
+				$pr4[$key][0]=$param[3];
+			}
+		}
+		$astr="";
+		foreach($pr4 as $key=>$val){
+			$astr.=$pr4[$key][0].",".$pr4[$key][1]."|";
+		}
+		$astr= trim($astr,"|");
+		$sqlx="UPDATE `users` SET `rng` =  '$astr' WHERE  `user`='".$param[1]."'";
+		if(!$rsx = mysql_query($sqlx,$myconn)){mysql_close($myconn); $irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Error interno \002002\002. Notifique al administrador."); return 0;}mysql_close($myconn);
+		$irc->sendCommand("PRIVMSG ".$channel." :Se han otorgado los privilegios.");
+	}
 	public function listpriv(&$irc,$msg,$channel,$param,$who)
 	{
 		if(!@isset($param[1])){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Faltan parametros."); return 0;}
