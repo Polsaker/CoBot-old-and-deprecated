@@ -306,8 +306,13 @@ class IRCBot{
 	private function procom($msg, $guy, $channel){
 		$param=explode(" ", substr ($msg, 1));
 		$nk=explode("!",$guy);
+		$g=0;if(preg_match("#{$this->nick}(,|:) (.*)#",$msg,$aq)){
+			if(!trim($aq[2])){return 0;}
+			$param=explode(" ", $aq[2]);
+			$g=1;
+		}
 		$param[0]=strtolower($param[0]);
-		if($msg[0]==$this->conf['irc']['prefix']){
+		if($msg[0]==$this->conf['irc']['prefix'] || $g==1){
 			switch($param[0]){
 				case "help":
 					$this->helpsys($param,$channel,$guy);return 0;
@@ -339,7 +344,6 @@ class IRCBot{
 					if($r==2){$this->SendPriv($channel,"No hay actualizaciones disponibles");}
 					return 0;
 				case "update":
-					if(!$this->checkauth($guy,9)){$this->SendCommand("PRIVMSG ".$channel." :04ERROR: No autorizado");return 0;}
 					$r=$this->Update(true,$channel);
 					if($r==-1){$this->SendPriv($channel, "03Error: No hay actualizaciones pendientes!");}
 					return 0;
