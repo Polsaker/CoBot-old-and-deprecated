@@ -339,6 +339,7 @@ class IRCBot{
 					if($r==2){$this->SendPriv($channel,"No hay actualizaciones disponibles");}
 					return 0;
 				case "update":
+					if(!$this->checkauth($guy,9)){$this->SendCommand("PRIVMSG ".$channel." :04ERROR: No autorizado");return 0;}
 					$r=$this->Update(true,$channel);
 					if($r==-1){$this->SendPriv($channel, "03Error: No hay actualizaciones pendientes!");}
 					return 0;
