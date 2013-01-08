@@ -25,8 +25,8 @@ class IRCBot{
 		$this->serv['ip']=gethostbynamel($this->conf['irc']['host']);
 		$this->nick=$this->conf['irc']['nick'];
 		
-		if($this->serv['ip']==false){die(" [ERR]\n");}
-		 echo " [OK] ".$this->serv['ip'][0]."\n";
+		if($this->serv['ip']==false){die(" [1;31m[ERR][0m\n");}
+		 echo " [1;32m[OK][0m ".$this->serv['ip'][0]."\n";
 		
 		$myconn=$this->myiConn();
 		$sqlx=$myconn->query("select * from users")or die("  - ERROR: verifique que las tablas mysql esten creadas.");
@@ -173,7 +173,7 @@ class IRCBot{
 	public function rehash(){
 		include("config.php");
 		$this->conf=$conf;
-		echo "Recargando el archivo de configuración [OK]\n";
+		echo "Recargando el archivo de configuración [1;32m[OK][0m\n";
 	}
 	
 	public function load($plugin){
@@ -187,11 +187,11 @@ class IRCBot{
 		
 		$nclassname=$mname."x".$ts;
 		echo "  - Cargando plugin ". $mname. " ";
-		if(@isset($this->plugins[$mname])){ echo "[ERR] El plugin ya está cargado\n"; return -2;}
+		if(@isset($this->plugins[$mname])){ echo "[1;31m[ERR][0m El plugin ya está cargado\n"; return -2;}
 		
 		@$r=shell_exec("php -l plugins/$plugin");
 		if(!preg_match("@.*No syntax errors detected.*@",$r)){
-			echo "[ERR] El plugin parece tener errores de sintáxis!!\n";
+			echo "[1;31m[ERR][0m El plugin parece tener errores de sintáxis!!\n";
 			return 3;
 		}
 		
@@ -203,15 +203,15 @@ class IRCBot{
 		fclose($fp);
 		
 		include("plugins/temp/$plugin");
-		if(!class_exists($nclassname)){echo "[ERR] No encuentro la funcion principal!!\n"; return -3;}
+		if(!class_exists($nclassname)){echo "[1;31m[ERR][0m No encuentro la funcion principal!!\n"; return -3;}
 		$this->plugins[$mname]=new $nclassname($this);
-		echo "[OK]\n";
+		echo "[1;32m[OK][0m\n";
 		return 2;
 	}
 	public function unload($plugin){
 		$fp = fopen("plugins/temp/$plugin", "r");
 		$pfile="";
-		if(!$fp){ echo "[ERR] El plugin no parece estar cargado o no esta en /temp\n"; return -2;}
+		if(!$fp){ echo "[1;31m[ERR][0m El plugin no parece estar cargado o no esta en /temp\n"; return -2;}
 		while(!feof($fp)){$pfile.= fgets($fp);}
 		if(preg_match("@.*name=\"(.+)\";.*@",$pfile,$m)){$name=trim($m[1]);}else{return -1;} //obtenemos el nombre del modulo.
 		fclose($fp); 
@@ -227,9 +227,9 @@ class IRCBot{
 			}
 		}
 		echo "  - Des-cargando plugin ". $name. " ";
-		if(!@isset($this->plugins[$name])){ echo "[ERR] El plugin no parece estar cargado\n"; return -2;}
+		if(!@isset($this->plugins[$name])){ echo "[1;31m[ERR][0m El plugin no parece estar cargado\n"; return -2;}
 		unset($this->plugins[$name]); // y descargamos el objeto
-		echo "[OK]\n";
+		echo "[1;32m[OK][0m\n";
 	}
 	
 	public function addcmd($oplugin,$command,$plugin,$alias=array()){
@@ -361,7 +361,7 @@ class IRCBot{
 		echo "  - Conectando a '". $this->serv['ip'][0].":".$this->conf['irc']['port']."'";
 		$this->serv['socket']=fsockopen(($this->conf['irc']['ssl']?"ssl://":"").$this->serv['ip'][0], $this->conf['irc']['port'], $errno, $errstr, 20);		
 		if($this->serv['socket']){
-			echo " [OK] \r\n";
+			echo " [1;32m[OK][0m \r\n";
 			socket_set_blocking($this->serv['socket'], false);
 			$this->SendCommand("NICK " . $this->nick);
 			$this->SendCommand("USER " . $this->nick. " * * :CoBOT, IRC Bot");
@@ -436,7 +436,7 @@ class IRCBot{
 					}
 				}
 			}
-		}else{echo" [ERR]\r\n";$this->disconn++;}
+		}else{echo" [1;31m[ERR][0m\r\n";$this->disconn++;}
 	}
 	
 	
