@@ -9,6 +9,7 @@ class IRCBot{
 	public $serv;
 	public $nick;
 	public $hdf;
+	public $htf=array(); 
 	public $initscript=array();
 	public $connscript=array();
 	public $joinscript=array();
@@ -375,6 +376,9 @@ class IRCBot{
 			while(!@feof($this->serv['socket'])){
 				$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"utf8"); 
 				echo $this->serv['rbuffer'];
+				foreach($this->htf as $key => $val){
+					$this->plugins[$val['pgin']]->$val['func']($this,$this->serv['rbuffer']);
+				}
 				if(empty($this->serv['rbuffer'])){sleep(1);continue;}	
 				preg_match('@^(?:\:.*? )?(.*?) @', $this->serv['rbuffer'], $coi);
 				@$this->serv['command'] = $coi[1];
