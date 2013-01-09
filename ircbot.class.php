@@ -232,6 +232,11 @@ class IRCBot{
 		echo "[1;32m[OK][0m\n";
 	}
 	
+	public function is_loaded($name){
+		foreach($this->pcomms as $key=>$val){if($this->pcomms[$key]['pgin']==$name){return true;}}
+		return false;
+	}
+	
 	public function addcmd($oplugin,$command,$plugin,$alias=array()){
 		array_push($this->pcomms,array('pgin'=>$plugin, 'comm'=>$command, 'ali'=>0));
 		if(!@isset($alias[0])){return 0;}
