@@ -17,7 +17,7 @@ class ee111t1t1172{
 			$div.="\"$val\", ";
 		}
 		
-		$irc->SendPriv($channel,$div,true,400, ", ");
+		$irc->SendPriv($channel,$div,true,400, ", ");
 	}
 }
 ?>
