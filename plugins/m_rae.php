@@ -14,7 +14,7 @@ class ee111t1t1172{
 		$f=file_get_contents("http://rae-quel.appspot.com/json?query=".strtolower($param[1]));
 		$js=json_decode($f);$div="Definiciones encontradas de la palabra \"".strtolower($param[1])."\": ";
 		foreach($js as $key=>$val){
-			$div.="\"$val\", ";
+			$div.="\"$val\", ";
 		}
 		
 		$irc->SendPriv($channel,$div,true,400, ", ");
