@@ -374,10 +374,10 @@ class IRCBot{
 			$t=0;
 			foreach($this->initscript as $key => $val){@$this->SendCommand($val);}
 			while(!@feof($this->serv['socket'])){
-				$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"utf8"); 
+				$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"latin1"); 
 				echo $this->serv['rbuffer'];
 				foreach($this->htf as $key => $val){
-					$this->plugins[$val['pgin']]->$val['func']($this,$this->serv['rbuffer']);
+					$this->plugins[$val[0]]->$val[1]($this,$this->serv['rbuffer']);
 				}
 				if(empty($this->serv['rbuffer'])){sleep(1);continue;}	
 				preg_match('@^(?:\:.*? )?(.*?) @', $this->serv['rbuffer'], $coi);
