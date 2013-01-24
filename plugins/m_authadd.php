@@ -25,7 +25,7 @@ class ee111t1t1172{
 		if(strtolower($channel)!=strtolower($irc->nick)){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Este comando no se debe usar desde un canal."); return 0;}
 		if(!@isset($param[2])){$irc->sendCommand("PRIVMSG ".$irc->mask2nick($who)." :\00305Error:\003 Faltan parametros."); return 0;}
 		$myconn=$irc->myiConn();
-		$x=$myconn->query("INSERT INTO `users` (`user` ,`pass`, `rng`) VALUES ('".$param[1]. "',  sha1('".$param[2]."'), '0,*')");
+		$x=$myconn->query("INSERT INTO `users` (`user` ,`pass`, `rng`) VALUES ('".mysqli_real_escape_string($myconn,$param[1]). "',  sha1('".mysqli_real_escape_string($myconn,$param[2])."'), '0,*')");
 		if(!$x){$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Error interno \002002\002. Notifique al administrador."); } $myconn->close; 
 	}
 	// Obsoleto (?)
@@ -58,11 +58,12 @@ class ee111t1t1172{
 	}
 	public function chgpass(&$irc,$msg,$channel,$param,$who){
 		if(strtolower($channel)!=strtolower($irc->nick)){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Este comando no se debe usar desde un canal."); return 0;}
-		$sql="SELECT * FROM users WHERE user='".$param[1]."' AND pass=sha1('".$param[2]."')";
 		$myconn=$irc->myiConn();
+		$sql="SELECT * FROM users WHERE user='".mysqli_real_escape_string($myconn,$param[1])."' AND pass=sha1('".mysqli_real_escape_string($myconn,$param[2])."')";
+
 		$rsx = $myconn->query($sql);
 		if($rsx->num_rows==0){mysqli_close($myconn);$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :05Error: Usuario/Contraseña invalidos");return 0;}
-		$sql="UPDATE  `users` SET  `pass` =  sha1('".$param[3]."') WHERE  `user`='".$param[1]."' AND pass=sha1('".$param[2]."')";
+		$sql="UPDATE  `users` SET  `pass` =  sha1('".mysqli_real_escape_string($myconn,$param[3])."') WHERE  `user`='".mysqli_real_escape_string($myconn,$param[1])."' AND pass=sha1('".mysqli_real_escape_string($myconn,$param[2])."')";
 		if(!$rsx = mysqli_query($myconn,$sql)){mysqli_close($myconn); $irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :\00305Error:\003 no se pudo concretar la operacion."); return 0;}
 		$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Operación realizada exitosamente.");
 		mysqli_close($myconn);
