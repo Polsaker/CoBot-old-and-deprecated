@@ -3,17 +3,38 @@
  * Hecho por Ramiro Bou bajo la licencia CC-By-NC-SA
  * http://creativecommons.org/licenses/by-nc-sa/3.0/
  */ 
+	declare(ticks = 1);
 	define("VER", "0.2.1");
 	date_default_timezone_set('UTC');
+	if (! function_exists('pcntl_fork')) die("[1;31mERROR[0m: Las funciones PCNTL no están disponibles\n\n");
+
 	require("config.php");
 	require("ircbot.class.php");
-		echo " - Iniciando [1;31mCo[1;32mBOT[0m [1mv".VER."[0m Por [4mMr. X[0m -\n\n";
-		$ircbot=new IRCBot($conf);
-		echo " - Cargando módulos.\n";
-		require("modules.conf.php");
-	while($ircbot->disconn<=$conf['conn']['reconnect']){
-		$ircbot->IRCConnect();
+	$pid = pcntl_fork();
+
+	switch($pid){
+		case -1:
+			die("[1;31mERROR[0m: No se ha podido realizar el 'fork'\n\n");
+			break;
+		case 0: 
+			include("childmgr.php");
+			break;
+		default:
+
+
+			
+			$ircbot=new IRCBot($conf);
+			echo " - Iniciando [1;31mCo[1;32mBOT[0m [1mv".VER."[0m Por [4mMr. X[0m -\n\n";
+			echo " - Cargando módulos.\n";
+			require("modules.conf.php");
+			while($ircbot->disconn<=$conf['conn']['reconnect']){
+				$ircbot->IRCConnect();
+			}
+			pcntl_wait($status);
+			break;
 	}
+	
+	
 ?>
 
 

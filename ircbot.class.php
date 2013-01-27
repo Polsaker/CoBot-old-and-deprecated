@@ -18,16 +18,17 @@ class IRCBot{
 	private $pcomms=array();
 	private $chanlst=array();
 	public $disconn=0;
-	public function __construct($config){
+	private $callado;
+	public function __construct($config,$callado=false){
 		$this->conf=$config;
 		
 		include("errhandler.php");
-		echo "  - Resolviendo '". $this->conf['irc']['host'] ."'";
+		if($callado==false){echo "  - Resolviendo '". $this->conf['irc']['host'] ."'";}
 		$this->serv['ip']=gethostbynamel($this->conf['irc']['host']);
 		$this->nick=$this->conf['irc']['nick'];
-		
+		$this->callado=$callado;
 		if($this->serv['ip']==false){die(" [1;31m[ERR][0m\n");}
-		 echo " [1;32m[OK][0m ".$this->serv['ip'][0]."\n";
+		if($callado==false){ echo " [1;32m[OK][0m ".$this->serv['ip'][0]."\n";}
 		
 		$myconn=$this->myiConn();
 		$sqlx=$myconn->query("select * from users")or die("  - ERROR: verifique que las tablas mysql esten creadas.");
@@ -44,7 +45,14 @@ class IRCBot{
 	public function SendCommand($command){
 		$command=$command."\r\n";
 		$command=mb_convert_encoding($command,$this->conf['conn']['charset']);
-		fwrite($this->serv['socket'], $command, strlen($command));
+		
+		if(isset($this->serv['socket'])){
+			fwrite($this->serv['socket'], $command, strlen($command));
+		}else{
+			$fp=fopen("SCcache","a+");
+			fputs($fp,$command); 
+			fclose($fp);
+		}
 	}
 	
 	public function SendPriv($chan,$msg,$arrow=false,$len=400, $sep=" "){
@@ -187,12 +195,12 @@ class IRCBot{
 		$ts=time();
 		
 		$nclassname=$mname."x".$ts;
-		echo "  - Cargando plugin ". $mname. " ";
-		if(@isset($this->plugins[$mname])){ echo "[1;31m[ERR][0m El plugin ya está cargado\n"; return -2;}
+		if($this->callado==false){echo "  - Cargando plugin ". $mname. " ";}
+		if(@isset($this->plugins[$mname])){if($this->callado==false){ echo "[1;31m[ERR][0m El plugin ya está cargado\n";} return -2;}
 		
 		@$r=shell_exec("php -l plugins/$plugin");
 		if(!preg_match("@.*No syntax errors detected.*@",$r)){
-			echo "[1;31m[ERR][0m El plugin parece tener errores de sintáxis!!\n";
+			if($this->callado==false){echo "[1;31m[ERR][0m El plugin parece tener errores de sintáxis!!\n";}
 			return 3;
 		}
 		
@@ -204,15 +212,15 @@ class IRCBot{
 		fclose($fp);
 		
 		include("plugins/temp/$plugin");
-		if(!class_exists($nclassname)){echo "[1;31m[ERR][0m No encuentro la funcion principal!!\n"; return -3;}
+		if(!class_exists($nclassname)){if($this->callado==false){echo "[1;31m[ERR][0m No encuentro la funcion principal!!\n"; }return -3;}
 		$this->plugins[$mname]=new $nclassname($this);
-		echo "[1;32m[OK][0m\n";
+		if($this->callado==false){echo "[1;32m[OK][0m\n";}
 		return 2;
 	}
 	public function unload($plugin){
 		$fp = fopen("plugins/temp/$plugin", "r");
 		$pfile="";
-		if(!$fp){ echo "[1;31m[ERR][0m El plugin no parece estar cargado o no esta en /temp\n"; return -2;}
+		if(!$fp){ if($this->callado==false){echo "[1;31m[ERR][0m El plugin no parece estar cargado o no esta en /temp\n";} return -2;}
 		while(!feof($fp)){$pfile.= fgets($fp);}
 		if(preg_match("@.*name=\"(.+)\";.*@",$pfile,$m)){$name=trim($m[1]);}else{return -1;} //obtenemos el nombre del modulo.
 		fclose($fp); 
@@ -227,10 +235,10 @@ class IRCBot{
 				if($this->hdf[$c][$a][0]==$name){ unset($this->hdf[$c][$a]); break;}
 			}
 		}
-		echo "  - Des-cargando plugin ". $name. " ";
-		if(!@isset($this->plugins[$name])){ echo "[1;31m[ERR][0m El plugin no parece estar cargado\n"; return -2;}
+		if($this->callado==false){echo "  - Des-cargando plugin ". $name. " ";}
+		if(!@isset($this->plugins[$name])){if($this->callado==false){ echo "[1;31m[ERR][0m El plugin no parece estar cargado\n";} return -2;}
 		unset($this->plugins[$name]); // y descargamos el objeto
-		echo "[1;32m[OK][0m\n";
+	if($this->callado==false){	echo "[1;32m[OK][0m\n";}
 	}
 	
 	public function is_loaded($name){
@@ -286,8 +294,14 @@ class IRCBot{
 	}
 	
 	public function checkauth ($uhost,$lvlr, $ch = "*"){
-		if(!is_array($this->authd)){return 0;}
-		foreach($this->authd as $key => $val){
+		$f=file("authinf");$authd="";
+		foreach($f as $key=>$val){
+			$authd.=$val;
+		}
+		if($authd==""){return 0;}
+		$authd=unserialize($authd);
+		
+		foreach($authd as $key => $val){
 			if($val['hst']==$uhost){
 				$pr2=explode("|",$val['rng']);
 				$pr4=array();
@@ -330,6 +344,7 @@ class IRCBot{
 						while($rowx=$sqlx->fetch_array()){$i++;
 							$this->SendCommand("PRIVMSG ".$nk[0]." :Autenticado exitosamente.");
 							array_push($this->authd,array('rng'=>$rowx['rng'],'hst'=>$guy));
+							unlink("authinf");file_put_contents("authinf",serialize($this->authd));
 							return 0;
 						}
 						$myconn->close();
@@ -364,18 +379,27 @@ class IRCBot{
 	} 
 	
 	public function IRCConnect(){
-		echo "  - Conectando a '". $this->serv['ip'][0].":".$this->conf['irc']['port']."'";
+		if($this->callado==false){echo "  - Conectando a '". $this->serv['ip'][0].":".$this->conf['irc']['port']."'";}
 		$this->serv['socket']=fsockopen(($this->conf['irc']['ssl']?"ssl://":"").$this->serv['ip'][0], $this->conf['irc']['port'], $errno, $errstr, 20);		
 		if($this->serv['socket']){
-			echo " [1;32m[OK][0m \r\n";
+			if($this->callado==false){echo " [1;32m[OK][0m \r\n";}
 			socket_set_blocking($this->serv['socket'], false);
 			$this->SendCommand("NICK " . $this->nick);
 			$this->SendCommand("USER " . $this->nick. " * * :CoBOT, IRC Bot");
+			socket_set_timeout($this->serv['socket'], 600);
 			$t=0;
 			foreach($this->initscript as $key => $val){@$this->SendCommand($val);}
 			while(!@feof($this->serv['socket'])){
 				$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"latin1"); 
-				echo $this->serv['rbuffer'];
+				if($this->callado==false){echo $this->serv['rbuffer'];}
+				if(file_exists("SCcache")){
+					$f=file("SCcache");
+					foreach($f as $key => $val){
+						usleep(750000); // Odio esperar
+						$this->SendCommand(trim($val));
+					}
+					unlink("SCcache");
+				}
 				foreach($this->htf as $key => $val){
 					$this->plugins[$val[0]]->$val[1]($this,$this->serv['rbuffer']);
 				}
@@ -445,7 +469,7 @@ class IRCBot{
 					}
 				}
 			}
-		}else{echo" [1;31m[ERR][0m\r\n";$this->disconn++;}
+		}else{if($this->callado==false){echo" [1;31m[ERR][0m\r\n";}$this->disconn++;}
 	}
 	
 	

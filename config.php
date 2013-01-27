@@ -1,9 +1,9 @@
 <?php
 	/* Configuración para la conexión a la base de datos */
 	$conf['db']['host']="localhost"; // host de la base de datos mysql
-	$conf['db']['user']=""; //usuario mysql
-	$conf['db']['pass']=""; // contraseña mysql
-	$conf['db']['name']=""; //tabla mysql
+	$conf['db']['user']="root"; //usuario mysql
+	$conf['db']['pass']="tcpmf"; // contraseña mysql
+	$conf['db']['name']="CoBOT"; //tabla mysql
 	
 	
 	/* Configuracion de la conexión al servidor IRC */
