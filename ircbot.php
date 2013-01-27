@@ -10,7 +10,7 @@
 
 	require("config.php");
 	require("ircbot.class.php");
-	$pid = pcntl_fork();
+	if($conf['threads']['use']==false){$pid=-2;}else{$pid = pcntl_fork();}
 
 	switch($pid){
 		case -1:

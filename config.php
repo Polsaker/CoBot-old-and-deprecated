@@ -1,9 +1,9 @@
 <?php
 	/* Configuración para la conexión a la base de datos */
 	$conf['db']['host']="localhost"; // host de la base de datos mysql
-	$conf['db']['user']="root"; //usuario mysql
-	$conf['db']['pass']="tcpmf"; // contraseña mysql
-	$conf['db']['name']="CoBOT"; //tabla mysql
+	$conf['db']['user']=""; //usuario mysql
+	$conf['db']['pass']=""; // contraseña mysql
+	$conf['db']['name']=""; //tabla mysql
 	
 	
 	/* Configuracion de la conexión al servidor IRC */
@@ -38,4 +38,6 @@
 	
 	$conf['m_mwedit']['mwuser']=""; // Usuario wiki
 	$conf['m_mwedit']['mwpass']=""; // Contraseña wiki
+	
+	$conf['threads']['use']=true; # true si se quiere usar threads (consume mas memoria) false si no se quiere usar threads (Nota: Algunos módulos pueden no andar con los threads desactivados)
 ?>
