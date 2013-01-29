@@ -241,9 +241,10 @@ class IRCBot{
 	if($this->callado==false){	echo "[1;32m[OK][0m\n";}
 	}
 	
-	public function is_loaded($name){
-		foreach($this->pcomms as $key=>$val){if($this->pcomms[$key]['pgin']==$name){return true;}}
-		return false;
+	public function is_loaded($name){if(isset($this->plugins[$name])){return true;}else{return false;}}
+	
+	public function get_class($name){
+		return $this->plugins[$name];
 	}
 	
 	public function addcmd($oplugin,$command,$plugin,$alias=array()){
