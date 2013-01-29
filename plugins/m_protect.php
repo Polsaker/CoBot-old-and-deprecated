@@ -7,6 +7,7 @@
 	$key="ee111t1t1172";
 class ee111t1t1172{
 		public $help;
+		public $ex;
 		private $ch=array();
 		public function __construct(&$irc){	
 			if(!@isset($irc->hdf['MODE'])){$irc->hdf['MODE']=array();}
@@ -23,7 +24,7 @@ class ee111t1t1172{
 			$txt=strip_tags(trim($txt), '\n\t\r\h\v\0');  
 		//	echo ".............:". $txt;
 			if (preg_match('#^:.+ MODE (.+) -o.* '.$irc->nick.'$#',$txt, $matches)){
-				$irc->SendCommand("PRIVMSG ChanServ :OP ".$matches[1]);
+				if($this->ex!=true){$irc->SendCommand("PRIVMSG ChanServ :OP ".$matches[1]);}else{$this->ex==true;}
 			}
 
 		}
