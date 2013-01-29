@@ -15,7 +15,7 @@ class ee111t1t1172{
 		if($this->irc->is_loaded("protect")){
 			$pclass=$this->irc->get_class("protect");
 			$pclass->ex=true;//sleep(3);
-			$this->irc->SendPriv("ChanServ","DEOP $chan $user");
 		}
+		$this->irc->SendPriv("ChanServ","DEOP $chan $user");
 	}
 }
