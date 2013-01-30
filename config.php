@@ -1,0 +1,44 @@
+<?php
+	/* Configuración para la conexión a la base de datos */
+	$conf['db']['host']="localhost"; // host de la base de datos mysql
+	$conf['db']['user']=""; //usuario mysql
+	$conf['db']['pass']=""; // contraseña mysql
+	$conf['db']['name']=""; //tabla mysql
+	
+	
+	/* Configuracion de la conexión al servidor IRC */
+	$conf['irc']['host']="127.0.0.1";
+	$conf['irc']['port']=6667; //puerto
+	$conf['irc']['nick']="CoBot"; // Nick
+	$conf['irc']['ssl']=false; // usar SSL para conectarse al servidor IRC.
+	
+	$conf['irc']['channels']=array("#CoBOT"); // canales a los que el bot entrara al conectarse
+	$conf['irc']['prefix']="$"; //prefijo de los comandos
+	
+	# Si el servidor IRC al que intenta conectar no usa servicios Atheme, ponga la contraseña en el campo para el usuario y deje el campo de usuario vacío
+	$conf['nickserv']['nsuser']="CoBot"; // Usuario de nickserv
+	$conf['nickserv']['nspass']="tcpmg"; // Contraseña de nickserv
+	$conf['nickserv']['ghost']=true; // Si usar ghost cuando el nick esta en uso.
+	
+	$conf['conn']['reconnect']=15; //numero de reconecciones. dejar en 1 para desactivars
+	$conf['conn']['charset']="ISO-8859-1";
+	
+	//Configuración para el módulo OPER:
+	$conf['m_oper']['operuser']="";
+	$conf['m_oper']['operpass']="";
+	
+	$conf['m_translate']['cid']=""; // Client ID de microsoft translate
+	$conf['m_translate']['cs']=""; // Client Secret
+	$conf['m_translate']['authurl']="https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/"; // Esto supuestamente no se debe modificar
+	$conf['m_translate']['scopeurl']="http://api.microsofttranslator.com"; // Esto tampoco
+	$conf['m_translate']['granttype']="client_credentials"; // Esto tampoco debe ser modificado :P
+	
+	$conf['m_google']['api_key']=""; // google api key
+	$conf['m_short']['bitly-api']=""; //Bit.ly api key
+	$conf['m_weather']['api_key']=""; //wunderground.com api key
+	
+	$conf['m_mwedit']['mwuser']=""; // Usuario wiki
+	$conf['m_mwedit']['mwpass']=""; // Contraseña wiki
+	
+	$conf['threads']['use']=true; # true si se quiere usar threads (consume mas memoria) false si no se quiere usar threads (Nota: Algunos módulos pueden no andar con los threads desactivados)
+?>
