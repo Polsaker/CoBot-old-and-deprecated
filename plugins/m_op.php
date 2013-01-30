@@ -45,7 +45,7 @@ class ee111t1t1172{
 		}
 		if(!isset($param[1])){$user=$irc->mask2nick($who);}else{$user=$param[1];}
 		$irc->SendCommand("MODE $channel +o $user");
-		if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_deop($channel,$irc->nick);} // Nos removemos el op
+		//if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_deop($channel,$irc->nick);} // Nos removemos el op
 
 	}
 	public function deop(&$irc,$msg,$channel,$param,$who){
@@ -55,7 +55,7 @@ class ee111t1t1172{
 			$irc->SendPriv($channel,"05Error: No puedo dar op si no tengo op!!");return 0;}
 		}		if(!isset($param[1])){$user=$irc->mask2nick($who);}else{$user=$param[1];}
 		$irc->SendCommand("MODE $channel -o $user");
-		if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_deop($channel,$irc->nick);} // Nos removemos el op
+		//if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_deop($channel,$irc->nick);} // Nos removemos el op
 	}
 	
 	public function voice(&$irc,$msg,$channel,$param,$who){
@@ -66,7 +66,7 @@ class ee111t1t1172{
 		}
 		if(!isset($param[1])){$user=$irc->mask2nick($who);}else{$user=$param[1];}
 		$irc->SendCommand("MODE $channel +v $user");
-		if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_deop($channel,$irc->nick);} // Nos removemos el op
+		//if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_deop($channel,$irc->nick);} // Nos removemos el op
 	}
 	public function devoice(&$irc,$msg,$channel,$param,$who){
 		if($irc->checkauth($who,1,trim($channel))!=1){$irc->SendPriv($channel,"05Error: No tienes privilegios suficientes como para realizar esta operación");return 0;}
@@ -76,7 +76,7 @@ class ee111t1t1172{
 		}
 		if(!isset($param[1])){$user=$irc->mask2nick($who);}else{$user=$param[1];}
 		$irc->SendCommand("MODE $channel -v $user");
-		if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_deop($channel,$irc->nick);} // Nos removemos el op
+		//if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_deop($channel,$irc->nick);} // Nos removemos el op
 
 	}
 
