@@ -14,7 +14,7 @@ class ee111t1t1172{
 	public function nickinuse(&$irc, $txt){
 		$irc->nick.="_";
 		$irc->SendCommand("NICK ".$irc->nick);
-		if($irc->conf['irc']['nspass'] && $irc->conf['irc']['ghost'){$this->g=1;} // Activando el ghost
+		if($irc->conf['irc']['nspass'] && $irc->conf['irc']['ghost']){$this->g=1;} // Activando el ghost
 	}
 	
 	public function nsid(&$irc, $txt){
