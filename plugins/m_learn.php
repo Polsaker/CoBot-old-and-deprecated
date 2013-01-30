@@ -18,8 +18,7 @@ class ee111t1t1172{
 			$this->help['find']='Busca una palabra por definición o nombre. Sintaxis: find <palabra>';
 		}
 
-		public function learn(&$irc,$msg,$channel,$param,$who)
-		{
+		public function learn(&$irc,$msg,$channel,$param,$who){
 			$i=2;
 			$ts="";
 			while(@isset($param[$i])){
@@ -29,41 +28,38 @@ class ee111t1t1172{
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 			mysql_select_db($irc->conf['db']['name']);
 			$rsx = mysql_query("SELECT * FROM defs WHERE pal='".mysql_real_escape_string($param[1])."'",$myconn);
-			if(mysql_num_rows($rsx)!=0){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$channel." :05Error: La definición ya existe!");return 0;}
+			if(mysql_num_rows($rsx)!=0){mysql_close($myconn);$irc->SendPriv($channel,"05Error: La definición ya existe!");return 0;}
 			$rsx = mysql_query("INSERT INTO defs (pal,def) VALUES ('".mysql_real_escape_string($param[1])."','".mysql_real_escape_string($ts)."')",$myconn);
-			$irc->SendCommand("PRIVMSG ".$channel." :Se ha insertado la nueva definición en la base de datos.");
+			$irc->SendPriv($channel,"Se ha insertado la nueva definición en la base de datos.");
 			mysql_close($myconn);
 		}
-		public function forget(&$irc,$msg,$channel,$param,$who)
-		{
+		public function forget(&$irc,$msg,$channel,$param,$who){
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 			mysql_select_db($irc->conf['db']['name']);
 			$sql="DELETE FROM `defs` WHERE `defs`.`pal` = '".mysql_real_escape_string($param[1])."'";
 			$rsx = mysql_query("SELECT * FROM defs WHERE pal='".mysql_real_escape_string($param[1])."'",$myconn);
-			if(mysql_num_rows($rsx)==0){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$channel." :05Error: La definición no existe!");return 0;}
+			if(mysql_num_rows($rsx)==0){mysql_close($myconn);$irc->SendPriv($channel,"05Error: La definición no existe!");return 0;}
 			$rsx = mysql_query($sql,$myconn);
-			if($rsx){$irc->SendCommand("PRIVMSG ".$channel." :Se ha borrado la definición.");}
+			if($rsx){$irc->SendPriv($channel,"Se ha borrado la definición.");}
 			mysql_close($myconn);
 		}
-		public function def(&$irc,$msg,$channel,$param,$who)
-		{
+		public function def(&$irc,$msg,$channel,$param,$who){
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 			mysql_select_db($irc->conf['db']['name']);
 			$rsx = mysql_query("SELECT * FROM defs WHERE pal='".mysql_real_escape_string($param[1])."'",$myconn);
-			if(mysql_num_rows($rsx)==0){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$channel." :05Error: La definición no existe!");return 0;}
+			if(mysql_num_rows($rsx)==0){mysql_close($myconn);$irc->SendPriv($channel,"05Error: La definición no existe!");return 0;}
 			$rowx=mysql_fetch_array($rsx);
-			$irc->SendCommand("PRIVMSG ". $channel ." :".$param[1]." = ".$rowx['def']);
+			$irc->SendPriv($channel,"".$param[1]." = ".$rowx['def']);
 			mysql_close($myconn);
 		}
-		public function find(&$irc,$msg,$channel,$param,$who)
-		{
+		public function find(&$irc,$msg,$channel,$param,$who){
 			$myconn=mysql_connect($irc->conf['db']['host'],$irc->conf['db']['user'],$irc->conf['db']['pass']);
 			mysql_select_db($irc->conf['db']['name']);
 			$rsx = mysql_query("SELECT * FROM defs WHERE pal LIKE '%".mysql_real_escape_string($param[1])."%' OR def LIKE '%".mysql_real_escape_string($param[1])."%'",$myconn);
-			if(mysql_num_rows($rsx)==0){mysql_close($myconn);$irc->SendCommand("PRIVMSG ".$channel." :No se encontraron coincidencias.");return 0;}
+			if(mysql_num_rows($rsx)==0){mysql_close($myconn);$irc->SendPriv($channel,"No se encontraron coincidencias.");return 0;}
 			$ta="";
 			while($rowx=mysql_fetch_array($rsx)){$ta.=$rowx['pal']." ";}
-			$irc->SendCommand("PRIVMSG ".$channel." :Coincidencias: ".$ta);
+			$irc->SendPriv($channel,"Coincidencias: ".$ta,true);
 			mysql_close($myconn);
 		}
 	}
