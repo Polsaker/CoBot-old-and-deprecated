@@ -10,17 +10,22 @@ $ircbot->load("m_ping.php"); // agrega el comando ping
 #$ircbot->load("m_iplocator.php"); //permite geolocalizar IPs con GeoIP [requiere geoipcity.inc, geoipregionvars.php y timezone.php]
 $ircbot->load("m_nick.php"); //agrega el comando nick.
 $ircbot->load("m_learn.php");
-$ircbot->load("m_protect.php");
+$ircbot->load("m_protect.php"); // No deja que el bot sea baneado o deopeado siempre y cuando tenga acceso a chanserv.
 #$ircbot->load("m_oper.php");
-$ircbot->load("m_translate.php");
-$ircbot->load("m_wikichan.php");
-$ircbot->load("m_games.php");
-$ircbot->load("m_youtube.php");
-$ircbot->load("m_hash.php");
-$ircbot->load("m_modules.php");
-$ircbot->load("m_ignore.php");
-$ircbot->load("m_booksearch.php");
-$ircbot->load("m_short.php");
-$ircbot->load("m_weather.php");
+$ircbot->load("m_translate.php"); // Traductor.
+$ircbot->load("m_wikichan.php"); // Integración con software mediawiki por canal
+$ircbot->load("m_games.php"); // Juegos para el bot
+$ircbot->load("m_youtube.php"); // Muestra información de links de youtube a un canal
+$ircbot->load("m_hash.php"); // Permite codificar textos usando hashes 
+$ircbot->load("m_modules.php"); // Permite la carga y descarga de módulos sin detener el bot
+$ircbot->load("m_ignore.php"); // Agrega mas funciones al ignore
+$ircbot->load("m_booksearch.php"); // Busca libros en google books
+$ircbot->load("m_short.php"); // Acortador de URLs
+$ircbot->load("m_weather.php"); // Comando weather, da el tiempo
+$ircbot->load("m_op.php"); // Funciones de operador (op, deop, voice, kickban, etc)
+$ircbot->load("m_atheme.php"); // Integración con atheme (op, deop, etc)
+$ircbot->load("m_bot.php"); // Se auto-asigna el modo +b (bot) al conectarse
+$ircbot->load("m_mwedit.php"); // Corrector ortográfico para mediawiki
+$ircbot->load("m_rae.php"); // Diccionario de la Real Academia Española
 
 ?>
