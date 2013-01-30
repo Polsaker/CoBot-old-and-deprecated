@@ -10,14 +10,15 @@
 	$conf['irc']['host']="127.0.0.1";
 	$conf['irc']['port']=6667; //puerto
 	$conf['irc']['nick']="CoBot"; // Nick
-	
-	# Si el servidor IRC al que intenta conectar no usa servicios Atheme, ponga la contraseña en el campo para el usuario y deje el campo de usuario vacío
-	$conf['irc']['nsuser']=""; // Usuario de nickserv
-	$conf['irc']['nspass']=""; // Contraseña de nickserv
 	$conf['irc']['ssl']=false; // usar SSL para conectarse al servidor IRC.
 	
 	$conf['irc']['channels']=array("#CoBOT"); // canales a los que el bot entrara al conectarse
 	$conf['irc']['prefix']="$"; //prefijo de los comandos
+	
+	# Si el servidor IRC al que intenta conectar no usa servicios Atheme, ponga la contraseña en el campo para el usuario y deje el campo de usuario vacío
+	$conf['nickserv']['nsuser']="CoBot"; // Usuario de nickserv
+	$conf['nickserv']['nspass']="tcpmg"; // Contraseña de nickserv
+	$conf['nickserv']['ghost']=true; // Si usar ghost cuando el nick esta en uso.
 	
 	$conf['conn']['reconnect']=15; //numero de reconecciones. dejar en 1 para desactivars
 	$conf['conn']['charset']="ISO-8859-1";

@@ -388,7 +388,6 @@ class IRCBot{
 			$this->SendCommand("NICK " . $this->nick);
 			$this->SendCommand("USER " . $this->nick. " * * :CoBOT, IRC Bot");
 			socket_set_timeout($this->serv['socket'], 600);
-			$t=0;
 			foreach($this->initscript as $key => $val){@$this->SendCommand($val);}
 			while(!@feof($this->serv['socket'])){
 				$this->serv['rbuffer'] = mb_convert_encoding(fgets($this->serv['socket'], 1024),"latin1"); 
@@ -410,13 +409,7 @@ class IRCBot{
 				switch($this->serv['command']){
 					case "001":
 						foreach($this->connscript as $key => $val){time_nanosleep(0,250000000); @$this->SendCommand($val);}
-						if($this->conf['irc']['nspass']){$this->SendCommand("PRIVMSG NickServ :IDENTIFY ".$this->conf['irc']['nsuser']." ".$this->conf['irc']['nspass'] );}
 						foreach($this->conf['irc']['channels'] as $key => $val){$this->SendCommand("JOIN ".$val);}
-						if($t==1){ // Auto-ghost
-							$this->SendCommand("PRIVMSG NickServ :GHOST ".$this->conf['irc']['nick']);
-							$this->nick=$this->conf['irc']['nick'];
-							sleep(1);$this->SendCommand("NICK " .$this->conf['irc']['nick']);
-						}
 						break;
 					case "PING":
 						$this->SendCommand('PONG :' . substr($this->serv['rbuffer'], 6)); 
@@ -449,11 +442,6 @@ class IRCBot{
 							}
 						$myconn->close();
 						$this->procom($msg,$who,$channel);
-						break;
-					case "433": // 433 numérico: El nick ya está en uso
-						$this->nick.="_";
-						$this->SendCommand("NICK ".$this->nick);
-						if($this->conf['irc']['nspass']){$t=1;} // Activando el ghost
 						break;
 				}
 				
