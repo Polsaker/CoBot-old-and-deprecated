@@ -1,6 +1,13 @@
 '''CoBot''' es un bot IRC modular programado en PHP. <br>
 ==Instalación==
 Para instalar el bot, edite los archivos de configuración (config.php y modules.conf.php) a gusto y ejecute la consulta SQL (que esta en CoBOT.sql) en la base de datos que haya configurado. El usuario y contraseña por defecto para el usuario administrador es admin:admin. Para autenticarse, envie el comando $auth usuario contraseña por mensaje privado al bot.
+
+==Corriendo CoBot==
+
+Para correr CoBot en un terminal Linux:
+
+ nohup php ircbot.php
+
 ==Wiki==
 [http://cobot.tk cobot.tk]
 ==Canal IRC==
