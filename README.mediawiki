@@ -6,7 +6,7 @@ Para instalar el bot, edite los archivos de configuración (config.php y modules
 
 Para correr CoBot en un terminal Linux:
 
- nohup php ircbot.php
+ nohup php ircbot.php &
 
 ==Wiki==
 [http://cobot.tk cobot.tk]
