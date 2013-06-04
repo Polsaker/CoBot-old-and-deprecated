@@ -4,7 +4,7 @@
  * http://creativecommons.org/licenses/by-nc-sa/3.0/
  */ 
 	declare(ticks = 1);
-	define("VER", "0.2.2");
+	define("VER", "0.2.2.1");
 	date_default_timezone_set('UTC');
 	if (! function_exists('pcntl_fork')) die("[1;31mERROR[0m: Las funciones PCNTL no están disponibles\n\n");
 
