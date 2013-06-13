@@ -9,7 +9,7 @@ class ee111t1t1172{
 	public $help;
 	public function __construct(&$irc){	
 		$irc->addcmd($this, 'ping', 'ping');	
-		$irc->addcmd($this, 'pong', 'ping');	
+		$irc->addcmd($this, 'pong', 'pong');	
 		$this->help['ping']='Responde con PONG';
 		$this->help['pong']='Responde con PING';
 	}
