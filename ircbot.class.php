@@ -278,6 +278,7 @@ class IRCBot{
 			$this->SendPriv($channel,trim($clist),true,380);
 		}else{
 			switch($commands[1]){
+				case "ayuda":
 				case "help":$this->SendCommand("PRIVMSG ".$channel." :help: Proporciona ayuda sobre un comando.");break;
 				case "auth":$this->SendCommand("PRIVMSG ".$channel." :auth: Permite identificarse y usar ciertos comandos especiales. Sintaxis: auth <usuario> <contraseña>");break;
 				case "ignore":$this->SendCommand("PRIVMSG ".$channel." :ignore: Ignora a un usuario. Sintaxis: ignore <mascara (regex)>");break;
@@ -335,6 +336,7 @@ class IRCBot{
 		$param[0]=strtolower($param[0]);
 		if($msg[0]==$this->conf['irc']['prefix'] || $g==1){
 			switch($param[0]){
+				case "ayuda":
 				case "help":
 					$this->helpsys($param,$channel,$guy);return 0;
 				case "auth":
