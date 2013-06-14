@@ -8,7 +8,7 @@ Para correr CoBot en un terminal Linux:
 
  nohup php ircbot.php &
 
-==Wiki==
-[http://cobot.tk cobot.tk]
+==Website del Proyecto==
+[http://www.cobot.com.ar http://www.cobot.com.ar]
 ==Canal IRC==
 Estamos en el canal #CoBot en freenode para atender sugerencias o brindar ayuda.
