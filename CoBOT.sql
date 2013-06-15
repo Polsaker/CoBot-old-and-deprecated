@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `defs` (
 
 
 CREATE TABLE IF NOT EXISTS `games_banco` (
-  `plata` int(255) NOT NULL DEFAULT '100000'
+  `plata` int(255) NOT NULL DEFAULT '100000',
   `cobre` int(255) NOT NULL,
   `plat` int(255) NOT NULL,
   `oro` int(255) NOT NULL
