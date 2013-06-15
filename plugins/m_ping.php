@@ -25,13 +25,13 @@ class ee111t1t1172{
 	public function pong(&$irc,$msg,$channel,$param,$who){ $irc->SendCommand("PRIVMSG ".$channel." :PING");}
 	public function pig(&$irc,$msg,$channel,$param,$who){ $irc->SendCommand("PRIVMSG ".$channel." :".$irc->mask2nick($who).", Necesitas un cerdo? ve a verte al espejo!");}
 
-        public function pingcom(&$irc,$txt){
-                       if(preg_match('@^:(.+) NOTICE .+ :PING (.+)@', $txt, $m)){
-                                @$ppl = $irc->mask2nick($m[1]);
-                                @$msg = $m[2];
-                                $LAG = microtime(true) - $msg ;
-                                $irc->SendCommand("NOTICE ".$ppl." :Su LAG es de $LAG segundos");
-                       }
+	public function pingcom(&$irc,$txt){
+		if(preg_match('@^:(.+) NOTICE .+ :PING (.+)@', $txt, $m)){
+			@$ppl = $irc->mask2nick($m[1]);
+			@$msg = $m[2];
+			$LAG = round(microtime(true) - $msg, 5) ;
+			$irc->SendCommand("NOTICE ".$ppl." :Su LAG es de $LAG segundos");
+		}
 	}
 }
 ?>
