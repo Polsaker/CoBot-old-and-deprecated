@@ -3,7 +3,7 @@
 	$conf['db']['host']="localhost"; // host de la base de datos mysql
 	$conf['db']['user']=""; //usuario mysql
 	$conf['db']['pass']=""; // contraseña mysql
-	$conf['db']['name']=""; //tabla mysql
+	$conf['db']['name']="cobot"; //tabla mysql
 	
 	
 	/* Configuracion de la conexión al servidor IRC */
@@ -13,11 +13,11 @@
 	$conf['irc']['ssl']=false; // usar SSL para conectarse al servidor IRC.
 	
 	$conf['irc']['channels']=array("#CoBOT"); // canales a los que el bot entrara al conectarse
-	$conf['irc']['prefix']="$"; //prefijo de los comandos
+	$conf['irc']['prefix']="-"; //prefijo de los comandos
 	
 	# Si el servidor IRC al que intenta conectar no usa servicios Atheme, ponga la contraseña en el campo para el usuario y deje el campo de usuario vacío
 	$conf['nickserv']['nsuser']="CoBot"; // Usuario de nickserv
-	$conf['nickserv']['nspass']="tcpmg"; // Contraseña de nickserv
+	$conf['nickserv']['nspass']="asdf"; // Contraseña de nickserv
 	$conf['nickserv']['ghost']=true; // Si usar ghost cuando el nick esta en uso.
 	
 	$conf['conn']['reconnect']=15; //numero de reconecciones. dejar en 1 para desactivars
@@ -33,7 +33,7 @@
 	$conf['m_translate']['scopeurl']="http://api.microsofttranslator.com"; // Esto tampoco
 	$conf['m_translate']['granttype']="client_credentials"; // Esto tampoco debe ser modificado :P
 	
-	$conf['m_google']['api_key']=""; // google api key
+	$conf['m_google']['api_key']=""; // google api key (usado tambien en m_short)
 	$conf['m_short']['bitly-api']=""; //Bit.ly api key
 	$conf['m_weather']['api_key']=""; //wunderground.com api key
 	
