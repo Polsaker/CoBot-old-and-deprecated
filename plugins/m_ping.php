@@ -6,7 +6,6 @@
 	 $name="ping"; 
 	$key="ee111t1t1172";
 class ee111t1t1172{
-	static protected $fecha;
 	public $help;
 	public function __construct(&$irc){	
 		$irc->addcmd($this, 'ping', 'ping');	
@@ -20,21 +19,17 @@ class ee111t1t1172{
 	}
 
 	public function ping(&$irc,$msg,$channel,$param,$who){ 
-			$fecha = time();	
-			$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :\001PING ".$fecha." \001");
-			
+		$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :\001PING ".microtime(true)."\001");	
 	}
 
 	public function pong(&$irc,$msg,$channel,$param,$who){ $irc->SendCommand("PRIVMSG ".$channel." :PING");}
 	public function pig(&$irc,$msg,$channel,$param,$who){ $irc->SendCommand("PRIVMSG ".$channel." :".$irc->mask2nick($who).", Necesitas un cerdo? ve a verte al espejo!");}
 
         public function pingcom(&$irc,$txt){
-                       if(preg_match('@^:(.+) NOTICE (.+) :(.+)@', $txt, $m)){
+                       if(preg_match('@^:(.+) NOTICE .+ :PING (.+)@', $txt, $m)){
                                 @$ppl = $irc->mask2nick($m[1]);
-                                @$msg = $m[3];
-                                $cmd=trim($msg);
-                                $cmd=explode(" ", $cmd);
-                                $LAG = time() - $cmd[1] ;
+                                @$msg = $m[2];
+                                $LAG = microtime(true) - $msg ;
                                 $irc->SendCommand("NOTICE ".$ppl." :Su LAG es de $LAG segundos");
                        }
 	}
