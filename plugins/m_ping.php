@@ -30,6 +30,9 @@ class ee111t1t1172{
 			@$ppl = $irc->mask2nick($m[1]);
 			@$msg = $m[2];
 			$LAG = round(microtime(true) - $msg, 5) ;
+			# Para no utilizar el 100% de la cpu del sistema, la clase principal posee un
+			# sleep(1). Eso retrasa el calculo del lag en aproximadamente 1.0004 segundos.
+			$LAG = $LAG -1;
 			$irc->SendCommand("NOTICE ".$ppl." :Su LAG es de $LAG segundos");
 		}
 	}
