@@ -30,7 +30,7 @@ class ee111t1t1172{
 						$i++;
 					}
 				}
-				$irc->SendPriv($channel,$resp,true,400,"), ");
+				$irc->SendPriv($channel,$resp,true,400,", ");
 				return 0;
 			}
 			
