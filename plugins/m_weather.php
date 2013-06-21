@@ -46,8 +46,8 @@ class ee111t1t1172{
 				$resp.="Mínima de \00306".$jao->forecast->simpleforecast->forecastday[$i]->low->celsius."ºC\003, ";
 				$i++;
 			}
-					
-			$irc->SendCommand("PRIVMSG ".$channel." :".$resp);
+			$resp=trim($resp,", ");
+			$irc->SendPriv($channel,$resp,true);
 		}
 		private function conv($estr){
 			switch($estr){
