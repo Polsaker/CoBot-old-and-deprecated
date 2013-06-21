@@ -101,11 +101,6 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;
 
 
-INSERT INTO `users` (`id`, `user`, `pass`, `rng`) VALUES
-(1, 'admin', 'd033e22ae348aeb5660fc2140aec35850c4da997', '10,*');
-
-
-
 CREATE TABLE IF NOT EXISTS `wikichans` (
   `chan` varchar(255) NOT NULL,
   `wiki` varchar(255) NOT NULL
