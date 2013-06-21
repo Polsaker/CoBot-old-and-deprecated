@@ -33,7 +33,7 @@ class ee111t1t1172{
 			# Para no utilizar el 100% de la cpu del sistema, la clase principal posee un
 			# sleep(1). Eso retrasa el calculo del lag en aproximadamente 1.0004 segundos.
 			$LAG = $LAG -1;
-			$irc->SendCommand("NOTICE ".$ppl." :Su LAG es de $LAG segundos");
+			$irc->SendCommand("NOTICE ".$ppl." :Su LAG es de ".round($LAG,4)." segundos");
 		}
 	}
 }
