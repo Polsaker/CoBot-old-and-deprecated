@@ -70,7 +70,7 @@ class ee111t1t1172{
 	public function op(&$irc,$msg,$channel,$param,$who){
 		if($irc->checkauth($who,1,trim($channel))!=1){$irc->SendPriv($channel,"05Error: No tienes privilegios suficientes como para realizar esta operación");return 0;}
 		if(substr($param[1],0,1)=="#"){$chan=$param[1];}else{$chan=$channel;}
-		if($this->chanprivs[$chan]<=3){
+		if($this->chanprivs[$chan]>3){
 			if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_op($chan,$irc->nick);usleep(500000);}else{ // Nota: Existe la posibilidad de que el bot no pueda dar op, planear la manera de saber si ChanServ dio op al bot o no.
 			$irc->SendPriv($channel,"05Error: No puedo dar op si no tengo op!!");return 0;}
 		}
@@ -80,7 +80,7 @@ class ee111t1t1172{
 	public function deop(&$irc,$msg,$channel,$param,$who){
 		if($irc->checkauth($who,1,trim($channel))!=1){$irc->SendPriv($channel,"05Error: No tienes privilegios suficientes como para realizar esta operación");return 0;}
 		if(substr($param[1],0,1)=="#"){$chan=$param[1];}else{$chan=$channel;}
-		if($this->chanprivs[$chan]<=3){
+		if($this->chanprivs[$chan]>3){
 			if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_op($chan,$irc->nick);usleep(500000);}else{ // Nota: Existe la posibilidad de que el bot no pueda dar op, planear la manera de saber si ChanServ dio op al bot o no.
 			$irc->SendPriv($channel,"05Error: No puedo quitar op si no tengo op!!");return 0;}
 		}
@@ -90,7 +90,7 @@ class ee111t1t1172{
 	public function voice(&$irc,$msg,$channel,$param,$who){
 		if($irc->checkauth($who,1,trim($channel))!=1){$irc->SendPriv($channel,"05Error: No tienes privilegios suficientes como para realizar esta operación");return 0;}
 		if(substr($param[1],0,1)=="#"){$chan=$param[1];}else{$chan=$channel;}
-		if($this->chanprivs[$chan]<=3){
+		if($this->chanprivs[$chan]>3){
 			if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_op($chan,$irc->nick);usleep(500000);}else{ // Nota: Existe la posibilidad de que el bot no pueda dar op, planear la manera de saber si ChanServ dio op al bot o no.
 			$irc->SendPriv($channel,"05Error: No puedo dar voz si no tengo op!!");return 0;}
 		}
@@ -100,7 +100,7 @@ class ee111t1t1172{
 	public function devoice(&$irc,$msg,$channel,$param,$who){
 		if($irc->checkauth($who,1,trim($channel))!=1){$irc->SendPriv($channel,"05Error: No tienes privilegios suficientes como para realizar esta operación");return 0;}
 		if(substr($param[1],0,1)=="#"){$chan=$param[1];}else{$chan=$channel;}
-		if($this->chanprivs[$chan]<=3){
+		if($this->chanprivs[$chan]>3){
 			if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_op($chan,$irc->nick);usleep(500000);}else{ // Nota: Existe la posibilidad de que el bot no pueda dar op, planear la manera de saber si ChanServ dio op al bot o no.
 			$irc->SendPriv($channel,"05Error: No puedo quitar voz si no tengo op!!");return 0;}
 		}
@@ -111,7 +111,7 @@ class ee111t1t1172{
 	public function kick(&$irc,$msg,$channel,$param,$who){
 		if($irc->checkauth($who,1,trim($channel))!=1){$irc->SendPriv($channel,"05Error: No tienes privilegios suficientes como para realizar esta operación");return 0;}
 		if(substr($param[1],0,1)=="#"){$chan=$param[1];}else{$chan=$channel;}
-		if($this->chanprivs[$chan]<=3){
+		if($this->chanprivs[$chan]>3){
 			if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_op($chan,$irc->nick);usleep(500000);}else{ // Nota: Existe la posibilidad de que el bot no pueda dar op, planear la manera de saber si ChanServ dio op al bot o no.
 			$irc->SendPriv($channel,"05Error: No puedo echar gente si no tengo op!!");return 0;}
 		}
@@ -123,7 +123,7 @@ class ee111t1t1172{
 	public function kickban(&$irc,$msg,$channel,$param,$who){
 		if($irc->checkauth($who,1,trim($channel))!=1){$irc->SendPriv($channel,"05Error: No tienes privilegios suficientes como para realizar esta operación");return 0;}
 		if(substr($param[1],0,1)=="#"){$chan=$param[1];}else{$chan=$channel;}
-		if($this->chanprivs[$chan]<=3){
+		if($this->chanprivs[$chan]>3){
 			if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_op($chan,$irc->nick);usleep(500000);}else{ // Nota: Existe la posibilidad de que el bot no pueda dar op, planear la manera de saber si ChanServ dio op al bot o no.
 			$irc->SendPriv($channel,"05Error: No puedo echar gente si no tengo op!!");return 0;}
 		}
@@ -139,7 +139,7 @@ class ee111t1t1172{
 	public function unban(&$irc,$msg,$channel,$param,$who){
 		if($irc->checkauth($who,1,trim($channel))!=1){$irc->SendPriv($channel,"05Error: No tienes privilegios suficientes como para realizar esta operación");return 0;}
 		if(substr($param[1],0,1)=="#"){$chan=$param[1];}else{$chan=$channel;}
-		if($this->chanprivs[$chan]<=3){
+		if($this->chanprivs[$chan]>3){
 			if($irc->is_loaded("atheme")){$irc->get_class("atheme")->cs_op($chan,$irc->nick);usleep(500000);}else{ // Nota: Existe la posibilidad de que el bot no pueda dar op, planear la manera de saber si ChanServ dio op al bot o no.
 			$irc->SendPriv($channel,"05Error: No puedo desbanear si no tengo op!!");return 0;}
 		}
