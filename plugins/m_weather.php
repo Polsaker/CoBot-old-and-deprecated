@@ -46,11 +46,7 @@ class ee111t1t1172{
 				$resp.="Mínima de \00306".$jao->forecast->simpleforecast->forecastday[$i]->low->celsius."ºC\003, ";
 				$i++;
 			}
-			
-			
 					
-			//$resp="Resultados de la búsqueda en Google de \"".$ts."\": ".$jao->items[0]->title." 10".$jao->items[0]->link." ".$jao->items[1]->title." 10".$jao->items[1]->link." ".$jao->items[2]->title." 10".$jao->items[2]->link."";
-			
 			$irc->SendCommand("PRIVMSG ".$channel." :".$resp);
 		}
 		private function conv($estr){
