@@ -26,7 +26,7 @@ class ee111t1t1172{
 		if(!@isset($param[2])){$irc->sendCommand("PRIVMSG ".$irc->mask2nick($who)." :\00305Error:\003 Faltan parametros."); return 0;}
 		$myconn=$irc->myiConn();
 		$x=$myconn->query("INSERT INTO `users` (`user` ,`pass`, `rng`) VALUES ('".mysqli_real_escape_string($myconn,$param[1]). "',  sha1('".mysqli_real_escape_string($myconn,$param[2])."'), '0,*')");
-		if(!$x){$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Error interno \002002\002. Notifique al administrador."); } $myconn->close; 
+	//if(!$x){$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Error interno \002002\002. Notifique al administrador."); } $myconn->close; 
 	}
 	// Obsoleto (?)
 	
@@ -36,7 +36,7 @@ class ee111t1t1172{
 		if($param[2]>=10){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 No se pueden otorgar privilegios maximos."); return 0;}
 		$sqlx="UPDATE `users` SET `rng` =  '".$param[2]."' WHERE  `user`='".$param[1]."'";
 		$myconn=$irc->myiConn();
-		if(!$myconn->query($sqlx)){$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Error interno \002002\002. Notifique al administrador."); return 0;}$myconn->close();
+		//if(!$myconn->query($sqlx)){$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Error interno \002002\002. Notifique al administrador."); return 0;}$myconn->close();
 		$irc->sendCommand("PRIVMSG ".$channel." :Se han otorgado los privilegios.");
 	}
 	
@@ -45,7 +45,7 @@ class ee111t1t1172{
 		if(!@isset($param[1])){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 Faltan parametros."); return 0;}
 		$myconn=$irc->myiConn();
 		$rsx=$myconn->query("DELETE FROM `users` WHERE  `user`='".$param[1]."' AND `rng`<9");
-		if(!$rsx){ $irc->SendCommand("PRIVMSG ".$channel." :\00305Error:\003 no se pudo concretar la operacion."); return 0;}$myconn->close;
+		//if(!$rsx){ $irc->SendCommand("PRIVMSG ".$channel." :\00305Error:\003 no se pudo concretar la operacion."); return 0;}$myconn->close;
 		$irc->sendCommand("PRIVMSG ".$channel." :Se ha borrado el usuario.");
 	}
 	public function listusers(&$irc,$msg,$channel,$param,$who){
