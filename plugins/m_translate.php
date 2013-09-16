@@ -65,7 +65,7 @@ class ee111t1t1172{
 			$strResponse = $translatorObj->curlRequest($TranslatorUrl, $authHeader);
 						
 			$resp.=strip_tags($strResponse);
-			$resp = str_replace(array("\r","\n","\r\n",""),$resp);
+			$resp = str_replace(array("\r","\n","\r\n"),"",$resp);
 			$irc->SendCommand("PRIVMSG $channel :$resp");
 		}
 	}
