@@ -436,23 +436,23 @@ class IRCBot{
 						$who = $matches[1];
 						list($channel,$msg) = explode(' :',$msg[1],2);
 						$msg=substr($msg,0,strlen($msg)-2);
-						
+						/*
 						$myconn=$this->myiConn();
 						$rsx = $myconn->query("SELECT * FROM `ignore`");
 							while(@$rowx=$rsx->fetch_array()){
 								if(preg_match("#".$rowx['host']."#",$who,$m)){break;}
 							}
-						$myconn->close();
+						$myconn->close();*/
 						$this->procom($msg,$who,$channel);
 						break;
 				}
-				
+				/*
 				$myconn=$this->myiConn();
 				$rsx = $myconn->query("SELECT * FROM `ignore`");
 				while(@$rowx=$rsx->fetch_array()){
 					if(preg_match("#.*".$rowx['host'].".*#",$this->serv['rbuffer'],$m)){$k=1;continue;}
 				}
-				$myconn->close();
+				$myconn->close();*/
 				if(@isset($this->hdf[$this->serv['command']])){
 					foreach($this->hdf[$this->serv['command']] as $key => $val){
 						$fn=$val[1];
