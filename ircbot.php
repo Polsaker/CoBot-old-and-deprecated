@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /* 
  * Hecho por Ramiro Bou bajo la licencia CC-By-NC-SA
  * http://creativecommons.org/licenses/by-nc-sa/3.0/
@@ -6,9 +6,10 @@
 	declare(ticks = 1);
 	define("VER", "0.2.2.1");
 	date_default_timezone_set('UTC');
-	if (! function_exists('pcntl_fork')) die("[1;31mERROR[0m: Las funciones PCNTL no están disponibles\n\n");
-
 	require("config.php");
+	if ((! function_exists('pcntl_fork')) && ($conf['threads']['use']==true)) die("[1;31mERROR[0m: Las funciones PCNTL no están disponibles\n\n");
+
+
 	require("ircbot.class.php");
 	if(!isset($conf['threads']['use']) || ($conf['threads']['use']==false)){$pid=-2;}else{$pid = pcntl_fork();}
 
