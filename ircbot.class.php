@@ -442,7 +442,7 @@ class IRCBot{
 							while(@$rowx=$rsx->fetch_array()){
 								if(preg_match("#".$rowx['host']."#",$who,$m)){break;}
 							}
-						$myconn->close();*/g
+						$myconn->close();*/
 						$this->procom($msg,$who,$channel);
 						break;
 				}
