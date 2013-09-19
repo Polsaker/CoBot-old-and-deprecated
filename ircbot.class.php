@@ -402,6 +402,10 @@ class IRCBot{
 					}
 					unlink("SCcache");
 				}
+				if((file_exists("child-todo")) &&(!$conf['threads']['use']==false)){
+					include("child-todo");
+					unlink("child-todo");
+				}
 				foreach($this->htf as $key => $val){
 					$this->plugins[$val[0]]->$val[1]($this,$this->serv['rbuffer']);
 				}
