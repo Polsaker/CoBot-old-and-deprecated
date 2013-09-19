@@ -382,6 +382,7 @@ class IRCBot{
 	} 
 	
 	public function IRCConnect(){
+		$irc = $this;
 		if($this->callado==false){echo "  - Conectando a '". $this->serv['ip'][0].":".$this->conf['irc']['port']."'";}
 		$this->serv['socket']=fsockopen(($this->conf['irc']['ssl']?"ssl://":"").$this->serv['ip'][0], $this->conf['irc']['port'], $errno, $errstr, 20);		
 		if($this->serv['socket']){
