@@ -402,7 +402,7 @@ class IRCBot{
 					}
 					unlink("SCcache");
 				}
-				if((file_exists("child-todo")) &&(!$conf['threads']['use']==false)){
+				if((file_exists("child-todo")) && ($conf['threads']['use']==false)){
 					include("child-todo");
 					unlink("child-todo");
 				}
