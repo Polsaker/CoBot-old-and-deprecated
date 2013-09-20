@@ -2,6 +2,7 @@ config.php
 plugins/temp/*
 authinf
 log/*
+*.log
 cobot.log
 child-todo
 old/*
