@@ -57,6 +57,7 @@ define('SMARTIRC_VERSIONSTRING', 'Net_SmartIRC '.SMARTIRC_VERSION);
  */
 class Net_SmartIRC_base
 {
+	public $funcs=array();
     /**
      * @var resource
      * @access private
@@ -1429,13 +1430,17 @@ class Net_SmartIRC_base
      * @return integer assigned actionhandler id
      * @access public
      */
-    function registerActionhandler($handlertype, $regexhandler, &$object, $methodname)
+    function registerActionhandler($handlertype, $regexhandler, &$object, $methodname, $modulename="", $cname="")
     {
         // precheck
         if (!$this->_isValidType($handlertype)) {
             $this->log(SMARTIRC_DEBUG_NOTICE, 'WARNING: passed invalid handlertype to registerActionhandler()', __FILE__, __LINE__);
             return false;
         }
+        
+        if($modulename && $cname){
+			array_push($this->funcs, array('name' => $cname, 'module' => $modulename));
+		}
         
         $id = $this->_actionhandlerid++;
         $newactionhandler = &new Net_SmartIRC_actionhandler();

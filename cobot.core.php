@@ -57,8 +57,7 @@ class CoBot{
 	}
 	
 	public function registerCommand($name, $module){
-		echo '^'.$this->conf['irc']['prefix'].$name;
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->conf['irc']['prefix'].$name, $this->module[$name], $name);
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->conf['irc']['prefix'].$name, $this->module[$module], $name, $module, $name);
 	}
 	
 	public function connect(){

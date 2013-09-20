@@ -11,10 +11,10 @@
 
 class asdfg{
 	public function __construct(&$core){
-		$core->registerCommand("test", "test");
+		$core->registerCommand("prueba", "test");
 	}
 	
-	public function test(&$irc, &$data){
+	public function prueba(&$irc, &$data){
 		echo "NUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU";
         $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $data->nick.': No me pruebes D: ');
 	}
