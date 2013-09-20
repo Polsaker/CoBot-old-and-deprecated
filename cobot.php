@@ -1,10 +1,13 @@
 <?php
 
-	define("VER", "0.2.2.1");
+	define("VER", "1.0 Alpha");
 	date_default_timezone_set('UTC');
 	require("config.php");
+	require("mustached-ironman/SmartIRC.php");
+	require("cobot.core.php");
 	
-	require("cobot.class.php");
+	$ircbot = new CoBot($conf);
 	
-	$ircbot = new CoBot();
+	//TODO: Carga de los modulos aqui!!
 	
+	$ircbot->connect();
