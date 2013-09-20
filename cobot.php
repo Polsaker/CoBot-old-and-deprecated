@@ -6,8 +6,8 @@
 	require("mustached-ironman/SmartIRC.php");
 	require("cobot.core.php");
 	
-	$ircbot = new CoBot($conf);
+	$cobot = new CoBot($conf);
 	
-	//TODO: Carga de los modulos aqui!!
+	require("modules.php");
 	
-	$ircbot->connect();
+	//$cobot->connect();
