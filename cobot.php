@@ -10,4 +10,4 @@
 	
 	require("modules.php");
 	
-	//$cobot->connect();
+	$cobot->connect();
