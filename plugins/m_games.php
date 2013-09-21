@@ -208,7 +208,7 @@ $key="ee111t1t1172";
 			$irc->SendCommand("PRIVMSG $channel :".$irc->mask2nick($who).": Se ha invitado a $param[1] a jugar. Se te notificara si acepta o no la partida (yo esperare 10 minutos a que responda).");
 			$ts=time();
 			$rsx= mysql_query("INSERT INTO games_ppt (n1,n2,ts,dn) VALUES ('".$irc->mask2nick($who)."','$param[1]','$ts',0)");
-			$irc->SendCommand("PRIVMSG $param[1] :Has sido invitado a jugar al piedra papel o tijera por ".$irc->mask2nick($who).". Si quiere jugar, escriba  sin comillas \"/msg ".$irc->nick." {$conf['irc']['prefix']}ppt $ts 1\" Si quiere rechazar la invitación, escriba sin comillas \"/msg ".$irc->nick." {$conf['irc']['prefix']}ppt $ts 0\"");
+			$irc->SendCommand("PRIVMSG $param[1] :Has sido invitado a jugar al piedra papel o tijera por ".$irc->mask2nick($who).". Si quiere jugar, escriba  sin comillas \"/msg ".$irc->nick." {$irc->conf['irc']['prefix']}ppt $ts 1\" Si quiere rechazar la invitación, escriba sin comillas \"/msg ".$irc->nick." {$irc->conf['irc']['prefix']}ppt $ts 0\"");
 			
 			mysql_close($myconn);
 		}
@@ -226,8 +226,8 @@ $key="ee111t1t1172";
 			if($param[2]==1){
 				$ts=$rowx['ts'];
 				$rsx = mysql_query("UPDATE  games_ppt SET dn='1' WHERE ts='$param[1]'",$myconn);
-				$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Has aceptado la partida de piedra papel o tijera. Escribe sin comillas \"/msg ".$irc->nick." {$conf['irc']['prefix']}pptj $ts piedra\" para jugar con la piedra. \"/msg ".$irc->nick." {$conf['irc']['prefix']}pptj $ts papel\" para jugar con el papel o \"/msg ".$irc->nick." {$conf['irc']['prefix']}pptj $ts tijeras\" para jugar con las tijeras");
-				$irc->SendCommand("PRIVMSG ".$rowx['n1']." :$rowx[n2] ha aceptado su solicitud de juego, para  jugar, escriba sin comillas \"/msg ".$irc->nick." {$conf['irc']['prefix']}pptj $ts piedra\" para jugar con la piedra. \"/msg ".$irc->nick." {$conf['irc']['prefix']}pptj $ts papel\" para jugar con el papel o \"/msg ".$irc->nick." {$conf['irc']['prefix']}pptj $ts tijeras\" para jugar con las tijeras");
+				$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Has aceptado la partida de piedra papel o tijera. Escribe sin comillas \"/msg ".$irc->nick." {$irc->conf['irc']['prefix']}pptj $ts piedra\" para jugar con la piedra. \"/msg ".$irc->nick." {$irc->conf['irc']['prefix']}pptj $ts papel\" para jugar con el papel o \"/msg ".$irc->nick." {$irc->conf['irc']['prefix']}pptj $ts tijeras\" para jugar con las tijeras");
+				$irc->SendCommand("PRIVMSG ".$rowx['n1']." :$rowx[n2] ha aceptado su solicitud de juego, para  jugar, escriba sin comillas \"/msg ".$irc->nick." {$irc->conf['irc']['prefix']}pptj $ts piedra\" para jugar con la piedra. \"/msg ".$irc->nick." {$irc->conf['irc']['prefix']}pptj $ts papel\" para jugar con el papel o \"/msg ".$irc->nick." {$irc->conf['irc']['prefix']}pptj $ts tijeras\" para jugar con las tijeras");
 			}else{
 				$rsx = mysql_query("UPDATE  games_ppt SET dn='-1' WHERE ts='$param[1]'",$myconn);
 				$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Has rechazado la partida.");
