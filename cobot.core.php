@@ -5,11 +5,17 @@ class CoBot{
 	public $conf;
 	private $module;
 	private $modinfo;
+	public $prefix;
+	private $commands=array();
 	public function __construct($config){
 		$this->conf = $config;
+		$this->prefix= preg_quote($this->conf['irc']['prefix']);
 		$this->irc = &new Net_SmartIRC();
 		$this->irc->setDebug(SMARTIRC_DEBUG_ALL);
 		$this->irc->setUseSockets(TRUE);
+		
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.'help', $this, "help");
+
 
 	}
 	
@@ -57,8 +63,22 @@ class CoBot{
 	}
 	
 	public function registerCommand($name, $module){
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->conf['irc']['prefix'].$name, $this->module[$module], $name, $module, $name);
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name, $this->module[$module], $name, $module, $name);
+		array_push($this->commands,array('module' => $module, 'name' => $name));
+		
 	}
+	
+	public function help(&$irc, $data){
+		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "03Co04BOT v".VER." Por Mr. X Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
+		$commands="";
+		foreach($this->commands as $a){
+			$commands.="{$a['name']} ";
+		}
+		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: $commands");
+
+
+	}
+	
 	
 	public function connect(){
 		$this->irc->connect($this->conf['irc']['host'], $this->conf['irc']['port']);
