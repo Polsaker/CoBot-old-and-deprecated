@@ -1222,6 +1222,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 				$i--;
 				$base2= $base2- ($base2 * 5/100); 
 			}
+			return $base2;
 		}
 	}
 ?>
