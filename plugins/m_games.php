@@ -642,9 +642,9 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 			switch($d2){case 1:$r=$n1+$n2;break;case 2:$r=$n1-$n2;break;case 3:$r=$n1*$n2;break;case 4:$r=$n1/$n2;break;case 5:if($ca==0){$r=0-$n1;}elseif(($ca==1)||($ca==2)){$r=0-($n1+$n2);}else{$r=0-($n1*$n2);}break;}
 		//	if($rowx["nivel"]<2){if($r>10000){if($rowx["nivel"]<1){$r=10000;}else{$r=50000;}}}
 		//	if($rowx["nivel"]<2){if($r<-10000){if($rowx["nivel"]<1){$r=10000;}else{$r=30000;}}}
-			if(($d1==1)&&($d2==1)&&($d3==1)){if($rowx["nivel"]<1){$r=2500000;}else{$r=500000000;}}
-			if(($d1==2)&&($d2==2)&&($d3==2)){if($rowx["nivel"]<1){$r=2500000;}else{$r=500000000;}}
-			if(($d1==3)&&($d2==3)&&($d3==3)){if($rowx["nivel"]<1){$r=2500000;}else{$r=500000000;}}
+			if(($d1==1)&&($d2==1)&&($d3==1)){if($rowx["nivel"]<1){$r=250000;}else{$r=50000000;}}
+			if(($d1==2)&&($d2==2)&&($d3==2)){if($rowx["nivel"]<1){$r=250000;}else{$r=50000000;}}
+			if(($d1==3)&&($d2==3)&&($d3==3)){if($rowx["nivel"]<1){$r=250000;}else{$r=50000000;}}
 			if(($r>=0)&&($r<50)){$r=50;}
 		
 			if($r<0){
