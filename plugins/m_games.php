@@ -997,7 +997,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 							if(!$rowx['cobre']){$rowx['cobre']=0;}
 							$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']+$cmd[2])."' WHERE nick='$nick'",$conn);
 							$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']-$cmd[2])."' WHERE cobre='$rowx2[cobre]'",$conn);
-							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,$this->mineralpricing(500000,$rowx2['cobre']));}
+							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,$this->mineralpricing(7000,$rowx2['cobre']));}
 							$irc->SendPriv($chn, "Has comprado $cmd[2] cobres");
 						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax cobres");return 0;}
 					}else{$irc->SendPriv($chn,"05Error: No hay suficiente stock de cobres como para que puedas comprar tantos..");return 0;}
@@ -1030,7 +1030,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					if($rowx['cobre']>=$cant){
 						$rsx = mysql_query("UPDATE games_users SET cobre='".($rowx['cobre']-$cant)."' WHERE nick='$nick'",$conn);
 						$rsx = mysql_query("UPDATE games_banco SET cobre='".($rowx2['cobre']+$cant)."' WHERE cobre='$rowx2[cobre]'",$conn);
-						$i=0;while($i!=$cant){$i++;$this->user2bank($irc,$nick,$this->mineralpricing(30000,$rowx2['cobre']),true);}
+						$i=0;while($i!=$cant){$i++;$this->user2bank($irc,$nick,$this->mineralpricing(3000,$rowx2['cobre']),true);}
 
 						$irc->SendPriv($chn,"Has vendido $cant cobres.");
 
@@ -1067,7 +1067,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 							if(!$rowx['plata']){$rowx['plata']=0;}
 							$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']+$cmd[2])."' WHERE nick='$nick'",$myconn);
 							$rsx = mysql_query("UPDATE games_banco SET plat='".($rowx2['plat']-$cmd[2])."' WHERE plat='$rowx2[plat]'",$myconn);
-							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,1000000);}
+							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,$this->mineralpricing(10000,$rowx2['plat']));}
 
 							$irc->SendPriv($chn, "Has comprado $cmd[2] medidas de plata ");
 						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax medidas de plata");return 0;}
@@ -1101,7 +1101,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					if($rowx['plata']>=$cant){
 						$rsx = mysql_query("UPDATE games_users SET plata='".($rowx['plata']-$cant)."' WHERE nick='$nick'",$myconn);
 						$rsx = mysql_query("UPDATE games_banco SET plat='".($rowx2['plat']+$cant)."' WHERE plat='$rowx2[plat]'",$myconn);
-						$i=0;while($i!=$cant){$i++;$this->user2bank($irc,$nick,750000,true);}
+						$i=0;while($i!=$cant){$i++;$this->user2bank($irc,$nick,$this->mineralpricing(6000,$rowx2['plat']),true);}
 
 						$irc->SendPriv($chn,"Has vendido $cant medidas de plata.");
 
@@ -1138,7 +1138,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 							if(!$rowx['oro']){$rowx['oro']=0;}
 							$rsx = mysql_query("UPDATE games_users SET oro='".($rowx['oro']+$cmd[2])."' WHERE nick='$nick'",$myconn);
 							$rsx = mysql_query("UPDATE games_banco SET oro='".($rowx2['oro']-$cmd[2])."' WHERE oro='$rowx2[oro]'",$myconn);
-							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,10000000);}
+							$i=0;while($i!=$cmd[2]){$i++;$this->user2bank($irc,$nick,$this->mineralpricing(100000,$rowx2['oro']));}
 
 							$irc->SendPriv($chn, "Has comprado $cmd[2] medidas de oro ");
 						}else{$irc->SendPriv($chn,"05Error: Con la caja que tienes solo puedes comprar como máximo $bmax medidas de oro");return 0;}
@@ -1172,7 +1172,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 					if($rowx['oro']>=$cant){
 						$rsx = mysql_query("UPDATE games_users SET oro='".($rowx['plata']-$cant)."' WHERE nick='$nick'",$myconn);
 						$rsx = mysql_query("UPDATE games_banco SET oro='".($rowx2['plat']+$cant)."' WHERE oro='$rowx2[oro]'",$myconn);
-						$i=0;while($i!=$cant){$i++;$this->user2bank($irc,$nick,7500000,true);}
+						$i=0;while($i!=$cant){$i++;$this->user2bank($irc,$nick,$this->mineralpricing(50000,$rowx2['oro']),true);}
 
 						$irc->SendPriv($chn,"Has vendido $cant medidas de oro.");
 
@@ -1220,9 +1220,9 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 			$i=$storecant;
 			while($i>0){
 				$i--;
-				$base2= $base2- ($base2 * 5/100); 
+				$base2= $base2- ($base2 * 7/100); 
 			}
-			return $base2;
+			return round($base2);
 		}
 	}
 ?>
