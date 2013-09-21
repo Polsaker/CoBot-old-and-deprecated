@@ -543,20 +543,22 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 			if ($d%2==0){
 				$m=1;
 				switch($rowx["nivel"]){
-					case 0:	$w=rand(20, 1500);	break;
-					case 1: $w=rand(30, 3000);	break;
-					case 2:	$w=rand(40, 4000);	break;
+					case 0:	$w=rand(20, 1000);	break;
+					case 1: $w=rand(30, 2500);	break;
+					case 2:	$w=rand(40, 3500);	break;
 					case 3:	$w=rand(50, 3000);	break;
+					case 4:	$w=rand(90, 5000);	break;
 				}
 				if($rowx["nivel"]>3){$w=rand(1, 700);}
 					
 			}else{
 				$m=0;
 				switch($rowx["nivel"]){
-					case 0:	$w=rand(20, 3500);	break;
-					case 1:	$w=rand(500, 4500);	break;
-					case 2:	$w=rand(1000, 7000);break;
-					case 3:	$w=rand(5000, 10000);break;
+					case 0:	$w=rand(20, 1000);	break;
+					case 1:	$w=rand(500, 3000);	break;
+					case 2:	$w=rand(1000, 8000);break;
+					case 3:	$w=rand(5000, 11000);break;
+					case 4:	$w=rand(6000, 17000);break;
 				}
 				if($rowx["nivel"]>3){$w=rand(5000, 10000);}
 			}
@@ -607,12 +609,12 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 			if($rowxa["dinero"]!="*"){
 			if($rowx["nivel"]<1){$irc->SendCommand("PRIVMSG ".$chn." :$nick: Lo siento, Debes ser por lo menos nivel 1 para poder jugar.");return 0;}
 
-			if($rowx["dinero"]<500){$irc->SendCommand("PRIVMSG ".$chn." :$nick: Lo siento, necesitas $500 para poder jugar.");mysql_close($myconn);return 0;}else{$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-500)."' WHERE nick='".$nick."'",$myconn);}
+			if($rowx["dinero"]<700){$irc->SendCommand("PRIVMSG ".$chn." :$nick: Lo siento, necesitas $700 para poder jugar.");mysql_close($myconn);return 0;}else{$rsx = mysql_query("UPDATE  games_users SET dinero='".($rowx["dinero"]-500)."' WHERE nick='".$nick."'",$myconn);}
 			}
 			$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
 			$rowx2=mysql_fetch_array($rsx);
 			$rsx = mysql_query("UPDATE games_banco SET plata ='".($rowx2["plata"]+500)."' WHERE  plata=$rowx2[plata]",$myconn);
-			$rowx["dinero"]=$rowx["dinero"]-500;
+			$rowx["dinero"]=$rowx["dinero"]-700;
 			$rsx = mysql_query("SELECT * FROM games_banco",$myconn);
 			$rowx2=mysql_fetch_array($rsx);
 			$fig="";$win=0;$los=0;
@@ -621,10 +623,13 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 			$d3=rand(1,3);
 			$n1=0;$n2=0;$r=0;
 			switch($rowx["nivel"]){
-				case 1:	$atv=100;$ptv=500;$xtv=1000;$ca=0;break;
-				case 2:	$atv=200;$ptv=750;$xtv=1250;$ca=1;break;
-				case 3:$atv=400;$ptv=1000;$xtv=5000;$ca=2;break;
-				case 4:$atv=500;$ptv=2000;$xtv=7000;$ca=3;break;
+				case 1:	$atv=50;$ptv=250;$xtv=700;$ca=0;break;
+				case 2:	$atv=100;$ptv=500;$xtv=1000;$ca=1;break;
+				case 3:$atv=200;$ptv=700;$xtv=2000;$ca=2;break;
+				case 4:$atv=500;$ptv=1000;$xtv=5000;$ca=3;break;
+				case 5:$atv=700;$ptv=2000;$xtv=6000;$ca=3;break;
+				case 6:$atv=800;$ptv=2500;$xtv=7000;$ca=3;break;
+				case 7:$atv=800;$ptv=2000;$xtv=5000;$ca=3;break;
 			}
 			$q1=mysql_query("SELECT * FROM games_stats WHERE nick='$nick'");$n=mysql_fetch_array($q1);
 			$q2=mysql_query("UPDATE games_stats SET traga ='".($n["traga"]+1)."' WHERE  nick='$nick'",$myconn);
@@ -637,9 +642,9 @@ if($rowx['dinero']=="*"){$rowx['dinero']=mb_convert_encoding("&#8734;", 'UTF-8',
 			switch($d2){case 1:$r=$n1+$n2;break;case 2:$r=$n1-$n2;break;case 3:$r=$n1*$n2;break;case 4:$r=$n1/$n2;break;case 5:if($ca==0){$r=0-$n1;}elseif(($ca==1)||($ca==2)){$r=0-($n1+$n2);}else{$r=0-($n1*$n2);}break;}
 		//	if($rowx["nivel"]<2){if($r>10000){if($rowx["nivel"]<1){$r=10000;}else{$r=50000;}}}
 		//	if($rowx["nivel"]<2){if($r<-10000){if($rowx["nivel"]<1){$r=10000;}else{$r=30000;}}}
-			if(($d1==1)&&($d2==1)&&($d3==1)){if($rowx["nivel"]<1){$r=25000;}else{$r=50000;}}
-			if(($d1==2)&&($d2==2)&&($d3==2)){if($rowx["nivel"]<1){$r=25000;}else{$r=50000;}}
-			if(($d1==3)&&($d2==3)&&($d3==3)){if($rowx["nivel"]<1){$r=25000;}else{$r=50000;}}
+			if(($d1==1)&&($d2==1)&&($d3==1)){if($rowx["nivel"]<1){$r=2500000;}else{$r=500000000;}}
+			if(($d1==2)&&($d2==2)&&($d3==2)){if($rowx["nivel"]<1){$r=2500000;}else{$r=500000000;}}
+			if(($d1==3)&&($d2==3)&&($d3==3)){if($rowx["nivel"]<1){$r=2500000;}else{$r=500000000;}}
 			if(($r>=0)&&($r<50)){$r=50;}
 		
 			if($r<0){
@@ -692,7 +697,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 			$q1=mysql_query("SELECT * FROM games_stats WHERE nick='$nick'");$n=mysql_fetch_array($q1);
 			$q2=mysql_query("UPDATE games_stats SET rued ='".($n["rued"]+1)."' WHERE  nick='$nick'",$myconn);
 			switch($d){
-				case 1:	$final=round($final+($rowx2["plata"] * 25/100));$finald=round($final);if($rowxa["dinero"]=="*"){$final="*";$finald=$finala;}  $rsx = mysql_query("UPDATE  games_users SET dinero=$final WHERE nick='$nick'",$myconn); $rsx = mysql_query("UPDATE games_banco SET plata =".($rowx2["plata"]-($rowx2["plata"] * 25/100))." WHERE  plata=$rowx2[plata]",$myconn);$irc->SendCommand("PRIVMSG ".$chn." :$nick: 04GANASTE11 EL 25% DEL DINERO DEL BANCO!!! Ahora tienes03 $$finald");break;
+				case 1:	$final=round($final+($rowx2["plata"] * 20/100));$finald=round($final);if($rowxa["dinero"]=="*"){$final="*";$finald=$finala;}  $rsx = mysql_query("UPDATE  games_users SET dinero=$final WHERE nick='$nick'",$myconn); $rsx = mysql_query("UPDATE games_banco SET plata =".($rowx2["plata"]-($rowx2["plata"] * 25/100))." WHERE  plata=$rowx2[plata]",$myconn);$irc->SendCommand("PRIVMSG ".$chn." :$nick: 04GANASTE11 EL 20% DEL DINERO DEL BANCO!!! Ahora tienes03 $$finald");break;
 				case 2:	$final=round($final * 25/100);$finald=round($final);if($rowxa["dinero"]=="*"){$final="*";$finald=$finala;} $rsx = mysql_query("UPDATE  games_users SET dinero=$final WHERE nick='$nick'",$myconn);	$rsx = mysql_query("UPDATE games_banco SET plata =".($rowx2["plata"]+($rowx["dinero"] * 75/100))." WHERE  plata=$rowx2[plata]",$myconn);$irc->SendCommand("PRIVMSG ".$chn." :$nick: 04PERDISTE11 el 75% de tu dinero!! Ahora tienes 03$$finald");break;
 				case 3:	$final=round($final+($rowx2["plata"] * 15/100));$finald=round($final);if($rowxa["dinero"]=="*"){$final="*";$finald=$finala;} $rsx = mysql_query("UPDATE  games_users SET dinero=$final WHERE nick='$nick'",$myconn);$rsx = mysql_query("UPDATE games_banco SET plata =".($rowx2["plata"]-($rowx2["plata"] * 15/100))." WHERE  plata=$rowx2[plata]",$myconn);$irc->SendCommand("PRIVMSG ".$chn." :$nick: 04GANASTE11 EL 15% DEL DINERO DEL BANCO!!! Ahora tienes03 $$finald");break;
 				case 4: $final=round($final * 50/100);$finald=round($final);if($rowxa["dinero"]=="*"){$final="*";$finald=$finala;} $rsx = mysql_query("UPDATE  games_users SET dinero=$final WHERE nick='$nick'",$myconn);$rsx = mysql_query("UPDATE  games_users SET imp=2 WHERE nick='$nick'",$myconn);	$rsx = mysql_query("UPDATE games_banco SET plata =".($rowx2["plata"]+$final)." WHERE  plata=$rowx2[plata]",$myconn);$irc->SendCommand("PRIVMSG ".$chn." :$nick: 04PERDISTE11 el 50% de tu dinero y tendras que pagar el triple de impuestos!! Ahora tienes 03$$final" );break;
