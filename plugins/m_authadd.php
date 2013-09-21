@@ -6,7 +6,7 @@ class ee111t1t1172{
 	public function __construct(&$irc){	
 		$irc->addcmd($this, 'register', 'authadd');	
 		$irc->addcmd($this, 'setpriv', 'authadd');	
-		$irc->addcmd($this, 'addpriv', 'authadd');	
+		//$irc->addcmd($this, 'addpriv', 'authadd');	
 		$irc->addcmd($this, 'listpriv', 'authadd');	
 		$irc->addcmd($this, 'deluser', 'authadd');	
 		$irc->addcmd($this, 'listusers', 'authadd');	
@@ -36,7 +36,7 @@ class ee111t1t1172{
 		if($param[2]>=10){$irc->sendCommand("PRIVMSG ".$channel." :\00305Error:\003 No se pueden otorgar privilegios maximos."); return 0;}
 		$sqlx="UPDATE `users` SET `rng` =  '".$param[2]."' WHERE  `user`='".$param[1]."'";
 		$myconn=$irc->myiConn();
-		//if(!$myconn->query($sqlx)){$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Error interno \002002\002. Notifique al administrador."); return 0;}$myconn->close();
+		if(!$myconn->query($sqlx)){$irc->SendCommand("PRIVMSG ".$irc->mask2nick($who)." :Error interno \002002\002. Notifique al administrador."); return 0;}$myconn->close();
 		$irc->sendCommand("PRIVMSG ".$channel." :Se han otorgado los privilegios.");
 	}
 	
