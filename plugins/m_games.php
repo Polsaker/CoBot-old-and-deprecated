@@ -1218,7 +1218,7 @@ if($rowx2["plata"]<10000000){ $irc->SendCommand("PRIVMSG $chn :Lo siento, el ban
 		public function mineralpricing($base,$storecant){
 			$base2=$base*100;
 			$i=$storecant;
-			while(($i>0) && ($base2<($base/10))){
+			while(($i>0) && ($base2>($base/10))){
 				$i--;
 				$base2= $base2- ($base2 * 7/100); 
 			}
