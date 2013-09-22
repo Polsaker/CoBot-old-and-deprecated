@@ -85,8 +85,6 @@ fclose($fp);
 	if(file_exists("config.php")){
 		echo "No se encuentra el archivo de configuraciones. ¿Ha instalado el bot?";
 	}
-	include("config.php");
-	$mysqli = mysqli_connect($conf['db']['host'], $conf['db']['user'], $conf['db']['pass'], $conf['db']['name']);
 	echo "Nombre del usuario: "; $uname=trim(fgets(STDIN));
 	echo "Contraseña: "; $upass=trim(fgets(STDIN));
 	echo "Privilegios (SE APLICARAN PRIVILEGIOS GLOBALES) del 1 al 10: "; $upriv=trim(fgets(STDIN));
