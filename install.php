@@ -30,7 +30,7 @@ if($o==1){
 	$sql=explode(";",file_get_contents($dotsql));
 	$db = new SQLiteDatabase('db/cobot.db');
 	foreach($sql as $query){echo $query;$db->query($query);}
-	$db = null;
+	$db->close();
 	echo "Tablas creadas!";
 	echo "\n\n\nConfiguración:\n";
 	echo "Servidor: "; $ircserv=trim(fgets(STDIN));
