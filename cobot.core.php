@@ -21,6 +21,10 @@ class CoBot{
 		$this->dbcon = new SQLiteDatabase('db/cobot.db');
 	}
 	
+	/*
+	 * Carga un módulo
+	 * @param $name nombre del módulo (extensión incluida)
+	 */ 
 	public function loadModule($name){
 		# TODO: Admitir carga-descarga de modulos, como antes...
 		copy("modules/$name","modules/tmp/$name"); 
@@ -64,12 +68,19 @@ class CoBot{
 		return 2;
 	}
 	
+	
+	/*
+	 * Registra un comando con el bot.
+	 * @param $name: Nombre del comando
+	 * @param $module: Nombre del modulo (@id)
+	 */ 
 	public function registerCommand($name, $module){
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name, $this->module[$module], $name, $module, $name);
 		array_push($this->commands,array('module' => $module, 'name' => $name));
 		
 	}
 	
+	# Ayuda del bot (comando)
 	public function help(&$irc, $data){
 		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "03Co04BOT v".VER." Por Mr. X Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
 		$commands="";
@@ -79,6 +90,7 @@ class CoBot{
 		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
 	}
 	
+	# Autenticación del bot (comando)
 	public function auth(&$irc, $data){
 		if(isset($data->messageex[2])){
 			$result = $this->dbcon->query("SELECT * FROM 'users' WHERE user='{$data->messageex[1]}' AND pass='".sha1($data->messageex[2])."';")->fetch();
@@ -90,6 +102,7 @@ class CoBot{
 		}
 	}
 	
+	# Funcion para conectarse al irc.
 	public function connect(){
 		$this->irc->connect($this->conf['irc']['host'], $this->conf['irc']['port']);
 		$this->irc->login($this->conf['irc']['nick'], 'CoBot/'.VER.'', 0, $this->conf['irc']['nick']);
