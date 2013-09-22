@@ -1,7 +1,7 @@
 <?php
 $conffile="<?php \n";
 $modfile="<?php \n";
-$dotsql="CoBOT.sql";
+$dotsql="cobot.sqlite.sql";
 echo "Instalador de CoBot.\n";
 echo "Seleccione una opción:\n\n";
 echo "1 - Instalar (Crear tablas en la base de datos y archivos de configuración)\n";
@@ -9,7 +9,7 @@ echo "2 - Crear usuarios\nSu opción: ";
 $o = trim(fgets(STDIN));
 echo "\n\n";
 if($o==1){
-	echo "Conexión a la base de datos:\n";
+/*	echo "Conexión a la base de datos:\n";
 	echo "Servidor [localhost]: "; $dbhost = trim(fgets(STDIN)); if(!$dbhost){$dbhost="localhost";}
 	echo "Usuario: "; $dbuser = trim(fgets(STDIN));
 	echo "Constraseña: "; $dbpass = trim(fgets(STDIN));
@@ -24,11 +24,13 @@ if($o==1){
 		$mycdb=$mysqli->query("CREATE DATABASE `{$db}`");
 		if(!$mycdb){echo "No se pudo crear la base de datos."; exit;}
 		echo "Base de datos creada.\n\n";
-	}
+	}*/
 	echo "Creando tablas...\n";
 	$ok = true;
 	$sql=explode(";",file_get_contents($dotsql));
-	foreach($sql as $query){$mysqli->query($query);}
+	$db = new SQLiteDatabase('db/cobot.db');
+	foreach($sql as $query){echo $query;$db->query($query);}
+	$db->close();
 	echo "Tablas creadas!";
 	echo "\n\n\nConfiguración:\n";
 	echo "Servidor: "; $ircserv=trim(fgets(STDIN));
@@ -80,16 +82,15 @@ fwrite($fp,$modfile);
 fclose($fp);
 
 }elseif($o==2){
-	if(file_exists("config.php")){
-		echo "No se encuentra el archivo de configuraciones. ¿Ha instalado el bot?";
-	}
-	include("config.php");
-	$mysqli = mysqli_connect($conf['db']['host'], $conf['db']['user'], $conf['db']['pass'], $conf['db']['name']);
 	echo "Nombre del usuario: "; $uname=trim(fgets(STDIN));
 	echo "Contraseña: "; $upass=trim(fgets(STDIN));
 	echo "Privilegios (SE APLICARAN PRIVILEGIOS GLOBALES) del 1 al 10: "; $upriv=trim(fgets(STDIN));
-	echo "Crear usuario? [Y/n] ";$g=trim(fgets(STDIN)); if($g!="y"){$g=false;}else{$g=true;}
+	echo "Crear usuario? [y/n] ";$g=trim(fgets(STDIN)); if($g!="y"){$g=false;}else{$g=true;}
 	if($g==true){
-		$mysqli->query("INSERT INTO `users` (`user` ,`pass` ,`rng`) VALUES ('{$uname}',  '".sha1($upass)."',  '{$upriv},*');");
+		$db = new SQLiteDatabase('db/cobot.db');
+		$db->query("INSERT INTO 'users' ('user' ,'pass') VALUES ('{$uname}',  '".sha1($upass)."');");
+		$r = $db->query("SELECT * FROM 'users' WHERE user='{$uname}';")->fetch();
+		$db->query("INSERT INTO 'userpriv' ('uid' ,'rng', 'sec') VALUES ('{$r['id']}', '{$upriv}',  '*');");
+		$db->close();
 	}
 }

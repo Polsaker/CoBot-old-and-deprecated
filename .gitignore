@@ -7,3 +7,4 @@ log/*
 cobot.log
 child-todo
 old/*
+db*

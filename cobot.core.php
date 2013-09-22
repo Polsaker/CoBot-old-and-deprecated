@@ -7,6 +7,7 @@ class CoBot{
 	private $modinfo;
 	public $prefix;
 	private $commands=array();
+	public $dbcon;
 	public function __construct($config){
 		$this->conf = $config;
 		$this->prefix= preg_quote($this->conf['irc']['prefix']);
@@ -15,8 +16,9 @@ class CoBot{
 		$this->irc->setUseSockets(TRUE);
 		
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.'help', $this, "help");
-
-
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'.$this->prefix.'auth', $this, "auth");
+		
+		$this->dbcon = new SQLiteDatabase('db/cobot.db');
 	}
 	
 	public function loadModule($name){
@@ -74,11 +76,19 @@ class CoBot{
 		foreach($this->commands as $a){
 			$commands.="{$a['name']} ";
 		}
-		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: $commands");
-
-
+		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
 	}
 	
+	public function auth(&$irc, $data){
+		if(isset($data->messageex[2])){
+			$result = $this->dbcon->query("SELECT * FROM 'users' WHERE user='{$data->messageex[1]}' AND pass='".sha1($data->messageex[2])."';")->fetch();
+			if(isset($result['id'])){
+				echo "Login OK";
+			}else{
+				echo "Fallo el login";
+			}
+		}
+	}
 	
 	public function connect(){
 		$this->irc->connect($this->conf['irc']['host'], $this->conf['irc']['port']);

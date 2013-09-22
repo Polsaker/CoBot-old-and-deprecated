@@ -15,7 +15,6 @@ class asdfg{
 	}
 	
 	public function prueba(&$irc, &$data){
-		echo "NUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU";
         $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $data->nick.': No me pruebes D: ');
 	}
 	
