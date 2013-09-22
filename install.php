@@ -90,7 +90,7 @@ fclose($fp);
 	echo "Nombre del usuario: "; $uname=trim(fgets(STDIN));
 	echo "Contraseña: "; $upass=trim(fgets(STDIN));
 	echo "Privilegios (SE APLICARAN PRIVILEGIOS GLOBALES) del 1 al 10: "; $upriv=trim(fgets(STDIN));
-	echo "Crear usuario? [y/n] ";$g=trim(fgets(STDIN)); if($g!="y")){$g=false;}else{$g=true;}
+	echo "Crear usuario? [y/n] ";$g=trim(fgets(STDIN)); if($g!="y"){$g=false;}else{$g=true;}
 	if($g==true){
 		$db = new SQLiteDatabase('db/cobot.db');
 		$db->query("INSERT INTO 'users' ('user' ,'pass') VALUES ('{$uname}',  '".sha1($upass)."');");
