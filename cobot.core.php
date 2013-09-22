@@ -15,8 +15,7 @@ class CoBot{
 		$this->irc->setUseSockets(TRUE);
 		
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.'help', $this, "help");
-
-
+		$db = new codb();
 	}
 	
 	public function loadModule($name){
