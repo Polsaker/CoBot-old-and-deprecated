@@ -82,9 +82,6 @@ fwrite($fp,$modfile);
 fclose($fp);
 
 }elseif($o==2){
-	if(file_exists("config.php")){
-		echo "No se encuentra el archivo de configuraciones. ¿Ha instalado el bot?";
-	}
 	echo "Nombre del usuario: "; $uname=trim(fgets(STDIN));
 	echo "Contraseña: "; $upass=trim(fgets(STDIN));
 	echo "Privilegios (SE APLICARAN PRIVILEGIOS GLOBALES) del 1 al 10: "; $upriv=trim(fgets(STDIN));
