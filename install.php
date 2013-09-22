@@ -9,7 +9,7 @@ echo "2 - Crear usuarios\nSu opción: ";
 $o = trim(fgets(STDIN));
 echo "\n\n";
 if($o==1){
-	echo "Conexión a la base de datos:\n";
+/*	echo "Conexión a la base de datos:\n";
 	echo "Servidor [localhost]: "; $dbhost = trim(fgets(STDIN)); if(!$dbhost){$dbhost="localhost";}
 	echo "Usuario: "; $dbuser = trim(fgets(STDIN));
 	echo "Constraseña: "; $dbpass = trim(fgets(STDIN));
@@ -24,11 +24,12 @@ if($o==1){
 		$mycdb=$mysqli->query("CREATE DATABASE `{$db}`");
 		if(!$mycdb){echo "No se pudo crear la base de datos."; exit;}
 		echo "Base de datos creada.\n\n";
-	}
+	}*/
 	echo "Creando tablas...\n";
 	$ok = true;
 	$sql=explode(";",file_get_contents($dotsql));
-	foreach($sql as $query){$mysqli->query($query);}
+	$db = new SQLiteDatabase('db/cobot.db');
+	foreach($sql as $query){echo $query;$db->query($query);}
 	echo "Tablas creadas!";
 	echo "\n\n\nConfiguración:\n";
 	echo "Servidor: "; $ircserv=trim(fgets(STDIN));
