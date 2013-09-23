@@ -90,10 +90,15 @@ fclose($fp);
 	echo "Crear usuario? [y/n] ";$g=trim(fgets(STDIN)); if($g!="y"){$g=false;}else{$g=true;}
 	if($g==true){
 		ORM::configure('sqlite:./db/cobot.db');
-		$db = new SQLiteDatabase('db/cobot.db');
-		$db->query("INSERT INTO 'users' ('user' ,'pass') VALUES ('{$uname}',  '".sha1($upass)."');");
-		$r = $db->query("SELECT * FROM 'users' WHERE user='{$uname}';")->fetch();
-		$db->query("INSERT INTO 'userpriv' ('uid' ,'rng', 'sec') VALUES ('{$r['id']}', '{$upriv}',  '*');");
-		$db->close();
+		$user = ORM::for_table('users')->create();
+		$user->username=$uname;
+		$user->pass=sha1($upass);
+		$user->save();
+
+		$priv = ORM::for_table('userpriv')->create();
+		$priv->uid = $user->id;
+		$priv->rng = $upriv;
+		$priv->sec = "*";
+		$priv->save();
 	}
 }
