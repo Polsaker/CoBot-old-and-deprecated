@@ -1,14 +1,20 @@
 '''CoBot''' es un bot IRC modular programado en PHP. <br>
 ==Instalación==
-Para instalar el bot, edite los archivos de configuración (config.php y modules.conf.php) a gusto y ejecute la consulta SQL (que esta en CoBOT.sql) en la base de datos que haya configurado. El usuario y contraseña por defecto para el usuario administrador es admin:admin. Para autenticarse, envie el comando $auth usuario contraseña por mensaje privado al bot.
+Para instalar el bot ejecute en un terminal:
+
+ php install.php
+
+Se iniciara una aplicacion que lo guiara en el proceso de instalar el bot con sus modulos basicos y crear usuarios.
 
 ==Corriendo CoBot==
 
-Para correr CoBot en un terminal Linux:
+Para correr CoBot:
 
- nohup php ircbot.php &
+ php cobot.php
 
-==Website del Proyecto==
-[http://www.cobot.com.ar http://www.cobot.com.ar]
-==Canal IRC==
-Estamos en el canal #CoBot en freenode para atender sugerencias o brindar ayuda.
+o
+
+ nohup php cobot.php &
+
+==Ayuda==
+Si necesitas ayuda instalando/configurando el bot puedes ir a preguntar en #Cobot en irc.freenode.net
