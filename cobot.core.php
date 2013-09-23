@@ -88,6 +88,7 @@ class CoBot{
 			$commands.="{$a['name']} ";
 		}
 		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
+		print_r($data);
 	}
 	
 	# Autenticación del bot (comando)
@@ -95,7 +96,9 @@ class CoBot{
 		if(isset($data->messageex[2])){
 			$result = $this->dbcon->query("SELECT * FROM 'users' WHERE user='{$data->messageex[1]}' AND pass='".sha1($data->messageex[2])."';")->fetch();
 			if(isset($result['id'])){
-				echo "Login OK";
+				if(file_exists("authinf")){$authinf=json_decode(file_get_contents("authinf"));}else{$authinf=array();}
+				array_push($authinf, $data->from);
+				file_put_contents("authinf",json_encode($authinf));
 			}else{
 				echo "Fallo el login";
 			}

@@ -1,6 +1,7 @@
 <?php
 $conffile="<?php \n";
 $modfile="<?php \n";
+require_once 'lib/idiorm/idiorm.php';
 $dotsql="cobot.sqlite.sql";
 echo "Instalador de CoBot.\n";
 echo "Seleccione una opción:\n\n";
@@ -28,9 +29,10 @@ if($o==1){
 	echo "Creando tablas...\n";
 	$ok = true;
 	$sql=explode(";",file_get_contents($dotsql));
-	$db = new SQLiteDatabase('db/cobot.db');
-	foreach($sql as $query){echo $query;$db->query($query);}
-	$db->close();
+	//$db = new SQLiteDatabase('db/cobot.db');
+	ORM::configure('sqlite:./db/cobot.db');
+	$db = ORM::get_db();
+	foreach($sql as $query){$db->exec($query);}
 	echo "Tablas creadas!";
 	echo "\n\n\nConfiguración:\n";
 	echo "Servidor: "; $ircserv=trim(fgets(STDIN));
@@ -67,7 +69,7 @@ if($o==1){
 	$ircbot->load("m_ignore.php");
 	$ircbot->load("m_op.php");
 	';
-	$conffile.="\$conf['conn']['reconnect']=15;\n\$conf['conn']['charset']=\"ISO-8859-1\";\n\n";
+	$conffile.="\$conf['conn']['reconnect']=15;\n\$conf['conn']['charset']=\"ISO-8859-1\";\n\n\$ormconfig = 'sqlite:./db/cobot.db';\n\n";
 	echo "\n\n -- Configuración básica terminada -- \n\n";
 	echo "Desea activar m_games? (juegos) [Y/n] ";$g=trim(fgets(STDIN)); if($g=="n"){$g=false;}else{$g=true;}
 	if($g==true){
@@ -87,6 +89,7 @@ fclose($fp);
 	echo "Privilegios (SE APLICARAN PRIVILEGIOS GLOBALES) del 1 al 10: "; $upriv=trim(fgets(STDIN));
 	echo "Crear usuario? [y/n] ";$g=trim(fgets(STDIN)); if($g!="y"){$g=false;}else{$g=true;}
 	if($g==true){
+		ORM::configure('sqlite:./db/cobot.db');
 		$db = new SQLiteDatabase('db/cobot.db');
 		$db->query("INSERT INTO 'users' ('user' ,'pass') VALUES ('{$uname}',  '".sha1($upass)."');");
 		$r = $db->query("SELECT * FROM 'users' WHERE user='{$uname}';")->fetch();
