@@ -3,5 +3,5 @@
 [/] Sistema de autenticacion
     [ ] "Handler" por el que pasen todos los comandos ante de llamar a sus funciones para verificar permisoss
     [X] La autenticacion en si
-    [ ] Verificacion de autenticacion
+    [X] Verificacion de autenticacion
 [ ] Migrar los modulos de la version anterior

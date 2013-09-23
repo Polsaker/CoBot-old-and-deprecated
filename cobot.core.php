@@ -17,7 +17,10 @@ class CoBot{
 		
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.'help', $this, "help");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'.$this->prefix.'auth', $this, "auth");
+		
 		ORM::configure($config['ormconfig']);
+		
+		if(file_exists("authinf")){unlink("authinf");} // Borramos la "cache" de usuarios identificados al iniciar
 	}
 	
 	/*
@@ -87,7 +90,6 @@ class CoBot{
 			$commands.="{$a['name']} ";
 		}
 		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
-		print_r($data);
 	}
 	
 	# Autenticación del bot (comando)
@@ -97,15 +99,41 @@ class CoBot{
 			$user = ORM::for_table('users')->where('username', $data->messageex[1])->where('pass', sha1($data->messageex[2]))->find_one();
 
 			if($user!=false){
-				echo $user->id;
 				if(file_exists("authinf")){$authinf=json_decode(file_get_contents("authinf"));}else{$authinf=array();}
-				array_push($authinf, $data->from);
+				array_push($authinf, array('h' => $data->from, 'u' => $user->id));
 				file_put_contents("authinf",json_encode($authinf));
 				$irc->message(SMARTIRC_TYPE_QUERY, $data->nick, 'Autenticado exitosamente');
 			}else{
 				$irc->message(SMARTIRC_TYPE_QUERY, $data->nick, 'Usuario/Contraseña incorrectos');
 			}
 		}
+	}
+	
+	/*
+	 * Función para verifica si un usuario se ha identificado con el bot
+	 * @param $host: Máscara del usuario ($data->from)
+	 * @param $perm: Privilegios a comprobar
+	 * @param $permsec: Sección de permisos a verificar (Opcional, si es false se
+	 *  verificara por permisos globales.
+	 * 
+	 * @return: True si el usuario esta identificado y cumple con los privilegios requeridos
+	 */ 
+	public function authchk($host, $perm, $permsec=false){
+		if(!file_exists("authinf")){ return false;}else{$authinf=json_decode(file_get_contents("authinf"));}
+		print_r($authinf);
+		foreach($authinf as $key => $val){
+			if($val->h==$host){
+				//$user = ORM::for_table('users')->where('id', $val['u'])->find_one();
+				$userpriv = ORM::for_table('userpriv')->where('uid', $val->u)->find_one();
+				if($userpriv==false){continue;}
+				if(($userpriv->sec == "*") && ($userpriv->rng >= $perm)){
+					return true;
+				}elseif(($userpriv->sec == $permsec) && ($userpriv->rng >= $perm)){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	# Funcion para conectarse al irc.
