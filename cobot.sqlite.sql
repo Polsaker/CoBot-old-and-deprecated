@@ -1,14 +1,3 @@
-CREATE TABLE users (
-  id INTEGER AUTO_INCREMENT,
-  username varchar(255) NOT NULL,
-  pass varchar(255) NOT NULL,
-  PRIMARY KEY (id)
-);
+CREATE TABLE 'users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'username' TEXT NOT NULL, 'pass' TEXT NOT NULL);
 
-CREATE TABLE userpriv (
-  'id' INTEGER AUTO_INCREMENT,
-  'uid' INTEGER,
-  rng varchar(100) NOT NULL,
-  sec varchar(100) NOT NULL,
-  PRIMARY KEY ('id')
-);
+CREATE TABLE 'userpriv' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'uid' INTEGER NOT NULL, 'rng' INTEGER NOT NULL, 'sec' TEXT NOT NULL);

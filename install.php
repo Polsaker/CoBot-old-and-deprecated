@@ -83,5 +83,6 @@ fclose($fp);
 		$priv->rng = $upriv;
 		$priv->sec = "*";
 		$priv->save();
+		$user->save();
 	}
 }
