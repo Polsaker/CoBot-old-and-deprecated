@@ -1,6 +1,6 @@
 CREATE TABLE users (
   id INTEGER AUTO_INCREMENT,
-  'user' varchar(255) NOT NULL,
+  username varchar(255) NOT NULL,
   pass varchar(255) NOT NULL,
   PRIMARY KEY (id)
 );
