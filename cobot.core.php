@@ -80,7 +80,7 @@ class CoBot{
 	 * @param $perm y $sec: Permisos y seccion de permisos. ($perm = -1, no requiere permisos)
 	 */ 
 	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*"){
-		$ac = $this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name.'(?!\d+)', $this, 'commandHandler');
+		$ac = $this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$nameIASY.'(?!\w+)', $this, 'commandHandler');
 		
 		if($help != false){
 			array_push($this->help,array('name' => $name, 'priv' => $perm, 'sec' => $sec));
