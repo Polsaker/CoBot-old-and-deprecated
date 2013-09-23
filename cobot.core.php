@@ -67,7 +67,7 @@ class CoBot{
 		$this->modinfo[$id]['author'] = $author;
 		$this->modinfo[$id]['ver'] = $ver;
 		$this->modinfo[$id]['desc'] = $desc;
-		echo "[1;32m[OK][0m\n";
+		echo "[OK]\n";
 		return 2;
 	}
 	
