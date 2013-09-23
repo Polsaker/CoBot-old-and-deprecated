@@ -19,6 +19,8 @@ class CoBot{
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.'help', $this, "help");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'.$this->prefix.'auth', $this, "auth");
 		
+		if($config['nickserv']['nsuser']){$this->irc->registerActionhandler(SMARTIRC_TYPE_LOGIN, '.*', $this, "ircLogin");}
+		
 		ORM::configure($config['ormconfig']);
 		
 		if(file_exists("authinf")){unlink("authinf");} // Borramos la "cache" de usuarios identificados al iniciar
@@ -27,9 +29,11 @@ class CoBot{
 	/*
 	 * Carga un módulo
 	 * @param $name nombre del módulo (extensión incluida)
+	 * @return: 2 = error de formato, -6 = Archivo no encontrado, -2 = El modulo ya estaba
+	 * cargado, 3 = Errores de sintaxis, -3 = no se encuentra la clase principal, 5 = todo ok
 	 */ 
 	public function loadModule($name){
-		# TODO: Admitir carga-descarga de modulos, como antes...
+		if(!file_exists("modules/$name")){ return -6;}
 		copy("modules/$name","modules/tmp/$name"); 
 		$fp = fopen("modules/tmp/$name", "r");
 		$pfile="";$i=0;
@@ -45,11 +49,11 @@ class CoBot{
 		
 		echo "Cargando $name ";
 		
-		if(@isset($this->module[$id])){echo "[1;31m[ERR][0m El plugin ya está cargado\n"; return -2;}
+		if(@isset($this->module[$id])){echo "[1;31m[ERR][0m El modulo ya está cargado\n"; return -2;}
 		
 		@$r=shell_exec("php -l modules/$name");
 		if(!preg_match("@.*No syntax errors detected.*@",$r)){
-			echo "[1;31m[ERR][0m El plugin parece tener errores de sintáxis!!\n";
+			echo "[ERR] El plugin parece tener errores de sintáxis!!\n";
 			return 3;
 		}
 		
@@ -61,16 +65,20 @@ class CoBot{
 		fclose($fp);
 		
 		include("modules/tmp/$name");
-		if(!class_exists($renclass)){echo "[1;31m[ERR][0m No encuentro la funcion principal!!\n";return -3;}
+		if(!class_exists($renclass)){echo "[ERR] No encuentro la funcion principal!!\n";return -3;}
 		
 		$this->module[$id]=new $renclass($this);
 		$this->modinfo[$id]['author'] = $author;
 		$this->modinfo[$id]['ver'] = $ver;
 		$this->modinfo[$id]['desc'] = $desc;
 		echo "[OK]\n";
-		return 2;
+		return 5;
 	}
 	
+	/*
+	 * Descarga un módulo
+	 * @param $module: Nombre del modulo
+	 */ 
 	public function unloadModule($module){
 		
 		$fp = fopen("modules/tmp/$module", "r");
@@ -83,6 +91,12 @@ class CoBot{
 			if($val['module']==$id){
 				$this->irc->unregisterActionid($val['handler']);
 				unset($this->commands[$key]);
+			}
+		}
+		
+		foreach($this->help as $key => $val){
+			if($val['m']==$id){
+				unset($this->help[$key]);
 			}
 		}
 	}	
@@ -98,7 +112,7 @@ class CoBot{
 		$ac = $this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name.'(?!\w+)', $this, 'commandHandler');
 		
 		if($help != false){
-			array_push($this->help,array('name' => $name, 'priv' => $perm, 'sec' => $sec));
+			array_push($this->help,array('m'=>$module,'name' => $name, 'priv' => $perm, 'sec' => $sec));
 		}
 		$this->commands[$name] = array(
 			'module' => $module,
@@ -110,6 +124,10 @@ class CoBot{
 		
 	}
 	
+	public function ircLogin(&$irc, $data){
+		$irc->message(SMARTIRC_TYPE_QUERY, "NickServ", "IDENTIFY ".$this->conf['nickserv']['nsuser']." ".$this->conf['nickserv']['nspass']);
+	}
+	# Funcion interna: Verifica privilegios y llama a la función correcta
 	public function commandHandler(&$irc, &$data){
 		print_r($data);
 		$command = substr($data->messageex[0],1);
