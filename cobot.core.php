@@ -71,6 +71,21 @@ class CoBot{
 		return 2;
 	}
 	
+	public function unloadModule($module){
+		
+		$fp = fopen("modules/tmp/$module", "r");
+		$pfile="";$i=0;
+		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);}
+		if(preg_match("#.*@id: (.+)\n.*#",$pfile,$m)){$id=$m[1];}else{return 2;}
+		
+		foreach($this->commands as $key => $val){
+			print_r($val);
+			if($val['module']==$id){
+				$this->irc->unregisterActionid($val['handler']);
+				unset($this->commands[$key]);
+			}
+		}
+	}	
 	
 	/*
 	 * Registra un comando con el bot.
@@ -80,7 +95,7 @@ class CoBot{
 	 * @param $perm y $sec: Permisos y seccion de permisos. ($perm = -1, no requiere permisos)
 	 */ 
 	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*"){
-		$ac = $this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$nameIASY.'(?!\w+)', $this, 'commandHandler');
+		$ac = $this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name.'(?!\w+)', $this, 'commandHandler');
 		
 		if($help != false){
 			array_push($this->help,array('name' => $name, 'priv' => $perm, 'sec' => $sec));

@@ -25,6 +25,7 @@ class asdfg{
 	
 	public function prueba3(&$irc, &$data, &$core){
         $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $data->nick.': Esta es una prueba oculta');
+        $core->unloadModule("m_test.php");
 	}
 	
 }

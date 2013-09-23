@@ -1,7 +1,7 @@
 [X] Migrar a SQLite
-[/] Sistema de carga/descarga de modulos
+[X] Sistema de carga/descarga de modulos
 [X] Sistema de autenticacion
     [X] "Handler" por el que pasen todos los comandos ante de llamar a sus funciones para verificar permisoss
     [X] La autenticacion en si
     [X] Verificacion de autenticacion
-[ ] Migrar los modulos de la version anterior
+[ ] Migrar los modulos de la version anteriorLos corchetes "[ ]"
