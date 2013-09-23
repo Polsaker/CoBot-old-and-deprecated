@@ -8,5 +8,25 @@
 	$conf['irc']['channels']=array("#CoBOT"); // canales a los que el bot entrara al conectarse
 	$conf['irc']['prefix']="-"; //prefijo de los comandos
 	
+	$conf['m_google']['api_key']=""; // Clave de la API de google
+
+	
+	
 	# No modificar
 	$conf['ormconfig'] = 'sqlite:./db/cobot.db';
+
+/*	
+	# Si el servidor IRC al que intenta conectar no usa servicios Atheme, ponga la contraseña en el campo para el usuario y deje el campo de usuario vacío
+	$conf['nickserv']['nsuser']="CoBot"; // Usuario de nickserv
+	$conf['nickserv']['nspass']="asdf"; // Contraseña de nickserv
+	$conf['nickserv']['ghost']=true; // Si usar ghost cuando el nick esta en uso.
+	
+	$conf['m_translate']['cid']=""; // Client ID de microsoft translate
+	$conf['m_translate']['cs']=""; // Client Secret
+	$conf['m_translate']['authurl']="https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/"; // Esto supuestamente no se debe modificar
+	$conf['m_translate']['scopeurl']="http://api.microsofttranslator.com"; // Esto tampoco
+	$conf['m_translate']['granttype']="client_credentials"; // Esto tampoco debe ser modificado :P
+	
+	$conf['m_short']['bitly-api']=""; //Bit.ly api key
+	$conf['m_weather']['api_key']=""; //wunderground.com api key
+	*/
