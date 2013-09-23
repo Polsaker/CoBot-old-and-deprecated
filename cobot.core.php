@@ -8,6 +8,7 @@ class CoBot{
 	public $prefix;
 	private $commands=array();
 	public $dbcon;
+	private $help=array();
 	public function __construct($config){
 		$this->conf = $config;
 		$this->prefix= preg_quote($this->conf['irc']['prefix']);
@@ -75,21 +76,45 @@ class CoBot{
 	 * Registra un comando con el bot.
 	 * @param $name: Nombre del comando
 	 * @param $module: Nombre del modulo (@id)
+	 * @param $help: Ayuda de la funcion (false = funcion oculta)
+	 * @param $perm y $sec: Permisos y seccion de permisos. ($perm = -1, no requiere permisos)
 	 */ 
-	public function registerCommand($name, $module){
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name, $this->module[$module], $name, $module, $name);
-		array_push($this->commands,array('module' => $module, 'name' => $name));
+	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*"){
+		$ac = $this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name, $this->module[$module], $name, $module, $name);
+		
+		if($help != false){
+			array_push($this->help,array('name' => $name, 'priv' => $perm, 'sec' => $sec));
+		}
+		$this->commands[$name] = array(
+			'module' => $module,
+			'perm' 	 => $perm,
+			'sec' 	 => $sec,
+			'help' 	 => $help,
+			'handler'=> $ah
+		);
 		
 	}
 	
 	# Ayuda del bot (comando)
 	public function help(&$irc, $data){
-		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "03Co04BOT v".VER." Por Mr. X Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
-		$commands="";
-		foreach($this->commands as $a){
-			$commands.="{$a['name']} ";
+		if((!isset($data->messageex[1])) || ($data->messageex[1]== "")){
+			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "03Co04BOT v".VER." Por Mr. X Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
+			$commands="";
+			foreach($this->help as $a){
+				if($a['priv']!=-1){
+					if($this->authchk($data->from, $a['priv'], $a['sec'])==false){
+						continue;
+					}
+				}
+				$commands.="{$a['name']} ";
+				
+			}
+			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
+		}else{
+			if((isset($this->commands[$data->messageex[1]])) && ($this->commands[$data->messageex[1]]['help'] != "")){
+				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de {$data->messageex[1]}: {$this->commands[$data->messageex[1]]['help']}");
+			}
 		}
-		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
 	}
 	
 	# Autenticación del bot (comando)
