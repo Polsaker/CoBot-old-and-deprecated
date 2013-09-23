@@ -10,26 +10,9 @@ echo "2 - Crear usuarios\nSu opción: ";
 $o = trim(fgets(STDIN));
 echo "\n\n";
 if($o==1){
-/*	echo "Conexión a la base de datos:\n";
-	echo "Servidor [localhost]: "; $dbhost = trim(fgets(STDIN)); if(!$dbhost){$dbhost="localhost";}
-	echo "Usuario: "; $dbuser = trim(fgets(STDIN));
-	echo "Constraseña: "; $dbpass = trim(fgets(STDIN));
-	echo "Base de datos (se creará si no existe) [CoBot]: "; $db = trim(fgets(STDIN)); if(!$db){$db="CoBot";}
-	$conffile.="\$conf['db']['host'] = '{$dbhost}';\n\$conf['db']['user'] = '{$dbuser}';\n\$conf['db']['pass'] = '{$dbpass}';\n\$conf['db']['name'] = '{$db}';\n\n";
-	echo "\n";
-	$mysqli=mysqli_connect($dbhost,$dbuser,$dbpass);
-	if(!$mysqli){echo "No se pudo conectar al servidor mysql."; exit;}
-	$mysdb=$mysqli->select_db($db);
-	if(!$mysdb){
-		echo "La base de datos no existe, creandola...\n";
-		$mycdb=$mysqli->query("CREATE DATABASE `{$db}`");
-		if(!$mycdb){echo "No se pudo crear la base de datos."; exit;}
-		echo "Base de datos creada.\n\n";
-	}*/
 	echo "Creando tablas...\n";
 	$ok = true;
 	$sql=explode(";",file_get_contents($dotsql));
-	//$db = new SQLiteDatabase('db/cobot.db');
 	ORM::configure('sqlite:./db/cobot.db');
 	$db = ORM::get_db();
 	foreach($sql as $query){$db->exec($query);}
