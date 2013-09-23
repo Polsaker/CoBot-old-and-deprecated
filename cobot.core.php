@@ -163,6 +163,25 @@ class CoBot{
 	}
 	
 	/*
+	 * Junta los valores de un array en una sola cadena.
+	 * Util para unir parametros
+	 * 
+	 * @param $param: Array
+	 * @param $from: Desde que parte del array se comenzara a concatenar
+	 * 
+	 */ 
+	public function jparam($param,$from){
+		$i=$from;
+		$ts="";
+		while(@isset($param[$i])){
+			$ts.=$param[$i]. " ";
+			$i++;
+		}
+		return trim($ts);
+	}
+
+	
+	/*
 	 * Función para verifica si un usuario se ha identificado con el bot
 	 * @param $host: Máscara del usuario ($data->from)
 	 * @param $perm: Privilegios a comprobar
