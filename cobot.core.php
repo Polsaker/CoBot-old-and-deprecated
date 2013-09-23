@@ -17,8 +17,7 @@ class CoBot{
 		
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.'help', $this, "help");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'.$this->prefix.'auth', $this, "auth");
-		
-		$this->dbcon = new SQLiteDatabase('db/cobot.db');
+		ORM::configure($config['ormconfig']);
 	}
 	
 	/*
@@ -94,13 +93,17 @@ class CoBot{
 	# Autenticación del bot (comando)
 	public function auth(&$irc, $data){
 		if(isset($data->messageex[2])){
-			$result = $this->dbcon->query("SELECT * FROM 'users' WHERE user='{$data->messageex[1]}' AND pass='".sha1($data->messageex[2])."';")->fetch();
-			if(isset($result['id'])){
+			//$result = $this->dbcon->query("SELECT * FROM 'users' WHERE user='{$data->messageex[1]}' AND pass='".sha1($data->messageex[2])."';")->fetch();
+			$user = ORM::for_table('users')->where('username', $data->messageex[1])->where('pass', sha1($data->messageex[2]))->find_one();
+
+			if($user!=false){
+				echo $user->id;
 				if(file_exists("authinf")){$authinf=json_decode(file_get_contents("authinf"));}else{$authinf=array();}
 				array_push($authinf, $data->from);
 				file_put_contents("authinf",json_encode($authinf));
+				$irc->message(SMARTIRC_TYPE_QUERY, $data->nick, 'Autenticado exitosamente');
 			}else{
-				echo "Fallo el login";
+				$irc->message(SMARTIRC_TYPE_QUERY, $data->nick, 'Usuario/Contraseña incorrectos');
 			}
 		}
 	}
