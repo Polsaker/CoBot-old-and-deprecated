@@ -16,13 +16,14 @@ class asdfg{
 		$core->registerCommand("prueba3", "test");
 	}
 	
-	public function prueba(&$irc, &$data){
+	public function prueba(&$irc, &$data, &$core){
         $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $data->nick.': No me pruebes D: ');
 	}
-	public function prueba2(&$irc, &$data){
+	public function prueba2(&$irc, &$data, &$core){
         $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $data->nick.': Esta es una prueba VIP');
 	}
-	public function prueba3(&$irc, &$data){
+	
+	public function prueba3(&$irc, &$data, &$core){
         $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $data->nick.': Esta es una prueba oculta');
 	}
 	

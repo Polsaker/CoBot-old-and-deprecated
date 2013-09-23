@@ -80,7 +80,7 @@ class CoBot{
 	 * @param $perm y $sec: Permisos y seccion de permisos. ($perm = -1, no requiere permisos)
 	 */ 
 	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*"){
-		$ac = $this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name, $this->module[$module], $name, $module, $name);
+		$ac = $this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name.'(?!\d+)', $this, 'commandHandler');
 		
 		if($help != false){
 			array_push($this->help,array('name' => $name, 'priv' => $perm, 'sec' => $sec));
@@ -90,9 +90,22 @@ class CoBot{
 			'perm' 	 => $perm,
 			'sec' 	 => $sec,
 			'help' 	 => $help,
-			'handler'=> $ah
+			'handler'=> $ac
 		);
 		
+	}
+	
+	public function commandHandler(&$irc, &$data){
+		print_r($data);
+		$command = substr($data->messageex[0],1);
+		if(isset($this->commands[$command])){
+			if($this->commands[$command]['perm']!=-1){
+				if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['sec'])==false){
+					return -5;
+				}
+			}
+			$this->module[$this->commands[$command]['module']]->$command(&$irc, $data, &$this);
+		}
 	}
 	
 	# Ayuda del bot (comando)
