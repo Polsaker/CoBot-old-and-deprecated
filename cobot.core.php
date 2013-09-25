@@ -9,6 +9,9 @@ class CoBot{
 	private $commands=array();
 	public $dbcon;
 	private $help=array();
+	
+	private $messagehandlers=array();
+	private $messagehandlerscount = 0;
 	public function __construct($config){
 		$this->conf = $config;
 		$this->prefix= preg_quote($this->conf['irc']['prefix']);
@@ -18,7 +21,7 @@ class CoBot{
 		
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.'help', $this, "help");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'.$this->prefix.'auth', $this, "auth");
-		
+		$this->irc->cobot=$this;
 		if($config['nickserv']['nsuser']){$this->irc->registerActionhandler(SMARTIRC_TYPE_LOGIN, '.*', $this, "ircLogin");}
 		
 		ORM::configure($config['ormconfig']);
@@ -127,6 +130,7 @@ class CoBot{
 	public function ircLogin(&$irc, $data){
 		$irc->message(SMARTIRC_TYPE_QUERY, "NickServ", "IDENTIFY ".$this->conf['nickserv']['nsuser']." ".$this->conf['nickserv']['nspass']);
 	}
+	
 	# Funcion interna: Verifica privilegios y llama a la función correcta
 	public function commandHandler(&$irc, &$data){
 		print_r($data);
@@ -176,6 +180,41 @@ class CoBot{
 				$irc->message(SMARTIRC_TYPE_QUERY, $data->nick, 'Autenticado exitosamente');
 			}else{
 				$irc->message(SMARTIRC_TYPE_QUERY, $data->nick, 'Usuario/Contraseña incorrectos');
+			}
+		}
+	}
+	
+	
+	/*
+	 * Registra un messageHandler.
+	 * @param $messagecode: Código del mensaje (Ej: "PRIVMSG", "NOTICE", "001", "353")
+	 * @param $module: @id del modulo.
+	 * @param $method: función a la que se llamará cuando se reciva $messagecode
+	 * 
+	 * @return ID del handler. Utilizada para eliminarlo.
+	 */ 
+	public function registerMessageHandler($messagecode, $module, $method){
+		$this->messagehandlers[$this->messagehandlerscount] = array(
+		'id' => $this->messagehandlerscount,
+		'module' => $module,
+		'type' => $messagecode,
+		'method' => $method
+		);
+		
+		$this->messagehandlerscount++;
+		return $this->messagehandlerscount - 1;
+	}
+	
+	#Borra un messageHandler. $id = ID del messagehandler
+	public function unregisterMessageHandler($id){
+		unset($this->messagehandlers[$id]);
+	}
+	
+	# Método interno para procesar message handlers
+	public function messageHandler(&$ircdata, $messagecode){
+		foreach($this->messagehandlers as $key => $val){
+			if($val['type']==$messagecode){
+				$this->module[$val['module']]->$val['method']($ircdata);
 			}
 		}
 	}

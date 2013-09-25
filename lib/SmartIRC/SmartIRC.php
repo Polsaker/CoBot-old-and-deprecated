@@ -56,7 +56,8 @@ define('SMARTIRC_VERSIONSTRING', 'Net_SmartIRC '.SMARTIRC_VERSION);
  * @access public
  */
 class Net_SmartIRC_base
-{
+{  
+    public $cobot;
 	public $funcs=array();
     /**
      * @var resource
@@ -2317,9 +2318,9 @@ class Net_SmartIRC_base
         }
         
         // if exist, call user defined method for the handling
-        if (@method_exists($this, $methodname)) {
-           $this->log(SMARTIRC_DEBUG_MESSAGEHANDLER, 'DEBUG_MESSAGEHANDLER: calling user defined method "'.get_class($this).'->'.$methodname.'" ('.$_codetype.')', __FILE__, __LINE__);
-           $this->$methodname($ircdata);
+        if (@method_exists($this->cobot, "messageHandler")) {
+           $this->log(SMARTIRC_DEBUG_MESSAGEHANDLER, 'DEBUG_MESSAGEHANDLER: calling user defined method "'.get_class($this->cobot).'->messageHandler" ('.$_codetype.')', __FILE__, __LINE__);
+           $this->cobot->messageHandler($ircdata, $messagecode);
            $found = true;
         }
         
