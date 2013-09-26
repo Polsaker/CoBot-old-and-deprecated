@@ -27,7 +27,7 @@
     [ ] m_ping
     [ ] m_protect
     [ ] m_rae
-    [ ] m_raw
+    [X] m_raw
     [X] m_say
     [ ] m_short
     [ ] m_translate
