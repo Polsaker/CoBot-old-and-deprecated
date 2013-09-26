@@ -8,7 +8,7 @@
 [/] Migrar los modulos de la version anterior
     [ ] m_atheme
     [ ] m_authadd
-    [ ] m_booksearch
+    [X] m_booksearch
     [_] m_bot
     [ ] m_divisa
     [ ] m_games
