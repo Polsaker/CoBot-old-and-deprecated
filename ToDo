@@ -20,7 +20,7 @@
     [ ] m_learn
     [ ] m_modules
     [_] m_mwedit
-    [ ] m_nick
+    [X] m_nick
     [X] m_nickserv
     [ ] m_op
     [_] m_oper
