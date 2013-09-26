@@ -23,7 +23,6 @@ class pinkflyingelephants{
 	}
     
     public function reconnect(&$irc, $data, &$core){
-        $irc->disconnect();
         $irc->reconnect();
 	}
     
