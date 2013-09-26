@@ -13,7 +13,7 @@
     [ ] m_divisa
     [ ] m_games
     [X] m_google
-    [ ] m_hash
+    [X] m_hash
     [_] m_ignore
     [ ] m_iplocator
     [X] m_joinpart
