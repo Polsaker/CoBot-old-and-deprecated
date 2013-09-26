@@ -22,8 +22,7 @@ class CoBot{
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.'help', $this, "help");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'.$this->prefix.'auth', $this, "auth");
 		$this->irc->cobot=$this;
-		if($config['nickserv']['nsuser']){$this->irc->registerActionhandler(SMARTIRC_TYPE_LOGIN, '.*', $this, "ircLogin");}
-		
+				
 		ORM::configure($config['ormconfig']);
 		
 		if(file_exists("authinf")){unlink("authinf");} // Borramos la "cache" de usuarios identificados al iniciar
@@ -127,10 +126,6 @@ class CoBot{
 		
 	}
 	
-	public function ircLogin(&$irc, $data){
-		$irc->message(SMARTIRC_TYPE_QUERY, "NickServ", "IDENTIFY ".$this->conf['nickserv']['nsuser']." ".$this->conf['nickserv']['nspass']);
-	}
-	
 	# Funcion interna: Verifica privilegios y llama a la función correcta
 	public function commandHandler(&$irc, &$data){
 		print_r($data);
@@ -214,7 +209,7 @@ class CoBot{
 	public function messageHandler(&$ircdata, $messagecode){
 		foreach($this->messagehandlers as $key => $val){
 			if($val['type']==$messagecode){
-				$this->module[$val['module']]->$val['method']($ircdata);
+				$this->module[$val['module']]->$val['method']($this->irc, $ircdata, $this);
 			}
 		}
 	}

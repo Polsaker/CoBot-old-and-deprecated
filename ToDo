@@ -4,7 +4,7 @@
     [X] "Handler" por el que pasen todos los comandos ante de llamar a sus funciones para verificar permisoss
     [X] La autenticacion en si
     [X] Verificacion de autenticacion
-[ ] Implementar EventHandlers
+[X] Implementar EventHandlers
 [/] Migrar los modulos de la version anterior
     [ ] m_atheme
     [ ] m_authadd
@@ -21,7 +21,7 @@
     [ ] m_modules
     [_] m_mwedit
     [ ] m_nick
-    [ ] m_nickserv
+    [X] m_nickserv
     [ ] m_op
     [_] m_oper
     [ ] m_ping
