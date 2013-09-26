@@ -14,8 +14,8 @@ class quemierdahacesmirandoesto{
 		$core->registerCommand("say", "say", "Hace que el bot hable. Sintaxis: say <canal> <mensaje>", 1);
 	}
 	
-	public function ythandler(&$irc, $data, $core){
-		$ts = $core->jparam, $data->messageex,2);
-		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->messageex[1], $ts);
-	}
+  public function say(&$irc, $data, &$core){
+    $ts = $core->jparam, $data->messageex,2);
+    $irc->message(SMARTIRC_TYPE_CHANNEL, $data->messageex[1], $ts);
+  }
 }
