@@ -16,7 +16,7 @@
     [ ] m_hash
     [_] m_ignore
     [ ] m_iplocator
-    [ ] m_joinpart
+    [X] m_joinpart
     [ ] m_learn
     [ ] m_modules
     [_] m_mwedit
