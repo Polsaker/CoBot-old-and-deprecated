@@ -109,9 +109,10 @@ class CoBot{
 	 * @param $help: Ayuda de la funcion (false = funcion oculta)
 	 * @param $perm y $sec: Permisos y seccion de permisos. ($perm = -1, no requiere permisos)
 	 * @param $method: La función a la que se llamará al ejecutarse el comando (Por defecto = el mismo nombre que el comando)
+	 * @param $type: El tipo de handler que se registrara. Por defecto: SMARTIRC_TYPE_CHANNEL
 	 */ 
-	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*", $method = null){
-		$ac = $this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name.'(?!\w+)', $this, 'commandHandler');
+	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*", $method = null, $type=SMARTIRC_TYPE_CHANNEL){
+		$ac = $this->irc->registerActionhandler($type, '^'.$this->prefix.$name.'(?!\w+)', $this, 'commandHandler');
 		if($method!=null){$fmethod=$method;}else{$fmethod=$name;}
 		if($help != false){
 			array_push($this->help,array('m'=>$module,'name' => $name, 'priv' => $perm, 'sec' => $sec));
