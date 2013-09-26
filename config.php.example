@@ -8,9 +8,13 @@
 	$conf['irc']['channels']=array("#CoBOT"); // canales a los que el bot entrara al conectarse
 	$conf['irc']['prefix']="-"; //prefijo de los comandos
 	
+	$conf['nickserv']['nsuser']="CoBot"; // Usuario de nickserv
+	$conf['nickserv']['nspass']="asdf"; // Contraseña de nickserv
+	
 	$conf['m_google']['api_key']=""; // Clave de la API de google
 
-	
+	$conf['m_weather']['api_key']=""; //wunderground.com api key
+
 	
 	# No modificar
 	$conf['ormconfig'] = 'sqlite:./db/cobot.db';
@@ -28,5 +32,4 @@
 	$conf['m_translate']['granttype']="client_credentials"; // Esto tampoco debe ser modificado :P
 	
 	$conf['m_short']['bitly-api']=""; //Bit.ly api key
-	$conf['m_weather']['api_key']=""; //wunderground.com api key
 	*/
