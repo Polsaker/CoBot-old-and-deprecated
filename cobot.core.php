@@ -137,7 +137,7 @@ class CoBot{
 				}
 			}
 			$fu = $this->commands[$command]['method'];
-			$this->module[$this->commands[$command]['module']]->$fu(&$irc, $data, &$this);
+			$this->module[$this->commands[$command]['module']]->$fu($irc, $data, $this);
 		}
 	}
 	
