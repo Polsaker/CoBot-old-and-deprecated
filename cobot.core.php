@@ -89,7 +89,6 @@ class CoBot{
 		if(preg_match("#.*@id: (.+)\n.*#",$pfile,$m)){$id=$m[1];}else{return 2;}
 		
 		foreach($this->commands as $key => $val){
-			print_r($val);
 			if($val['module']==$id){
 				$this->irc->unregisterActionid($val['handler']);
 				unset($this->commands[$key]);
@@ -130,7 +129,6 @@ class CoBot{
 	
 	# Funcion interna: Verifica privilegios y llama a la función correcta
 	public function commandHandler(&$irc, &$data){
-		print_r($data);
 		$command = substr($data->messageex[0],1);
 		if(isset($this->commands[$command])){
 			if($this->commands[$command]['perm']!=-1){
@@ -247,7 +245,6 @@ class CoBot{
 	 */ 
 	public function authchk($host, $perm, $permsec=false){
 		if(!file_exists("authinf")){ return false;}else{$authinf=json_decode(file_get_contents("authinf"));}
-		print_r($authinf);
 		foreach($authinf as $key => $val){
 			if($val->h==$host){
 				//$user = ORM::for_table('users')->where('id', $val['u'])->find_one();
