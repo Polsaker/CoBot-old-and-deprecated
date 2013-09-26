@@ -109,10 +109,11 @@ class CoBot{
 	 * @param $module: Nombre del modulo (@id)
 	 * @param $help: Ayuda de la funcion (false = funcion oculta)
 	 * @param $perm y $sec: Permisos y seccion de permisos. ($perm = -1, no requiere permisos)
+	 * @param $method: La función a la que se llamará al ejecutarse el comando (Por defecto = el mismo nombre que el comando)
 	 */ 
-	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*"){
+	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*", $method = null){
 		$ac = $this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.$name.'(?!\w+)', $this, 'commandHandler');
-		
+		if($method!=null){$fmethod=$method;}else{$fmethod=$name;}
 		if($help != false){
 			array_push($this->help,array('m'=>$module,'name' => $name, 'priv' => $perm, 'sec' => $sec));
 		}
@@ -121,7 +122,8 @@ class CoBot{
 			'perm' 	 => $perm,
 			'sec' 	 => $sec,
 			'help' 	 => $help,
-			'handler'=> $ac
+			'handler'=> $ac,
+			'method' => $fmethod
 		);
 		
 	}
@@ -136,7 +138,8 @@ class CoBot{
 					return -5;
 				}
 			}
-			$this->module[$this->commands[$command]['module']]->$command(&$irc, $data, &$this);
+			$fu = $this->commands[$command]['method'];
+			$this->module[$this->commands[$command]['module']]->$fu(&$irc, $data, &$this);
 		}
 	}
 	
