@@ -9,3 +9,4 @@ $cobot->loadModule("m_weather.php");
 $cobot->loadModule("m_hash.php");
 $cobot->loadModule("m_youtube.php");
 $cobot->loadModule("m_raw.php");
+$cobot->loadModule("m_rae.php");

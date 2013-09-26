@@ -26,7 +26,7 @@
     [_] m_oper
     [ ] m_ping
     [ ] m_protect
-    [ ] m_rae
+    [X] m_rae
     [X] m_raw
     [X] m_say
     [ ] m_short
