@@ -11,3 +11,4 @@ $cobot->loadModule("m_youtube.php");
 $cobot->loadModule("m_raw.php");
 $cobot->loadModule("m_rae.php");
 $cobot->loadModule("m_booksearch.php");
+$cobot->loadModule("m_authadd.php");
