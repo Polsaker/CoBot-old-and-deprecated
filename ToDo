@@ -28,7 +28,7 @@
     [ ] m_protect
     [ ] m_rae
     [ ] m_raw
-    [ ] m_say
+    [X] m_say
     [ ] m_short
     [ ] m_translate
     [X] m_weather
