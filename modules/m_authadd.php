@@ -11,7 +11,7 @@
 
 class amodkey{
 	public function __construct($core){
-		$irc->registerCommand("register", "authadd", false, -1, "*", null, SMARTIRC_TYPE_QUERY);
+		$core->registerCommand("register", "authadd", false, -1, "*", null, SMARTIRC_TYPE_QUERY);
 	}
 	
 	public function register(&$irc, &$data, &$core){
