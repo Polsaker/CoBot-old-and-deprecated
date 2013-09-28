@@ -19,8 +19,8 @@ class CoBot{
 		$this->irc->setDebug(SMARTIRC_DEBUG_ALL);
 		$this->irc->setUseSockets(TRUE);
 		
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'.$this->prefix.'help', $this, "help");
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'.$this->prefix.'auth', $this, "auth");
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|".preg_quote($this->conf['irc']['nick'])."[:,] )help(?!\w+)", $this, "help");
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|".preg_quote($this->conf['irc']['nick'])."[:,] )".'auth(?!\w+)', $this, "auth");
 		$this->irc->cobot=$this;
 				
 		ORM::configure($config['ormconfig']);
@@ -128,24 +128,32 @@ class CoBot{
 		
 	}
 	
+	private function rsMsgEx($messageex){
+		if(preg_match("#".preg_quote($this->conf['irc']['nick'])."(\:|,)#",$messageex[0])){
+			$messageex[0] = $messageex[0]. " " . $messageex[1];
+			$i=0;
+			foreach($messageex as $key => $val){
+				if($i>0){
+					if(isset($messageex[$i+1])){
+						$messageex[$i] = $messageex[$i+1];
+						
+					}else{
+						unset($messageex[$i]);
+					}
+				}
+			$i++;}
+		}
+		return $messageex;
+	}
+	
 	# Funcion interna: Verifica privilegios y llama a la función correcta
 	public function commandHandler(&$irc, &$data){
 		if(preg_match("#".preg_quote($this->conf['irc']['nick'])."(\:|,)#",$data->messageex[0])){
-			$command = $data->messageex[1];
-			echo "boop";
-			$data->messageex[0] = $data->messageex[0]. " " . $data->messageex[1];
-			$i=0;foreach($data->messageex as $key => $val){
-				if($i>0){
-					if(isset($data->messageex[$key+1])){
-						$data->messageex[$key] = $data->messageex[$key+1];
-					}else{
-						unset($data->messageex[$key]);
-					}
-				}
-			}
+			$command = $data->messageex[1];		
 		}else{
 			$command = substr($data->messageex[0],1);
 		}
+		$data->messageex = $this->rsMsgEx($data->messageex);
 		print_r($data->messageex);
 		if(isset($this->commands[$command])){
 			if($this->commands[$command]['perm']!=-1){
@@ -160,6 +168,7 @@ class CoBot{
 	
 	# Ayuda del bot (comando)
 	public function help(&$irc, $data){
+		$data->messageex = $this->rsMsgEx($data->messageex);
 		if((!isset($data->messageex[1])) || ($data->messageex[1]== "")){
 			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "03Co04BOT v".VER." Por Mr. X Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
 			$commands="";
