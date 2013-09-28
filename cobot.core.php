@@ -112,7 +112,7 @@ class CoBot{
 	 * @param $type: El tipo de handler que se registrara. Por defecto: SMARTIRC_TYPE_CHANNEL
 	 */ 
 	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*", $method = null, $type=SMARTIRC_TYPE_CHANNEL){
-		$ac = $this->irc->registerActionhandler($type, '^'.$this->prefix.$name.'(?!\w+)', $this, 'commandHandler');
+		$ac = $this->irc->registerActionhandler($type, '^'."(?:{$this->prefix}|".preg_quote($this->conf['irc']['nick'])."[:,] )".$name.'(?!\w+)', $this, 'commandHandler');
 		if($method!=null){$fmethod=$method;}else{$fmethod=$name;}
 		if($help != false){
 			array_push($this->help,array('m'=>$module,'name' => $name, 'priv' => $perm, 'sec' => $sec));
@@ -130,7 +130,23 @@ class CoBot{
 	
 	# Funcion interna: Verifica privilegios y llama a la función correcta
 	public function commandHandler(&$irc, &$data){
-		$command = substr($data->messageex[0],1);
+		if(preg_match("#".preg_quote($this->conf['irc']['nick'])."(\:|,)#",$data->messageex[0])){
+			$command = $data->messageex[1];
+			echo "boop";
+			$data->messageex[0] = $data->messageex[0]. " " . $data->messageex[1];
+			$i=0;foreach($data->messageex as $key => $val){
+				if($i>0){
+					if(isset($data->messageex[$key+1])){
+						$data->messageex[$key] = $data->messageex[$key+1];
+					}else{
+						unset($data->messageex[$key]);
+					}
+				}
+			}
+		}else{
+			$command = substr($data->messageex[0],1);
+		}
+		print_r($data->messageex);
 		if(isset($this->commands[$command])){
 			if($this->commands[$command]['perm']!=-1){
 				if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['sec'])==false){
