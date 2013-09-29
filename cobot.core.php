@@ -19,7 +19,7 @@ class CoBot{
 		$this->irc->setDebug(SMARTIRC_DEBUG_ALL);
 		$this->irc->setUseSockets(TRUE);
 		
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|".preg_quote($this->conf['irc']['nick'])."[:,] )help(?!\w+)", $this, "help");
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|".preg_quote($this->conf['irc']['nick'])."[:,] )(help|ayuda)(?!\w+)", $this, "help");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|".preg_quote($this->conf['irc']['nick'])."[:,] )".'auth(?!\w+)', $this, "auth");
 		$this->irc->cobot=$this;
 				
