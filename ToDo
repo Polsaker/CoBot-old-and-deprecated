@@ -7,7 +7,7 @@
 [X] Implementar EventHandlers
 [/] Migrar los modulos de la version anterior
     [ ] m_atheme
-    [/] m_authadd
+    [X] m_authadd
     [X] m_booksearch
     [_] m_bot
     [X] m_divisa
