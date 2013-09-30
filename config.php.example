@@ -22,11 +22,6 @@
 	$conf['ormconfig'] = 'sqlite:./db/cobot.db';
 
 /*	
-	# Si el servidor IRC al que intenta conectar no usa servicios Atheme, ponga la contraseña en el campo para el usuario y deje el campo de usuario vacío
-	$conf['nickserv']['nsuser']="CoBot"; // Usuario de nickserv
-	$conf['nickserv']['nspass']="asdf"; // Contraseña de nickserv
-	$conf['nickserv']['ghost']=true; // Si usar ghost cuando el nick esta en uso.
-	
 	$conf['m_translate']['cid']=""; // Client ID de microsoft translate
 	$conf['m_translate']['cs']=""; // Client Secret
 	$conf['m_translate']['authurl']="https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/"; // Esto supuestamente no se debe modificar

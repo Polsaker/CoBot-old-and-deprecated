@@ -16,3 +16,4 @@ $cobot->loadModule("m_op.php");
 $cobot->loadModule("m_say.php");
 $cobot->loadModule("m_divisa.php");
 $cobot->loadModule("m_short.php");
+$cobot->loadModule("m_modules.php");

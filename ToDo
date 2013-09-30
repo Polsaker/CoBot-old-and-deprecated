@@ -18,7 +18,7 @@
     [ ] m_iplocator
     [X] m_joinpart
     [ ] m_learn
-    [ ] m_modules
+    [X] m_modules
     [_] m_mwedit
     [X] m_nick
     [X] m_nickserv

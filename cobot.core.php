@@ -42,10 +42,10 @@ class CoBot{
 		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);}
 		if(preg_match("#.*@key: (.+)\n.*#",$pfile,$m)){$key=$m[1];}else{return 2;}
 		if(preg_match("#.*@id: (.+)\n.*#",$pfile,$m)){$id=$m[1];}else{return 2;}
-		if(preg_match("#.*@author: (.+)\n.*#",$pfile,$m)){$author=$m[1];}else{return 2;}
-		if(preg_match("#.*@ver: (.+).*#",$pfile,$m)){$ver=$m[1];}else{}
+		if(preg_match("#.*@author: (.+)\n.*#",$pfile,$m)){$author=$m[1];}
+		if(preg_match("#.*@ver: (.+).*#",$pfile,$m)){$ver=$m[1];}
 		if(preg_match("#.*@name: (.+)\n.*#",$pfile,$m)){$pname=$m[1];}else{return 2;}
-		if(preg_match("#.*@desc: (.+)\n.*#",$pfile,$m)){$desc=$m[1];}else{return 2;}
+		if(preg_match("#.*@desc: (.+)\n.*#",$pfile,$m)){$desc=$m[1];}
 		$ts=time();
 		$renclass = $id."x".$ts;
 		
@@ -80,14 +80,16 @@ class CoBot{
 	/*
 	 * Descarga un módulo
 	 * @param $module: Nombre del modulo
+	 * @return: -6 = El archivo no existe; 2 = Error de formato;  -2 = El modulo no estaba cargado
+	 * 5 = todo ok.
 	 */ 
 	public function unloadModule($module){
-		
+		if(!file_exists("modules/tmp/$module")){return -6;}
 		$fp = fopen("modules/tmp/$module", "r");
 		$pfile="";$i=0;
 		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);}
 		if(preg_match("#.*@id: (.+)\n.*#",$pfile,$m)){$id=$m[1];}else{return 2;}
-		
+		if(!isset($this->module[$id])){ return -2; }
 		foreach($this->commands as $key => $val){
 			if($val['module']==$id){
 				$this->irc->unregisterActionid($val['handler']);
@@ -100,6 +102,17 @@ class CoBot{
 				unset($this->help[$key]);
 			}
 		}
+		
+		foreach($this->messagehandlers as $key => $val){
+			if($val['module']==$id){
+				unset($this->messagehandlers[$key]);
+			}
+		}
+
+		
+		unset($this->module[$id]);
+		unset($this->modinfo[$id]);
+		return 5;
 	}	
 	
 	/*
