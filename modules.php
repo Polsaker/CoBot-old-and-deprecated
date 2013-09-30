@@ -13,3 +13,4 @@ $cobot->loadModule("m_rae.php");
 $cobot->loadModule("m_booksearch.php");
 $cobot->loadModule("m_authadd.php");
 $cobot->loadModule("m_op.php");
+$cobot->loadModule("m_say.php");
