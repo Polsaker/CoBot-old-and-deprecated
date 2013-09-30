@@ -29,7 +29,7 @@
     [X] m_rae
     [X] m_raw
     [X] m_say
-    [ ] m_short
+    [X] m_short
     [ ] m_translate
     [X] m_weather
     [ ] m_wikichan
