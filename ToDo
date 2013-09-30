@@ -22,7 +22,7 @@
     [_] m_mwedit
     [X] m_nick
     [X] m_nickserv
-    [ ] m_op
+    [X] m_op
     [_] m_oper
     [ ] m_ping
     [ ] m_protect
