@@ -14,7 +14,9 @@
 	$conf['m_google']['api_key']=""; // Clave de la API de google
 
 	$conf['m_weather']['api_key']=""; //wunderground.com api key
-
+	
+	$conf['m_short']['bitly-api']=""; //Bit.ly api key
+	$conf['m_short']['bitly-user']=""; //Bit.ly user
 	
 	# No modificar
 	$conf['ormconfig'] = 'sqlite:./db/cobot.db';
@@ -30,6 +32,4 @@
 	$conf['m_translate']['authurl']="https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/"; // Esto supuestamente no se debe modificar
 	$conf['m_translate']['scopeurl']="http://api.microsofttranslator.com"; // Esto tampoco
 	$conf['m_translate']['granttype']="client_credentials"; // Esto tampoco debe ser modificado :P
-	
-	$conf['m_short']['bitly-api']=""; //Bit.ly api key
-	*/
+		*/
