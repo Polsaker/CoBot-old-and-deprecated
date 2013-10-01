@@ -11,7 +11,7 @@
 
 class imagenius{
 	public function __construct(&$core){
-        $core->registerMessageHandler('376', "nickserv", "identify");
+        $core->registerMessageHandler('001', "nickserv", "identify");
 	}
 	
 	public function identify(&$irc, $data, $core){
