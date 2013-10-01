@@ -9,7 +9,7 @@ class ee111t1t1172{
 	private $kbanrsn;
 	private $kban=-1; // -1=no hace nada; 0=kickban; 1=unban
 	public function __construct(&$irc){	
-		if(!$irc->conf['nickserv']['nspass']){return 0;}
+	//	if(!$irc->conf['nickserv']['nspass']){return 0;}
 		$irc->addcmd($this, 'op', 'op');	
 		$irc->addcmd($this, 'deop', 'op');
 		$irc->addcmd($this, 'voice', 'op');
