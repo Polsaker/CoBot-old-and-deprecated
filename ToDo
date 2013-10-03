@@ -16,7 +16,7 @@
     [X] m_google
     [X] m_hash
     [_] m_ignore
-    [ ] m_iplocator
+    [X] m_iplocator
     [X] m_joinpart
     [ ] m_learn
     [X] m_modules

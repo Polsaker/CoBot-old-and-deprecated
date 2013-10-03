@@ -18,3 +18,4 @@ $cobot->loadModule("m_divisa.php");
 $cobot->loadModule("m_short.php");
 $cobot->loadModule("m_modules.php");
 $cobot->loadModule("m_protect.php");
+$cobot->loadModule("m_iplocator.php");
