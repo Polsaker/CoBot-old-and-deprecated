@@ -11,8 +11,8 @@
 
 class polsakervaadominarelmundo{
 	public function __construct(&$core){
-        $core->registerCommand("join", "joinpart", "Hace que el bot entre a un canal. Sintaxis: join <#canal>", 4);
-        $core->registerCommand("part", "joinpart", "Hace que el bot salga de un canal. Sintaxis: part [#canal] [Razón]", 4);
+        $core->registerCommand("join", "joinpart", "Hace que el bot entre a un canal. Sintaxis: join <#canal>", 4, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+        $core->registerCommand("part", "joinpart", "Hace que el bot salga de un canal. Sintaxis: part [#canal] [Razón]", 4, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 	}
 	
 	public function join(&$irc, $data, &$core){

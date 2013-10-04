@@ -11,8 +11,8 @@
 
 class bofh{
 	public function __construct($core){
-		$core->registerCommand("loadmod", "modules", "Carga un módulo. Sinaxis: loadmod <modulo>", 10);
-		$core->registerCommand("unloadmod", "modules", "Descarga un módulo. Sinaxis: unloadmod <modulo>", 10);
+		$core->registerCommand("loadmod", "modules", "Carga un módulo. Sinaxis: loadmod <modulo>", 10, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("unloadmod", "modules", "Descarga un módulo. Sinaxis: unloadmod <modulo>", 10, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 	}
 
 	public function loadmod(&$irc, $data, &$core){

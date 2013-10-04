@@ -11,7 +11,7 @@
 
 class quemierdahacesmirandoesto{
 	public function __construct(&$core){
-		$core->registerCommand("say", "say", "Hace que el bot hable. Sintaxis: say <canal> <mensaje>", 1);
+		$core->registerCommand("say", "say", "Hace que el bot hable. Sintaxis: say <canal> <mensaje>", 1, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 	}
 	
   public function say(&$irc, $data, &$core){

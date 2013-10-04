@@ -11,8 +11,8 @@
 
 class pinkflyingelephants{
 	public function __construct(&$core){
-		$core->registerCommand("quit", "quit", "Desconecta del IRC y cierra el bot.", 10);
-		$core->registerCommand("reconnect", "quit", "Desconecta del IRC y conecta de nuevo.", 10);
+		$core->registerCommand("quit", "quit", "Desconecta del IRC y cierra el bot.", 10, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("reconnect", "quit", "Desconecta del IRC y conecta de nuevo.", 10, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
         
         // TODO: Restart.
 	}
