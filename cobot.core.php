@@ -187,16 +187,16 @@ class CoBot{
 		foreach($k->tree as $key => $val){
 			switch($val->path){
 				case "cobot.core.php":
-					array_push($toupdate, array('path'=>"cobot.core.php",'hash'=>$val->sha,'url'=>$val->url,'l'=>$val['size']));
+					array_push($toupdate, array('path'=>"cobot.core.php",'hash'=>$val->sha,'url'=>$val->url,'l'=>$val->size));
 					break;
 				case "cobot.php":
-					array_push($toupdate, array('path'=>"cobot.php",'hash'=>$val->sha,'url'=>$val->url,'l'=>$val['size']));
+					array_push($toupdate, array('path'=>"cobot.php",'hash'=>$val->sha,'url'=>$val->url,'l'=>$val->size));
 					break;
 				case "modules":
 					$w = json_decode(file_get_contents($val->url));
 					foreach($w->tree as $k => $v){
 						if($v->type == "blob"){
-							array_push($toupdate, array('path'=>"modules/".$v->path,'hash'=>$v->sha,'url'=>$v->url,'l'=>$v['size']));
+							array_push($toupdate, array('path'=>"modules/".$v->path,'hash'=>$v->sha,'url'=>$v->url,'l'=>$v->size));
 						}
 					}
 					break;
