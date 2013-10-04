@@ -26,7 +26,7 @@ class CoBot{
 				
 		ORM::configure($config['ormconfig']);
 		
-	//	if(file_exists("authinf")){unlink("authinf");} // Borramos la "cache" de usuarios identificados al iniciar
+		if(file_exists("authinf")){unlink("authinf");} // Borramos la "cache" de usuarios identificados al iniciar
 	}
 	
 	/*
