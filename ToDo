@@ -5,7 +5,7 @@
     [X] La autenticacion en si
     [X] Verificacion de autenticacion
 [X] Implementar EventHandlers
-[ ] Sistema de actualizaciones
+[X] Sistema de actualizaciones
 [/] Migrar los modulos de la version anterior
     [ ] m_atheme
     [X] m_authadd

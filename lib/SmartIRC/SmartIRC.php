@@ -2348,7 +2348,7 @@ class Net_SmartIRC_base
             } else {
                 $regex = '/'.$handlerobject->message.'/';
             }
-            
+            $regex = str_replace("¬NICK¬", $this->_nick, $regex);
             if (($handlerobject->type & $ircdata->type) &&
                 (preg_match($regex, $ircdata->message) == 1)) {
                 

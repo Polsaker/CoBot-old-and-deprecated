@@ -19,8 +19,9 @@ class CoBot{
 		$this->irc->setDebug(SMARTIRC_DEBUG_ALL);
 		$this->irc->setUseSockets(TRUE);
 		
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|".preg_quote($this->conf['irc']['nick'])."[:,] )(help|ayuda)(?!\w+)", $this, "help");
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|".preg_quote($this->conf['irc']['nick'])."[:,] )".'auth(?!\w+)', $this, "auth");
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|¬NICK¬[:,] )(help|ayuda)(?!\w+)", $this, "help");
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:,] )".'auth(?!\w+)', $this, "auth");
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|¬NICK¬[:,] )".'update(?!\w+)', $this, "update");
 		$this->irc->cobot=$this;
 				
 		ORM::configure($config['ormconfig']);
@@ -125,7 +126,7 @@ class CoBot{
 	 * @param $type: El tipo de handler que se registrara. Por defecto: SMARTIRC_TYPE_CHANNEL
 	 */ 
 	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*", $method = null, $type=SMARTIRC_TYPE_CHANNEL){
-		$ac = $this->irc->registerActionhandler($type, '^'."(?:{$this->prefix}|".preg_quote($this->conf['irc']['nick'])."[:,] )".$name.'(?!\w+)', $this, 'commandHandler');
+		$ac = $this->irc->registerActionhandler($type, '^'."(?:{$this->prefix}|¬NICK¬[:,] )".$name.'(?!\w+)', $this, 'commandHandler');
 		if($method!=null){$fmethod=$method;}else{$fmethod=$name;}
 		if($help != false){
 			array_push($this->help,array('m'=>$module,'name' => $name, 'priv' => $perm, 'sec' => $sec));
@@ -177,6 +178,45 @@ class CoBot{
 			$fu = $this->commands[$command]['method'];
 			$this->module[$this->commands[$command]['module']]->$fu($irc, $data, $this);
 		}
+	}
+	
+	
+	public function update(&$irc, $data){
+		$k = json_decode(file_get_contents("https://api.github.com/repos/irc-CoBot/CoBot/git/trees/1.0"));
+		$toupdate = array();
+		foreach($k->tree as $key => $val){
+			switch($val->path){
+				case "cobot.core.php":
+					array_push($toupdate, array('path'=>"cobot.core.php",'hash'=>$val->sha,'url'=>$val->url));
+					break;
+				case "cobot.php":
+					array_push($toupdate, array('path'=>"cobot.php",'hash'=>$val->sha,'url'=>$val->url));
+					break;
+				case "modules":
+					$w = json_decode(file_get_contents($val->url));
+					foreach($w->tree as $k => $v){
+						if($v->type == "blob"){
+							array_push($toupdate, array('path'=>"modules/".$v->path,'hash'=>$v->sha,'url'=>$v->url));
+						}
+					}
+					break;
+			}
+		}
+		foreach($toupdate as $val){
+			if(!file_exists($val['path'])){
+				$k=json_decode(file_get_contents($val['url']));
+				file_put_contents($val['path'],base64_decode($k->content));
+				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Actualizando \00303{$val['path']}\003\002 \00308[Nuevo]");
+			}else{
+				$hash1 = sha1_file($val['path']);
+				if($hash1 != $val['hash']){
+					$k=json_decode(file_get_contents($val['url']));
+					file_put_contents($val['path'],base64_decode($k->content));
+					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Actualizando \00303{$val['path']}\003\002");
+				}
+			}
+		}
+		
 	}
 	
 	# Ayuda del bot (comando)
