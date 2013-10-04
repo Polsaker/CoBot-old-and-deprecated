@@ -15,7 +15,7 @@ class ear{
 	}
 	
   public function rae(&$irc, $data, &$core){
-    	$f=file_get_contents("http://rae-quel.appspot.com/json?query=".strtolower($data->messageex[1]));
+    	$f=file_get_contents("http://rae-quel.appspot.com/json?query=".urlencode(strtolower($data->messageex[1])));
 		$js=json_decode($f);$div="Definiciones encontradas de la palabra \"".strtolower($data->messageex[1])."\": ";
 		foreach($js as $key=>$val){
 			$div.="\"$val\", ";
