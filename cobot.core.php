@@ -187,16 +187,16 @@ class CoBot{
 		foreach($k->tree as $key => $val){
 			switch($val->path){
 				case "cobot.core.php":
-					array_push($toupdate, array('path'=>"cobot.core.php",'hash'=>$val->sha,'url'=>$val->url));
+					array_push($toupdate, array('path'=>"cobot.core.php",'hash'=>$val->sha,'url'=>$val->url,'l'=>$val['size']));
 					break;
 				case "cobot.php":
-					array_push($toupdate, array('path'=>"cobot.php",'hash'=>$val->sha,'url'=>$val->url));
+					array_push($toupdate, array('path'=>"cobot.php",'hash'=>$val->sha,'url'=>$val->url,'l'=>$val['size']));
 					break;
 				case "modules":
 					$w = json_decode(file_get_contents($val->url));
 					foreach($w->tree as $k => $v){
 						if($v->type == "blob"){
-							array_push($toupdate, array('path'=>"modules/".$v->path,'hash'=>$v->sha,'url'=>$v->url));
+							array_push($toupdate, array('path'=>"modules/".$v->path,'hash'=>$v->sha,'url'=>$v->url,'l'=>$v['size']));
 						}
 					}
 					break;
@@ -208,7 +208,7 @@ class CoBot{
 				file_put_contents($val['path'],base64_decode($k->content));
 				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Actualizando \00303{$val['path']}\003\002 \00308[Nuevo]");
 			}else{
-				$hash1 = sha1_file($val['path']);
+				$hash1 = sha1("blob {$val['l']}\0".file_get_contents($val['path']));
 				if($hash1 != $val['hash']){
 					$k=json_decode(file_get_contents($val['url']));
 					file_put_contents($val['path'],base64_decode($k->content));
