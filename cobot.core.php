@@ -224,7 +224,7 @@ class CoBot{
 			exec("php restart.php &");
 			exit;
 		}
-		if($u==true){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "No hay actulizaciones disponibles.");}
+		if($u==false){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "No hay actulizaciones disponibles.");}
 	}
 	
 	# Ayuda del bot (comando)
