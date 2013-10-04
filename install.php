@@ -52,7 +52,7 @@ if($o==1){
 	$ircbot->load("m_ignore.php");
 	$ircbot->load("m_op.php");
 	';
-	$conffile.="\$conf['conn']['reconnect']=15;\n\$conf['conn']['charset']=\"ISO-8859-1\";\n\n\$ormconfig = 'sqlite:./db/cobot.db';\n\n";
+	$conffile.="\$conf['conn']['reconnect']=15;\n\$conf['conn']['charset']=\"ISO-8859-1\";\n\n\$conf['ormconfig'] = 'sqlite:./db/cobot.db';\n\n";
 	echo "\n\n -- Configuración básica terminada -- \n\n";
 	/*echo "Desea activar m_games? (juegos) [Y/n] ";$g=trim(fgets(STDIN)); if($g=="n"){$g=false;}else{$g=true;}
 	if($g==true){
