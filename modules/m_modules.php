@@ -13,6 +13,7 @@ class bofh{
 	public function __construct($core){
 		$core->registerCommand("loadmod", "modules", "Carga un módulo. Sinaxis: loadmod <modulo>", 10, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("unloadmod", "modules", "Descarga un módulo. Sinaxis: unloadmod <modulo>", 10, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("reloadmod", "modules", "Descarga y carga un modulo. Sinaxis: reloadmod <modulo>", 10, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 	}
 
 	public function loadmod(&$irc, $data, &$core){
@@ -27,6 +28,10 @@ class bofh{
 			case 5: $r = "Se ha cargado el módulo";break;
 		}
 		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
+	}
+	public function reloadmod(&$irc, $data, &$core){
+		$this->unloadmod($irc,$data,$core);
+		$this->loadmod($irc,$data,$core);
 	}
 	public function unloadmod(&$irc, $data, &$core){
 		if(!isset($data->messageex[1])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!");}// Por que enviar un mensaje de error al usuario es mucho trabajo
