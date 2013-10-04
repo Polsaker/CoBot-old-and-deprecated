@@ -202,6 +202,7 @@ class CoBot{
 					break;
 			}
 		}
+		$p = false;
 		foreach($toupdate as $val){
 			if(!file_exists($val['path'])){
 				$k=json_decode(file_get_contents($val['url']));
@@ -213,10 +214,16 @@ class CoBot{
 					$k=json_decode(file_get_contents($val['url']));
 					file_put_contents($val['path'],base64_decode($k->content));
 					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Actualizando \00303{$val['path']}\003\002");
-				}
-			}
+					if(($val['path']=="cobot.php")||($val['path']=="cobot.core.php")){$p = true;}
+					if(preg_match("#modules/(.+)#",$val['path'],$m)){ $this->unloadModule($m[1]); $this->loadModule($m[1]);}
+				} 
+			} 
 		}
-		
+		if($p==true){
+			$irc->quit("[UPDATE] Aplicando actualizaciones.");
+			exec("php restart.php &");
+			exit;
+		}
 	}
 	
 	# Ayuda del bot (comando)
