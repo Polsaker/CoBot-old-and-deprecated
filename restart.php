@@ -1,1 +1,1 @@
-<?php exec("php ircbot.php > cobot.log"); ?>
+<?php exec("php cobot.php > cobot.log"); ?>
