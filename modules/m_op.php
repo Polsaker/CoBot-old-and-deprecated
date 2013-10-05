@@ -19,6 +19,7 @@ class ghasts{
 		$core->registerCommand("kick", "op", "Kickea a una persona en un canal. Sintaxis: kick [canal] [nick]", 5, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("kickban", "op", "Banea a alguien en un canal. Sintaxis: kickban [canal] [nick]", 5, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("unban", "op", "Desanea a alguien en un canal. Sintaxis: unban [canal] [nick]", 5, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("topic", "op", "Cambia el topic en un canal. Sintaxis: topic [canal] [topic]", 5, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->irc->setChannelSyncing(true);
 		$core->registerMessageHandler('352', "op", "whorecv");
 	}
@@ -97,6 +98,13 @@ class ghasts{
 		if(!isset($data->messageex[1]) || (substr($data->messageex[1],0,1)=="#" && !isset($data->messageex[2]))){$user=$data->nick;}elseif(substr($data->messageex[1],0,1)=="#"){$user=$data->messageex[2];}else{$user=$data->messageex[1];}
 		if($irc->isOpped($chan)){
 			$irc->voice($chan, $user);
+		}
+	}
+	
+	public function topic(&$irc, $data, &$core){
+		if(substr($data->messageex[1],0,1)=="#"){$chan=$data->messageex[1];$t = $core->jparam($data->messageex,2);}else{$chan=$data->channel;$t = $core->jparam($data->messageex,1);}
+		if($irc->isOpped($chan)){
+			$irc->topic($chan, $t);
 		}
 	}
 	
