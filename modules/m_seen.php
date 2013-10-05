@@ -36,9 +36,9 @@ class imagenius{
 				if($this->diff['da']!=0){$r2.="\002{$this->diff['da']}\002 días, ";}
 				if($this->diff['ho']!=0){$r2.="\002{$this->diff['ho']}\002 horas, ";}
 				if($this->diff['mi']!=0){$r2.="\002{$this->diff['mi']}\002 minutos, ";}
-				$r2.="y \002{$this->diff['se']}\002 segundos.";
+				$r2.="y \002{$this->diff['se']}\002 segundos";
 				$r2 = trim($r2, " ,y");
-				$r.=$r2;
+				$r.=$r2.": ".$n->txt;
 			}
 		}else{
 			$r.="No he visto a \002{$data->messageex[1]}\002...";
