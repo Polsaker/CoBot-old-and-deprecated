@@ -104,7 +104,7 @@ class ghasts{
 	public function topic(&$irc, $data, &$core){
 		if(substr($data->messageex[1],0,1)=="#"){$chan=$data->messageex[1];$t = $core->jparam($data->messageex,2);}else{$chan=$data->channel;$t = $core->jparam($data->messageex,1);}
 		if($irc->isOpped($chan)){
-			$irc->topic($chan, $t);
+			$irc->setTopc($chan, $t);
 		}
 	}
 	
