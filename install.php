@@ -52,20 +52,21 @@ if($o==1){
 	$ircbot->load("m_ignore.php");
 	$ircbot->load("m_op.php");
 	';
-	$conffile.="\$conf['conn']['reconnect']=15;\n\$conf['conn']['charset']=\"ISO-8859-1\";\n\n\$ormconfig = 'sqlite:./db/cobot.db';\n\n";
+	$conffile.="\$conf['conn']['reconnect']=15;\n\$conf['conn']['charset']=\"ISO-8859-1\";\n\n\$conf['ormconfig'] = 'sqlite:./db/cobot.db';\n\n";
 	echo "\n\n -- Configuración básica terminada -- \n\n";
-	echo "Desea activar m_games? (juegos) [Y/n] ";$g=trim(fgets(STDIN)); if($g=="n"){$g=false;}else{$g=true;}
+	/*echo "Desea activar m_games? (juegos) [Y/n] ";$g=trim(fgets(STDIN)); if($g=="n"){$g=false;}else{$g=true;}
 	if($g==true){
 		$modfile.='$ircbot->load("m_games.php");';
 	}
 	echo "Lea la documentación para activar otros módulos que agregan mejores funcionalidades!!";
+*/
 $fp=fopen("config.php","w");
 fwrite($fp,$conffile);
 fclose($fp);
-$fp=fopen("modules.conf.php", "w");
+/*$fp=fopen("modules.conf.php", "w");
 fwrite($fp,$modfile);
 fclose($fp);
-
+*/
 }elseif($o==2){
 	echo "Nombre del usuario: "; $uname=trim(fgets(STDIN));
 	echo "Contraseña: "; $upass=trim(fgets(STDIN));
