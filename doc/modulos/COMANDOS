@@ -1,0 +1,35 @@
+Para registrar un comando con el bot se debe llamar a la función
+registerCommand en el núcleo ($core). Un comando puede ser
+registrado en cualquier momento, pero se recomienda hacerlo en el
+__construct.
+
+Sintaxis (solo los primeros dos parametros son obligatorios):
+registerCommand($name, $module, $help = false, $perm = -1, $sec = "*", $method = null, $type=SMARTIRC_TYPE_CHANNEL)
+
+Donde:
+ - $name es el nombre del comando
+ - $module es el @key del módulo (ver doc/modulos/ESTRUCTURA).
+ - $help es la ayuda del comando (si no se define, el comando no aparecera listado con el comando "help")
+ - $perm son los privilegios necesarios para ejecutar el comando (-1 significa que cualquiera lo puede ejecutar)
+ - $sec es el grupo de privielgios necesario para ejecutar el comando (actualmente no esta correctamente implementado)
+ - $method es la función que será llamada al ejecutarse el comando (por defecto es la misma que el nombre del comando)
+ - $type define donde será aceptado el comando (con SMARTIRC_TYPE_CHANNEL solo se accionara si se ejecuta desde un canal, con SMARTIRC_TYPE_QUERY se ejecutara unicamente vía mensaje privado y con "SMARTIRC_TYPE_CHANNEL|SMARTIRC_TYPE_QUERY" se ejecutara con ambos)
+
+Ejemplos:
+ 	public function __construct($core){
+		$core->registerCommand("prueba", "test");
+		$core->registerCommand("prueba2", "test", "HACE PRUEBAS");
+		$core->registerCommand("prueba3", "test", "HACE PRUEBAS", 2);
+		$core->registerCommand("prueba4", "test", "HACE PRUEBAS", 2, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+	}
+
+
+La función que será llamada debe tener tres parametros: $irc, $data y $core.
+$data contiene la información del mensaje, como canal, nick, parametros, etc.
+
+Ejemplo:
+	public function prueba(&$irc, &$data, &$core){
+        $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $data->nick.': No me pruebes D: ');
+	}
+	
+
