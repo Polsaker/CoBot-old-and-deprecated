@@ -29,7 +29,7 @@ class amodkey{
 	}
 	public function register(&$irc, &$data, &$core){
 		if(!isset($data->messageex[2])){
-			$irc->message(SMARTIRC_TYPE_QUERY, $data->nick, "Faltan parámetros. Sintaxis: register <usuario> <contraseña>");
+			$irc->message(SMARTIRC_TYPE_QUERY, $data->nick, "Faltan parámetros. Sintaxis: register <usuario> <contraseña>");return 0;
 		}
 		$user = ORM::for_table('users')->create();
 		$user->username=$data->messageex[1];
@@ -45,7 +45,7 @@ class amodkey{
 	}
 	
 	public function listpriv(&$irc, &$data, &$core){
-		if(!isset($data->messageex[1])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!");}
+		if(!isset($data->messageex[1])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!");return 0;}
 		$user = ORM::for_table('users')->where('username', $data->messageex[1])->find_one();
 		$userpriv = ORM::for_table('userpriv')->where('uid', $user->id)->find_many();
 		$r="\002{$data->messageex[1]}\002 tiene los siguientes privilegios: ";
@@ -57,7 +57,7 @@ class amodkey{
 	}
 	
 	public function addpriv(&$irc, &$data, &$core){
-		if(!isset($data->messageex[3])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!");}// Por que enviar un mensaje de error al usuario es mucho trabajo
+		if(!isset($data->messageex[3])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!"); return 0;}
 		if($data->messageex[2]>9){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Error de usuario. Inserte otro usuario y presione enter. (No se pueden otorgar privilegios de nivel 10!!)");}
 		$user = ORM::for_table('users')->where('username', $data->messageex[1])->find_one(); 
 		$k = ORM::for_table('userpriv')->where('uid', $user->id)->where('sec',$data->messageex[3])->find_one();
@@ -71,7 +71,7 @@ class amodkey{
 	}
 	
 	public function delpriv(&$irc, &$data, &$core){
-		if(!isset($data->messageex[3])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!");}// Por que enviar un mensaje de error al usuario es mucho trabajo
+		if(!isset($data->messageex[3])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!");return 0;}
 		if($data->messageex[2]>9){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Error de usuario. Inserte otro usuario y presione enter. (No se pueden otorgar privilegios de nivel 10!!)");}
 		$user = ORM::for_table('users')->where('username', $data->messageex[1])->find_one();
 		if(!isset($user->id)){return 0; } //el usuario no existeer 
