@@ -71,9 +71,9 @@ class CoBot{
 		if(!class_exists($renclass)){echo "[ERR] No encuentro la funcion principal!!\n";return -3;}
 		
 		$this->module[$id]=new $renclass($this);
-		$this->modinfo[$id]['author'] = $author;
-		$this->modinfo[$id]['ver'] = $ver;
-		$this->modinfo[$id]['desc'] = $desc;
+		@$this->modinfo[$id]['author'] = $author;
+		@$this->modinfo[$id]['ver'] = $ver;
+		@$this->modinfo[$id]['desc'] = $desc;
 		echo "[OK]\n";
 		return 5;
 	}
