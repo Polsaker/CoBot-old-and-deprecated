@@ -25,7 +25,7 @@
     [X] m_nickserv
     [X] m_op
     [_] m_oper
-    [ ] m_ping
+    [X] m_ping
     [X] m_protect
     [X] m_rae
     [X] m_raw
