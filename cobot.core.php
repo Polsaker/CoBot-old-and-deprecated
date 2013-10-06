@@ -41,7 +41,7 @@ class CoBot{
 		copy("modules/$name","modules/tmp/$name"); 
 		$fp = fopen("modules/tmp/$name", "r");
 		$pfile="";$i=0;
-		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);}
+		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);$i++;}
 		if(preg_match("#.*@key: (.+)\n.*#",$pfile,$m)){$key=$m[1];}else{return 2;}
 		if(preg_match("#.*@id: (.+)\n.*#",$pfile,$m)){$id=$m[1];}else{return 2;}
 		if(preg_match("#.*@author: (.+)\n.*#",$pfile,$m)){$author=$m[1];}
@@ -89,7 +89,7 @@ class CoBot{
 		if(!file_exists("modules/tmp/$module")){return -6;}
 		$fp = fopen("modules/tmp/$module", "r");
 		$pfile="";$i=0;
-		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);}
+		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);s}
 		if(preg_match("#.*@id: (.+)\n.*#",$pfile,$m)){$id=$m[1];}else{return 2;}
 		if(!isset($this->module[$id])){ return -2; }
 		foreach($this->commands as $key => $val){
