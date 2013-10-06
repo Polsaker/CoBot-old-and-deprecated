@@ -18,6 +18,7 @@ class CoBot{
 		$this->irc = &new Net_SmartIRC();
 		$this->irc->setDebug(SMARTIRC_DEBUG_ALL);
 		$this->irc->setUseSockets(TRUE);
+		$this->irc->setCtcpVersion("CoBot/".VER);
 		
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|¬NICK¬[:,] )(help|ayuda)(?!\w+)", $this, "help");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:,] )".'auth(?!\w+)', $this, "auth");
