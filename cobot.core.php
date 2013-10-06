@@ -20,7 +20,7 @@ class CoBot{
 		$this->irc->setUseSockets(TRUE);
 		$this->irc->setCtcpVersion("CoBot/".VER);
 		
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|¬NICK¬[:,] )(help|ayuda)(?!\w+)", $this, "help");
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL|SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:,] )(help|ayuda)(?!\w+)", $this, "help");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:,] )".'auth(?!\w+)', $this, "auth");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|¬NICK¬[:,] )".'update(?!\w+)', $this, "update");
 		$this->irc->cobot=$this;
@@ -225,6 +225,7 @@ class CoBot{
 	
 	# Ayuda del bot (comando)
 	public function help(&$irc, $data){
+		if(!$data->channel){$data->channel=$data->nick;}
 		$data->messageex = $this->rsMsgEx($data->messageex);
 		if((!isset($data->messageex[1])) || ($data->messageex[1]== "")){
 			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "03Co04BOT v".VER." Por Mr. X Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");

@@ -15,12 +15,12 @@ class key{
 	}
 	
 	public function ip(&$irc, &$data, &$core){
-            $gap = file_get_contents("http://ip-api.com/json/{$data->messageex[1]}?fields=57305");
+            $gap = file_get_contents("http://ip-api.com/json/{$data->messageex[1]}?fields=61439");
 			$jao=json_decode($gap);
             print_r($jao);
             $r="";
             if($jao->status=="success"){
-                $r.="IP: \002{$data->messageex[1]}\002";
+                $r.="IP: \002{$jao->query}\002";
                 if($jao->reverse){ $r.=" = \002{$jao->reverse}\002";}
                 if($jao->isp){ $r.=", \002ISP:\002 {$jao->isp}";}
                 if($jao->org){ $r.=", \002Organización:\002 {$jao->org}";}
