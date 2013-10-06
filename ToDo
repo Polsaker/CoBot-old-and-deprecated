@@ -7,7 +7,7 @@
 [X] Implementar EventHandlers
 [X] Sistema de actualizaciones
 [/] Migrar los modulos de la version anterior
-    [ ] m_atheme
+    [_] m_atheme
     [X] m_authadd
     [X] m_booksearch
     [_] m_bot
@@ -18,7 +18,7 @@
     [_] m_ignore
     [X] m_iplocator
     [X] m_joinpart
-    [ ] m_learn
+    [_] m_learn
     [X] m_modules
     [_] m_mwedit
     [X] m_nick

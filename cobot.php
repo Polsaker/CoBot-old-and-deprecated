@@ -1,6 +1,6 @@
 <?php
 
-	define("VER", "1.0 Alpha");
+	define("VER", "1.0 Beta");
 	date_default_timezone_set('UTC');
 	require("config.php");
 	require("lib/idiorm/idiorm.php");
