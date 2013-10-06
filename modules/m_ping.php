@@ -28,10 +28,11 @@ class pinkflyingelephants{
 	}
     
     public function notha(&$irc, $data, &$core){
-        $rts = trim($data->messageex[1],"\001");
-        $LAG = round(microtime(true) - $rts, 5) ;
-        $irc->message(SMARTIRC_TYPE_CHANNEL, $this->lagchan, "{$data->nick} tiene un lag de $LAG segundos.");
-        
+        if(preg_match("#\001PING (.*)\001#", $data->message,$m)){
+            $rts = $m[1];
+            $LAG = round(microtime(true) - $rts, 5) ;
+            $irc->message(SMARTIRC_TYPE_CHANNEL, $this->lagchan, "{$data->nick} tiene un lag de $LAG segundos.");
+        }
     }
     
 }
