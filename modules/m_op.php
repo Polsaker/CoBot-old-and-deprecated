@@ -11,6 +11,7 @@
 class ghasts{
 	private $searchfor;
 	private $searchforchan;
+	private $kbreas;
 	public function __construct($core){
 		$core->registerCommand("op", "op", "Da OP en un canal. Sintaxis: op [canal] [nick]", 5, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("deop", "op", "Quita OP en un canal. Sintaxis: deop [canal] [nick]", 5, "*", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
@@ -31,7 +32,7 @@ class ghasts{
 			if($this->ban==true){
 				echo "wooo";
 				$irc->ban($this->searchforchan, "*!*@".$data->rawmessageex[5]);
-				$irc->kick($this->searchforchan, $this->searchfor);
+				$irc->kick($this->searchforchan, $this->searchfor,$this->kbreas);
 			}else{
 				$irc->unban($this->searchforchan, "*!*@".$data->rawmessageex[5]);
 			}
@@ -56,7 +57,7 @@ class ghasts{
 	}
 	
 	public function kickban(&$irc, $data, &$core){
-		if(substr($data->messageex[1],0,1)=="#"){$chan=$data->messageex[1];}else{$chan=$data->channel;}
+		if(substr($data->messageex[1],0,1)=="#"){$chan=$data->messageex[1];$reason=$irc->jparam($data->messageex,3);}else{$chan=$data->channel;$reason=$irc->jparam($data->messageex,2);}
 		if(!isset($data->messageex[1]) || (substr($data->messageex[1],0,1)=="#" && !isset($data->messageex[2]))){$user=$data->nick;}elseif(substr($data->messageex[1],0,1)=="#"){$user=$data->messageex[2];}else{$user=$data->messageex[1];}
 		if($irc->isOpped($chan)){
 			if(preg_match("#@.+!.+@.*#", $user)){
@@ -65,16 +66,17 @@ class ghasts{
 				$this->ban = true;
 				$this->searchfor = $user;
 				$this->searchforchan = $chan;
+				$this->kbreas = $reason;
 				$irc->who($user);
 			}
 		}
 	}
 	
 	public function kick(&$irc, $data, &$core){
-		if(substr($data->messageex[1],0,1)=="#"){$chan=$data->messageex[1];}else{$chan=$data->channel;}
+		if(substr($data->messageex[1],0,1)=="#"){$chan=$data->messageex[1];$reason=$irc->jparam($data->messageex,3);}else{$chan=$data->channel;$reason=$irc->jparam($data->messageex,2);}
 		if(!isset($data->messageex[1]) || (substr($data->messageex[1],0,1)=="#" && !isset($data->messageex[2]))){$user=$data->nick;}elseif(substr($data->messageex[1],0,1)=="#"){$user=$data->messageex[2];}else{$user=$data->messageex[1];}
 		if($irc->isOpped($chan)){
-			$irc->kick($chan, $user);
+			$irc->kick($chan, $user, $reason);
 		}
 	}
 	public function op(&$irc, $data, &$core){
