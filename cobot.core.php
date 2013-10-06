@@ -39,9 +39,6 @@ class CoBot{
 	public function loadModule($name){
 		if(!file_exists("modules/$name")){ return -6;}
 		copy("modules/$name","modules/tmp/$name"); 
-		/*$fp = fopen("modules/tmp/$name","r");
-		$pfile="";$i=0;
-		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);$i++;}*/
 		$pfile=file_get_contents("modules/tmp/$name");
 		if(preg_match("#.*@key: (.+)\n.*#",$pfile,$m)){$key=$m[1];}else{return 2;}
 		if(preg_match("#.*@id: (.+)\n.*#",$pfile,$m)){$id=$m[1];}else{return 2;}
