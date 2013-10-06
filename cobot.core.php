@@ -39,9 +39,10 @@ class CoBot{
 	public function loadModule($name){
 		if(!file_exists("modules/$name")){ return -6;}
 		copy("modules/$name","modules/tmp/$name"); 
-		$fp = fopen("modules/tmp/$name", "r");
+		/*$fp = fopen("modules/tmp/$name","r");
 		$pfile="";$i=0;
-		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);$i++;}
+		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);$i++;}*/
+		$pfile=file_get_contents("modules/tmp/$name");
 		if(preg_match("#.*@key: (.+)\n.*#",$pfile,$m)){$key=$m[1];}else{return 2;}
 		if(preg_match("#.*@id: (.+)\n.*#",$pfile,$m)){$id=$m[1];}else{return 2;}
 		if(preg_match("#.*@author: (.+)\n.*#",$pfile,$m)){$author=$m[1];}
@@ -62,7 +63,6 @@ class CoBot{
 		}
 		
 		$nmod=preg_replace("/class $key{/","class $renclass{",$pfile);
-		fclose($fp);
 		
 		$fp = fopen("modules/tmp/$name", "w+");
 		fputs($fp, $nmod);
@@ -87,16 +87,14 @@ class CoBot{
 	 */ 
 	public function unloadModule($module){
 		if(!file_exists("modules/tmp/$module")){return -6;}
-		$fp = fopen("modules/tmp/$module", "r");
-		$pfile="";$i=0;
-		while((!feof($fp)) && ($i <= 15)){$pfile.= fgets($fp);s}
+		$pfile=file_get_contents("modules/tmp/$name");
 		if(preg_match("#.*@id: (.+)\n.*#",$pfile,$m)){$id=$m[1];}else{return 2;}
 		if(!isset($this->module[$id])){ return -2; }
 		foreach($this->commands as $key => $val){
 			if($val['module']==$id){
 				$this->irc->unregisterActionid($val['handler']);
 				unset($this->commands[$key]);
-			}
+			} 
 		}
 		
 		foreach($this->help as $key => $val){
