@@ -94,17 +94,20 @@ class jueg{
 	}
 	public function nivel($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
-		if(!isset($data->messageex[1])){
+		//if(!isset($data->messageex[1])){
 			$this->schan($irc,$data->channel, "{$data->nick}: Nivel {$k->nivel}");
-		}else{
-			if($data->messageex[1]<=0){$this->schan($irc,$data->channel, "Heh, nivel cero... CREES QUE SOY PELOTUDO O QUE?!", true);return 0;}
+		//}else{
+			//if($k->nivel>=$data->messageex[1]){$this->schan($irc,$data->channel,"Ya estás en un nivel igual o superior al {$data->messageex[1]}",true);return 0;}
+			//if($data->messageex[1]<=0){$this->schan($irc,$data->channel, "Heh, nivel cero... CREES QUE SOY PELOTUDO O QUE?!", true);return 0;}
 			$basecost=125;$i=0;
-			while($i<$data->messageex[1]){
+			while($i<($k->nivel+1)){
 				$i++;
 				$basecost=$basecost*2;
 			}
-			$this->schan($irc,$data->channel, "Pasar al nivel {$data->messageex[1]} te costaria $basecost");
-		}
+			$k->nivel=$k->nivel+1;
+			$k->dinero=$k->dinero-$basecost;$k->save();
+			$this->schan($irc,$data->channel, "Ahora eres nivel {$k->nivel}!");
+		//}
 	}
 	
 	public function dados($irc,$data){
