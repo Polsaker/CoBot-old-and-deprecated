@@ -53,6 +53,7 @@ class jueg{
 			case "!dinero": $this->dinero($irc,$data);break;
 			case "!top": $this->top($irc,$data,5);break;
 			case "!top10": $this->top($irc,$data,10);break;
+			case "!lvlup":
 			case "!nivel": $this->nivel($irc,$data);break;
 		}
   }
@@ -98,12 +99,13 @@ class jueg{
 			$this->schan($irc,$data->channel, "{$data->nick}: Nivel {$k->nivel}");
 		//}else{
 			//if($k->nivel>=$data->messageex[1]){$this->schan($irc,$data->channel,"Ya estás en un nivel igual o superior al {$data->messageex[1]}",true);return 0;}
-			//if($data->messageex[1]<=0){$this->schan($irc,$data->channel, "Heh, nivel cero... CREES QUE SOY PELOTUDO O QUE?!", true);return 0;}
+			//if($data->messageex[1]<=0){$this->schan($irc,$data->channel, "Heh, nivel cero... CREES QUE SOY PELOTUDO O QUE?!", true);return 0;}	
 			$basecost=125;$i=0;
 			while($i<($k->nivel+1)){
 				$i++;
 				$basecost=$basecost*2;
 			}
+			if($k->dinero<$basecost){$this->schan($irc,$data->channel,"Necesitas $basecost para pasar al nivel ".($k->nivel+1),true);return 0;}
 			$k->nivel=$k->nivel+1;
 			$k->dinero=$k->dinero-$basecost;$k->save();
 			$this->schan($irc,$data->channel, "Ahora eres nivel {$k->nivel}!");
