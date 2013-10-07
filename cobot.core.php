@@ -84,7 +84,7 @@ class CoBot{
 	 */ 
 	public function unloadModule($module){
 		if(!file_exists("modules/tmp/$module")){return -6;}
-		$pfile=file_get_contents("modules/tmp/$name");
+		$pfile=file_get_contents("modules/tmp/$module");
 		if(preg_match("#.*@id: (.+)\n.*#",$pfile,$m)){$id=$m[1];}else{return 2;}
 		if(!isset($this->module[$id])){ return -2; }
 		foreach($this->commands as $key => $val){
