@@ -53,6 +53,7 @@ class jueg{
 			case "!dinero": $this->dinero($irc,$data);break;
 			case "!top": $this->top($irc,$data,5);break;
 			case "!top10": $this->top($irc,$data,10);break;
+			case "!nivel": $this->nivel($irc,$data);break;
 		}
   }
   
@@ -84,13 +85,28 @@ class jueg{
 		$this->schan($irc,$data->channel, "\00308    NICK                NIVEL  DINERO");
 		foreach($k as $key => $val){
 			$i++;
-			//NICK             10  DINERO
 			$bs1=substr("                  ",0,(20-strlen($val->nick)));
 			$r="\002".$i.(($i>=10)?". ":".  ")."\002".$val->nick .$bs1.$val->nivel.(($val->nivel>=10)?"     ":"      ").$val->dinero;
 			$this->schan($irc,$data->channel, $r);
+			if($i==$n){break;}
 		}
 		
 	}
+	public function nivel($irc,$data){
+		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		if(!isset($data->messageex[1])){
+			$this->schan($irc,$data->channel, "{$data->nick}: Nivel {$k->nivel}");
+		}else{
+			if($data->messageex[1]<=0){$this->schan($irc,$data->channel, "Heh, nivel cero... CREES QUE SOY PELOTUDO O QUE?!", true);return 0;}
+			$basecost=125;$i=0;
+			while($i<$data->messageex[1]){
+				$i++;
+				$basecost=$basecost*2;
+			}
+			$this->schan($irc,$data->channel, "Pasar al nivel {$data->messageex[1]} te costaria $basecost");
+		}
+	}
+	
 	public function dados($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		if($k->dinero<10){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $10.", true); return 0;}
@@ -108,8 +124,6 @@ class jueg{
 			$b->dinero=$b->dinero + $w;$b->save();
 		}
 		$r = "\002{$data->nick}\002:\017 [\002$d1+$d2+$d3=$d\002] ".(($d%2==0)?"ganaste":"perdiste")." $$w!!!";
-		// TODO: lo de la base de datos...
-
 
 		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
 	}
