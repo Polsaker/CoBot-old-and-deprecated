@@ -15,7 +15,8 @@ class jueg{
 	public $startrial=100;
 	public function __construct(&$core){
 		$core->registerMessageHandler('PRIVMSG', "games", "gamecommandhandler");
-		
+		$core->registerCommand("changemoney", "games", "Cambia el dinero almacenado en la cuenta de un usuario. Sintaxis: changemoney <nick> <dinero>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+
 		try {
 			$k = ORM::for_table('games_users')->find_one();
 			$k = ORM::for_table('games_banco')->find_one();
@@ -25,7 +26,14 @@ class jueg{
 			$db->exec("CREATE TABLE 'games_users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'nick' TEXT NOT NULL, 'dinero' INTEGER NOT NULL, 'nivel' INTEGER NOT NULL, 'congelado' INTEGER NOT NULL, 'extrainf' TEXT NOT NULL);");
 			$db->exec("CREATE TABLE 'games_banco' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'dinero' INTEGER NOT NULL, 'extrainf' TEXT NOT NULL);");
 			$db->exec("CREATE TABLE 'games_cgames' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'extrainf' TEXT NOT NULL);");
+			$banco = ORM::for_table('games_banco')->create();
+			$banco->dinero=1000000;$banco->extrainf=json_encode(array());$banco->save();
 		}
+	}
+	
+	public function changemoney(&$irc, $data, &$core){
+		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		if($k){	$k->dinero=$data->messageex[2]; $k->save(); }
 	}
 	
   public function gamecommandhandler(&$irc, $data, &$core){
@@ -43,6 +51,8 @@ class jueg{
 			case "!alta": $this->alta($irc,$data);break;
 			case "!dados": $this->dados($irc,$data);break;
 			case "!dinero": $this->dinero($irc,$data);break;
+			case "!top": $this->top($irc,$data,5);break;
+			case "!top10": $this->top($irc,$data,10);break;
 		}
   }
   
@@ -68,17 +78,34 @@ class jueg{
 		}
 	}
 	
+	public function top($irc,$data, $n){
+		$k = ORM::for_table('games_users')->order_by_desc("dinero")->find_many();
+		$i=0;
+		$this->schan($irc,$data->channel, "\00308    NICK                NIVEL  DINERO");
+		foreach($k as $key => $val){
+			$i++;
+			//NICK             10  DINERO
+			$bs1=substr("                  ",0,(20-strlen($val->nick)));
+			$r="\002".$i.(($i>=10)?". ":".  ")."\002".$val->nick .$bs1.$val->nivel.(($val->nivel>=10)?"     ":"      ").$val->dinero;
+			$this->schan($irc,$data->channel, $r);
+		}
+		
+	}
 	public function dados($irc,$data){
-
-		$k = ORM::for_table('games_users')->where("nick", $user)->find_one();
-		if($k->dinero<10){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $10.", true);}
+		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		if($k->dinero<10){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $10.", true); return 0;}
 		$d1 = rand(1,6);  $d2 = rand(1,6);  $d3 = rand(1,6);
+		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
 		$d = $d1+$d2+$d3;
 
 		if ($d%2==0){// TODO: si es nivel 1, bla bla bla
-			$w=rand(2, 150);
+			$w=rand(2, 30);
+			$k->dinero=$k->dinero + $w;$k->save();
+			$b->dinero=$b->dinero - $w;$b->save();
 		}else{
-			$w=rand(2, 350);
+			$w=rand(2, 15);
+			$k->dinero=$k->dinero - $w;$k->save();
+			$b->dinero=$b->dinero + $w;$b->save();
 		}
 		$r = "\002{$data->nick}\002:\017 [\002$d1+$d2+$d3=$d\002] ".(($d%2==0)?"ganaste":"perdiste")." $$w!!!";
 		// TODO: lo de la base de datos...
