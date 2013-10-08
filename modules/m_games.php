@@ -137,10 +137,10 @@ class jueg{
 	
 	public function tragaperras($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
-		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
-		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true); return 0;}
+		$ba = ORM::for_table('games_banco')->where("id", 1)->find_one();
+		if($ba->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true); return 0;}
 		if($k->dinero<25){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $25.", true); return 0;}
-		if($k->nivel<0){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 1 para poder jugar a este juego.", true); return 0;}
+		if($k->nivel==0){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 1 para poder jugar a este juego.", true); return 0;}
 		
 		switch($k->nivel){
 			case 1:	$s=rand(5,10);	$p=rand(2,14);	$n=rand(-6,10);	$m=rand(9,29);	$e=rand(-10,1);	$b=rand(-19,-2); $x=rand(-10,10); $a=rand(-5,10);break;
@@ -155,7 +155,7 @@ class jueg{
 		$tot=$r1+$r2+$r3;
 		if($n1==$n2 && $n3==$n2){$tot=200;}
 		$k->dinero=$k->dinero + $tot;$k->save();
-		$b->dinero=$b->dinero - $tot;$b->save();
+		$ba->dinero=$ba->dinero - $tot;$ba->save();
 		$resp="\002{$data->nick}\002\017: $comb ".(($tot<0)?"\002PERDISTE\002 $".abs($tot):"\002GANASTE\002 $$tot");
 
 		$this->schan($irc,$data->channel,$resp);
