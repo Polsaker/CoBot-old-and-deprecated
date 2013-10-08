@@ -55,6 +55,8 @@ class jueg{
 			case "!top10": $this->top($irc,$data,10);break;
 			case "!lvlup":
 			case "!nivel": $this->nivel($irc,$data);break;
+			case "!tragamonedas": 
+			case "!tragaperras": $this->tragaperras($irc,$data);break;
 		}
   }
   
@@ -74,16 +76,25 @@ class jueg{
 		if(!isset($data->messageex[1])){$user = $data->nick;}else{$user=$data->messageex[1];}
 		$k = ORM::for_table('games_users')->where("nick", $user)->find_one();
 		if($k){
-			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "En la cuenta de \002$user\002 hay \002\${$k->dinero}\002");
+			$r="\017En la cuenta de \002$user\002 hay $\002{$k->dinero}\002. Flags: [\002Lvl\002 {$k->nivel}] ";
+			if($k->dinero>1000000){$r.="[\002\00303M\003\002] ";}
+			if($k->dinero>3000000){$r.="[\002\00304M\003\002] ";}
+			if($k->dinero>1000000000){$r.="[\002\00304MM\003\002] ";}
+
 		}else{
-			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: El usuario \002$user\002 no existe.");
+			$r="\00304Error\003: El usuario \002$user\002 no existe.";
 		}
+		if($user=="banco"){
+			$k = ORM::for_table('games_banco')->where("id", 1)->find_one();
+			$r="En el banco hay $\002{$k->dinero}\002. Flags: [\002\00302B\003\002]";
+		}
+		$this->schan($irc,$data->channel,$r);
 	}
 	
 	public function top($irc,$data, $n){
 		$k = ORM::for_table('games_users')->order_by_desc("dinero")->find_many();
 		$i=0;
-		$this->schan($irc,$data->channel, "\00308    NICK                NIVEL  DINERO");
+		$this->schan($irc,$data->channel, "\00306    NICK                NIVEL  DINERO");
 		foreach($k as $key => $val){
 			$i++;
 			$bs1=substr("                  ",0,(20-strlen($val->nick)));
@@ -95,21 +106,38 @@ class jueg{
 	}
 	public function nivel($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
-		//if(!isset($data->messageex[1])){
-			$this->schan($irc,$data->channel, "{$data->nick}: Nivel {$k->nivel}");
-		//}else{
-			//if($k->nivel>=$data->messageex[1]){$this->schan($irc,$data->channel,"Ya estás en un nivel igual o superior al {$data->messageex[1]}",true);return 0;}
-			//if($data->messageex[1]<=0){$this->schan($irc,$data->channel, "Heh, nivel cero... CREES QUE SOY PELOTUDO O QUE?!", true);return 0;}	
-			$basecost=125;$i=0;
-			while($i<($k->nivel+1)){
-				$i++;
-				$basecost=$basecost*2;
-			}
-			if($k->dinero<$basecost){$this->schan($irc,$data->channel,"Necesitas $basecost para pasar al nivel ".($k->nivel+1),true);return 0;}
-			$k->nivel=$k->nivel+1;
-			$k->dinero=$k->dinero-$basecost;$k->save();
-			$this->schan($irc,$data->channel, "Ahora eres nivel {$k->nivel}!");
-		//}
+		$this->schan($irc,$data->channel, "{$data->nick}: Nivel {$k->nivel}");
+		$basecost=125;$i=0;
+		while($i<($k->nivel+1)){
+			$i++;
+			$basecost=$basecost*2;
+		}
+		if($k->dinero<$basecost){$this->schan($irc,$data->channel,"Necesitas $basecost para pasar al nivel ".($k->nivel+1),true);return 0;}
+		$k->nivel=$k->nivel+1;
+		$k->dinero=$k->dinero-$basecost;$k->save();
+		$this->schan($irc,$data->channel, "Ahora eres nivel {$k->nivel}!");
+	}
+	
+	public function tragaperras($irc,$data){
+		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		if($k->dinero<25){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $25.", true); return 0;}
+		echo "--------{$k->nivel}---------";
+		if($k->nivel<0){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 1 para poder jugar a este juego.", true); return 0;}
+		
+		switch($k->nivel){
+			case 1:	$s=rand(5,10);	$p=rand(2,14);	$n=rand(-6,10);	$m=rand(9,29);	$e=rand(-10,1);	$b=rand(-19,-2); $x=rand(-10,10); $a=rand(-5,10);break;
+			default:$s=rand(6,12);	$p=rand(5,16);	$n=rand(-9,15);	$m=rand(12,30);	$e=rand(-17,3);	$b=rand(-26,-8); $x=rand(-17,17); $a=rand(-8,15);break;
+		}
+		$n1=rand(1,8);	$n2=rand(1,8);	$n3=rand(1,8);
+		// OPTIMIZAR!!!
+		$comb="";
+		switch($n1){case 1:$r1=$s;$comb.="[\002\00303$\003\002]";break; case 2:$r1=$p;$comb.="[\002\00302%\003\002]";break;	case 3:$r1=$n;$comb.="[\002\00307#\003\002]";break; case 4:$r1=$m;$comb.="[\002\00309+\003\002]";break;	case 5:$r1=$e;$comb.="[\002\00315-\003\002]";break; case 6:$r1=$b;$comb.="[\002\00311/\003\002]";break;	case 7:$r1=$x;$comb.="[\002\00313X\003\002]";break; case 8:$r1=$a;$comb.="[\002\00312&\003\002]";break;}
+		switch($n2){case 1:$r2=$s;$comb.="[\002\00303$\003\002]";break; case 2:$r2=$p;$comb.="[\002\00302%\003\002]";break;	case 3:$r2=$n;$comb.="[\002\00307#\003\002]";break; case 4:$r2=$m;$comb.="[\002\00309+\003\002]";break; case 5:$r2=$e;$comb.="[\002\00315-\003\002]";break; case 6:$r2=$b;$comb.="[\002\00311/\003\002]";break; case 7:$r2=$x;$comb.="[\002\00313X\003\002]";break; case 8:$r2=$a;$comb.="[\002\00312&\003\002]";break;}
+		switch($n3){case 1:$r3=$s;$comb.="[\002\00303$\003\002]";break; case 2:$r3=$p;$comb.="[\002\00302%\003\002]";break; case 3:$r3=$n;$comb.="[\002\00307#\003\002]";break; case 4:$r3=$m;$comb.="[\002\00309+\003\002]";break;	case 5:$r3=$e;$comb.="[\002\00315-\003\002]";break; case 6:$r3=$b;$comb.="[\002\00311/\003\002]";break; case 7:$r3=$x;$comb.="[\002\00313X\003\002]";break; case 8:$r3=$a;$comb.="[\002\00312&\003\002]";break;}
+		$tot=$r1+$r2+$r3;
+		$resp="\002{$data->nick}\002\017: $comb ".(($tot<0)?"\002PERDISTE\002 $".abs($tot):"\002GANASTE\002 $$tot");
+
+		$this->schan($irc,$data->channel,$resp);
 	}
 	
 	public function dados($irc,$data){
