@@ -121,7 +121,6 @@ class jueg{
 	public function tragaperras($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		if($k->dinero<25){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $25.", true); return 0;}
-		echo "--------{$k->nivel}---------";
 		if($k->nivel<0){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 1 para poder jugar a este juego.", true); return 0;}
 		
 		switch($k->nivel){
@@ -135,6 +134,9 @@ class jueg{
 		switch($n2){case 1:$r2=$s;$comb.="[\002\00303$\003\002]";break; case 2:$r2=$p;$comb.="[\002\00302%\003\002]";break;	case 3:$r2=$n;$comb.="[\002\00307#\003\002]";break; case 4:$r2=$m;$comb.="[\002\00309+\003\002]";break; case 5:$r2=$e;$comb.="[\002\00315-\003\002]";break; case 6:$r2=$b;$comb.="[\002\00311/\003\002]";break; case 7:$r2=$x;$comb.="[\002\00313X\003\002]";break; case 8:$r2=$a;$comb.="[\002\00312&\003\002]";break;}
 		switch($n3){case 1:$r3=$s;$comb.="[\002\00303$\003\002]";break; case 2:$r3=$p;$comb.="[\002\00302%\003\002]";break; case 3:$r3=$n;$comb.="[\002\00307#\003\002]";break; case 4:$r3=$m;$comb.="[\002\00309+\003\002]";break;	case 5:$r3=$e;$comb.="[\002\00315-\003\002]";break; case 6:$r3=$b;$comb.="[\002\00311/\003\002]";break; case 7:$r3=$x;$comb.="[\002\00313X\003\002]";break; case 8:$r3=$a;$comb.="[\002\00312&\003\002]";break;}
 		$tot=$r1+$r2+$r3;
+		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+		$k->dinero=$k->dinero + $tot;$k->save();
+		$b->dinero=$b->dinero - $tot;$b->save();
 		$resp="\002{$data->nick}\002\017: $comb ".(($tot<0)?"\002PERDISTE\002 $".abs($tot):"\002GANASTE\002 $$tot");
 
 		$this->schan($irc,$data->channel,$resp);
