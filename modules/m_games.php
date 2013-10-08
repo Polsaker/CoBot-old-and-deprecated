@@ -43,7 +43,13 @@ class jueg{
   public function gamecommandhandler(&$irc, $data, &$core){
 		if(!preg_match("#\!.*#", $data->message)){return 0;}
 		// TODO 1: Verificar si el nick esta registrado y si puso un comando de juegos en un canal con juegos habilitados..
-		
+		$bu = ORM::for_table('users')->where("username", strtolower($data->nick))->find_one();
+		if($bu){
+			if(!$core->authchk($data->from, 0, "*")){
+				$this->schan($irc,$data->channel, "Estas usando un nick registrado. Por favor identifiquese o utilice otro nick.", true);
+				return 0;
+			}
+		}
 		if(($data->messageex[0]!="!alta")){
 			$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 			 if(!isset($k->congelado)){
@@ -83,11 +89,12 @@ class jueg{
 		if(!isset($data->messageex[1])){$user = $data->nick;}else{$user=$data->messageex[1];}
 		$k = ORM::for_table('games_users')->where("nick", $user)->find_one();
 		if($k){
+			$bu = ORM::for_table('users')->where("username", strtolower($data->nick))->find_one();
 			$r="\017En la cuenta de \002$user\002 hay $\002{$k->dinero}\002. Flags: [\002Lvl\002 {$k->nivel}] ";
 			if($k->dinero>1000000){$r.="[\002\00303M\003\002] ";}
 			if($k->dinero>3000000){$r.="[\002\00304M\003\002] ";}
 			if($k->dinero>1000000000){$r.="[\002\00304MM\003\002] ";}
-
+			if($bu){$r.="[\2\00307R\003\2] ";}
 		}else{
 			$r="\00304Error\003: El usuario \002$user\002 no existe.";
 		}
@@ -162,7 +169,7 @@ class jueg{
 		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true);return 0;}
 		$d = $d1+$d2+$d3;
 
-		if ($d%2==0){// TODO: si es nivel 1, bla bla bla
+		if ($d%2==0){
 			$w=rand(2, 30);
 			$k->dinero=$k->dinero + $w;$k->save();
 			$b->dinero=$b->dinero - $w;$b->save();
