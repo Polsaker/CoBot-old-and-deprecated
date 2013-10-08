@@ -57,7 +57,7 @@ class ghasts{
 	}
 	
 	public function kickban(&$irc, $data, &$core){
-		if(substr($data->messageex[1],0,1)=="#"){$chan=$data->messageex[1];$reason=$irc->jparam($data->messageex,3);}else{$chan=$data->channel;$reason=$irc->jparam($data->messageex,2);}
+		if(substr($data->messageex[1],0,1)=="#"){$chan=$data->messageex[1];$reason=$core->jparam($data->messageex,3);}else{$chan=$data->channel;$reason=$core->jparam($data->messageex,2);}
 		if(!isset($data->messageex[1]) || (substr($data->messageex[1],0,1)=="#" && !isset($data->messageex[2]))){$user=$data->nick;}elseif(substr($data->messageex[1],0,1)=="#"){$user=$data->messageex[2];}else{$user=$data->messageex[1];}
 		if($irc->isOpped($chan)){
 			if(preg_match("#@.+!.+@.*#", $user)){
