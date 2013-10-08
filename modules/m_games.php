@@ -32,6 +32,10 @@ class jueg{
 	}
 	
 	public function changemoney(&$irc, $data, &$core){
+		if($data->messageex[1]=="banco"){
+			$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+			$b->dinero=$data->messageex[2];$b->save();return 0;
+		}
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		if($k){	$k->dinero=$data->messageex[2]; $k->save(); }
 	}
@@ -61,6 +65,8 @@ class jueg{
   }
   
 	public function alta($irc,$data){
+		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true);return 0;}
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		if(isset($k->nick)){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: Ya estás dado de alta");return 0;}
 		$guser = ORM::for_table('games_users')->create();
@@ -69,6 +75,7 @@ class jueg{
 		$guser->congelado=0;
 		$guser->extrainf=json_encode(array());
 		$guser->nivel=0; $guser->save();
+		$b->dinero=$b->dinero-$this->startrial; $b->save();
 		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Te has dado de alta!!\002 ahora tienes \002\${$this->startrial}\002 para empezar a jugar!");
 	}
   
@@ -86,7 +93,8 @@ class jueg{
 		}
 		if($user=="banco"){
 			$k = ORM::for_table('games_banco')->where("id", 1)->find_one();
-			$r="En el banco hay $\002{$k->dinero}\002. Flags: [\002\00302B\003\002]";
+			$r="En el banco hay $\002{$k->dinero}\002. Flags: [\002\00302B\003\002] ";
+			if($k->dinero<1000){$r.="[\2\00305Q\003\2]";}
 		}
 		$this->schan($irc,$data->channel,$r);
 	}
@@ -115,11 +123,15 @@ class jueg{
 		if($k->dinero<$basecost){$this->schan($irc,$data->channel,"Necesitas $basecost para pasar al nivel ".($k->nivel+1),true);return 0;}
 		$k->nivel=$k->nivel+1;
 		$k->dinero=$k->dinero-$basecost;$k->save();
+		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+		$b->dinero=$b->dinero+$basecost;$b->save();
 		$this->schan($irc,$data->channel, "Ahora eres nivel {$k->nivel}!");
 	}
 	
 	public function tragaperras($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true); return 0;}
 		if($k->dinero<25){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $25.", true); return 0;}
 		if($k->nivel<0){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 1 para poder jugar a este juego.", true); return 0;}
 		
@@ -135,7 +147,6 @@ class jueg{
 		switch($n3){case 1:$r3=$s;$comb.="[\002\00303$\003\002]";break; case 2:$r3=$p;$comb.="[\002\00302%\003\002]";break; case 3:$r3=$n;$comb.="[\002\00307#\003\002]";break; case 4:$r3=$m;$comb.="[\002\00309+\003\002]";break;	case 5:$r3=$e;$comb.="[\002\00315-\003\002]";break; case 6:$r3=$b;$comb.="[\002\00311/\003\002]";break; case 7:$r3=$x;$comb.="[\002\00313X\003\002]";break; case 8:$r3=$a;$comb.="[\002\00312&\003\002]";break;}
 		$tot=$r1+$r2+$r3;
 		if($n1==$n2 && $n3==$n2){$tot=200;}
-		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
 		$k->dinero=$k->dinero + $tot;$k->save();
 		$b->dinero=$b->dinero - $tot;$b->save();
 		$resp="\002{$data->nick}\002\017: $comb ".(($tot<0)?"\002PERDISTE\002 $".abs($tot):"\002GANASTE\002 $$tot");
@@ -148,6 +159,7 @@ class jueg{
 		if($k->dinero<10){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $10.", true); return 0;}
 		$d1 = rand(1,6);  $d2 = rand(1,6);  $d3 = rand(1,6);
 		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true);return 0;}
 		$d = $d1+$d2+$d3;
 
 		if ($d%2==0){// TODO: si es nivel 1, bla bla bla
