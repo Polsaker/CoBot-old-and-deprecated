@@ -178,7 +178,7 @@ class CoBot{
 	
 	
 	public function update(&$irc, $data){
-		$k = json_decode(file_get_contents("https://api.github.com/repos/irc-CoBot/CoBot/git/trees/1.0"));
+		$k = json_decode(file_get_contents("https://api.github.com/repos/irc-CoBot/CoBot/git/trees/master"));
 		$toupdate = array();
 		foreach($k->tree as $key => $val){
 			switch($val->path){
