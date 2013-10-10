@@ -11,6 +11,7 @@ class CoBot{
 	private $help=array();
 	
 	private $messagehandlers=array();
+	private $timehandlers=array();
 	private $messagehandlerscount = 0;
 	public function __construct($config){
 		$this->conf = $config;
@@ -105,7 +106,13 @@ class CoBot{
 				unset($this->messagehandlers[$key]);
 			}
 		}
-
+		
+		foreach($this->timehandlers as $key => $val){
+			if($val['module']==$id){
+				$this->irc->unregisterTimeid($val['tid']);
+				unset($this->timehandlers[$key]);
+			}
+		}
 		
 		unset($this->module[$id]);
 		unset($this->modinfo[$id]);
@@ -176,7 +183,7 @@ class CoBot{
 		}
 	}
 	
-	
+	#Funion interna: Actualizador
 	public function update(&$irc, $data){
 		$k = json_decode(file_get_contents("https://api.github.com/repos/irc-CoBot/CoBot/git/trees/master"));
 		$toupdate = array();
@@ -297,6 +304,17 @@ class CoBot{
 				$this->module[$val['module']]->$val['method']($this->irc, $ircdata, $this);
 			}
 		}
+	}
+	
+	/*
+	 * Registra un TimeHandler 
+	 * @param: $miliseconds = Intervalo en milisegundos
+	 * @param: $module = @id del modulo
+	 * @param: $method = Función que se llamara en $module
+	 */
+	public function registerTimeHandler($miliseconds, $module, $method){
+		$tid = $this->irc->registerTimeHandler($miliseconds, $this->module[$module], $method);
+		array_push($this->timehandlers, array('module'=>$module, 'tid' => $tid));
 	}
 	
 	/*
