@@ -22,7 +22,7 @@ class key{
 		$this->bots[1] = $clever->createSession();
 		
 		$jabber = $factory->create(ChatterBotType::JABBERWACKY);
-		$this->bots[2] = $jabber->createSession();
+		$this->bots[2] = $jabber->createSession(); 
     
 		$pandora = $factory->create(ChatterBotType::PANDORABOTS, 'b0dafd24ee35a479');
 		$this->bots[3] = $pandora->createSession();
