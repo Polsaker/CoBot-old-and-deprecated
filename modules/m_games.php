@@ -260,7 +260,7 @@ class jueg{
 		}
 		if($user=="banco"){
 			$k = ORM::for_table('games_banco')->where("id", 1)->find_one();
-			$r="En el banco hay $\002".number_format($k->dinero,0,".",",")."\002. Flags: [\002\00302B\003\002] ";
+			$r="En el banco hay $\002".number_format($k->dinero,0,",",".")."\002. Flags: [\002\00302B\003\002] ";
 			if($k->dinero<1000){$r.="[\2\00305Q\003\2] ";}
 			if($p = json_decode($k->extrainf)->pozo){$r.="[\2Pozo\2 $p]";}
 		}
