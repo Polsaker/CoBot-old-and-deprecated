@@ -19,6 +19,7 @@ class jueg{
 		$core->registerCommand("impuesto", "games", "Cobra impuestos.",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("enablegame", "games", "Activa los juegos en un cana. Sintaxis: enablegame <canal>",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("disablegame", "games", "Desactiva los juegos en un canal. Sintaxis: disablegame <canal>",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("delgameuser", "games", "Elimina a un usurio de los juegos. Sintaxis: delgameuser <usuario>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		
 		$core->registerTimeHandler(86400000, "games", "autoimp");
 		try {
@@ -46,6 +47,16 @@ class jueg{
 		$r = $this->cimpuesto(5);
 	}
 		
+	public function delgameuser(&$irc, $data, &$core){
+		$c = ORM::for_table('games_users')->where("user", $data->messageex[1])->find_one();
+		if($c){
+			$c->delete();
+			$this->schan($irc,$data->channel, "Se ha eliminado el usuario.");
+		}else{
+			$this->schan($irc,$data->channel, "Ese usuario no existe!.",true);
+		}
+	}
+	
 	public function enablegame(&$irc, $data, &$core){
 		$c = ORM::for_table('games_channels')->where("channel", strtolower($data->messageex[1]))->find_one();
 		if(!$c){
@@ -168,7 +179,7 @@ class jueg{
 	}
 	public function nivel($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
-		$this->schan($irc,$data->channel, "{$data->nick}: Nivel {$k->nivel}");
+		//$this->schan($irc,$data->channel, "{$data->nick}: Nivel {$k->nivel}");
 		$basecost=125;$i=0;
 		while($i<($k->nivel+1)){
 			$i++;
@@ -326,7 +337,10 @@ class jueg{
 		}
 		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
 		$b->dinero = $b->dinero+$toti;$b->save();
-		
+		$chans = ORM::for_table('games_channels')->find_many();
+		foreach($chans as $chan){
+			$irc->message(SMARTIRC_TYPE_NOTICE, $chan->channel, "Se han cobrado \$\2$toti\2 de impuestos a $totu usuarios");
+		}
 		return array('users'=>$totu, 'dinero'=>$toti);
 	}
 }
