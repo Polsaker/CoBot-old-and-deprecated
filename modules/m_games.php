@@ -246,7 +246,7 @@ class jueg{
 		$k = ORM::for_table('games_users')->where("nick", $user)->find_one();
 		if($k){
 			$bu = ORM::for_table('users')->where("username", strtolower($user))->find_one();
-			$r="\017En la cuenta de \002$user\002 hay $\002{$k->dinero}\002. Flags: [\002Lvl\002 {$k->nivel}] ";
+			$r="\017En la cuenta de \002$user\002 hay $\002".number_format($k->dinero,2,".",".").".\002. Flags: [\002Lvl\002 {$k->nivel}] ";
 			if($k->dinero>1000000){$r.="[\002\00303M\003\002] ";}
 			if($k->dinero>3000000){$r.="[\002\00304M\003\002] ";}
 			if($k->dinero>1000000000){$r.="[\002\00304MM\003\002] ";}
@@ -260,7 +260,7 @@ class jueg{
 		}
 		if($user=="banco"){
 			$k = ORM::for_table('games_banco')->where("id", 1)->find_one();
-			$r="En el banco hay $\002{$k->dinero}\002. Flags: [\002\00302B\003\002] ";
+			$r="En el banco hay $\002".number_format($k->dinero,2,".",".")."\002. Flags: [\002\00302B\003\002] ";
 			if($k->dinero<1000){$r.="[\2\00305Q\003\2] ";}
 			if($p = json_decode($k->extrainf)->pozo){$r.="[\2Pozo\2 $p]";}
 		}
@@ -302,7 +302,7 @@ class jueg{
 			$basecost=$basecost*2;
 		}
 		$basecost=$basecost;
-		if($k->dinero<($basecost+50)){$this->schan($irc,$data->channel,"Necesitas ".($basecost+50)." para pasar al nivel ".($k->nivel+1),true);return 0;}
+		if($k->dinero<($basecost+50)){$this->schan($irc,$data->channel,"Necesitas ".number_format(($basecost+50), 2, ",", ".")." para pasar al nivel ".($k->nivel+1),true);return 0;}
 		$k->nivel=$k->nivel+1;
 		$k->dinero=$k->dinero-$basecost;$k->save();
 		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
