@@ -20,6 +20,8 @@ class jueg{
 		$core->registerCommand("enablegame", "games", "Activa los juegos en un cana. Sintaxis: enablegame <canal>",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("disablegame", "games", "Desactiva los juegos en un canal. Sintaxis: disablegame <canal>",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("delgameuser", "games", "Elimina a un usurio de los juegos. Sintaxis: delgameuser <usuario>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("congelar", "games", "Congela a un usuario de los juegos. Sintaxis congelar <usuario> [hiper]",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("descongelar", "games", "Descongela a un usuario de los juegos. Sintaxis: descongelar <usuario>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		
 		$core->registerTimeHandler(86400000, "games", "autoimp");
 		try {
@@ -47,6 +49,34 @@ class jueg{
 		$r = $this->cimpuesto(5);
 	}
 		
+	public function congelar(&$irc, $data, &$core){
+		$c = ORM::for_table('games_users')->where("user", $data->messageex[1])->find_one();
+		if($c){
+			if(isset($data->messageex[2]) && $data->messageex[2]=="hiper"){
+				$c->congelado = 2;
+			}else{
+				$c->congelado = 1;
+			}
+			$c->save();
+			$this->schan($irc,$data->channel, "Se ha congelado la cuenta.");
+		}else{
+			$this->schan($irc,$data->channel, "Ese usuario no existe!.",true);
+		}
+	}
+	public function descongelar(&$irc, $data, &$core){
+		$c = ORM::for_table('games_users')->where("user", $data->messageex[1])->find_one();
+		if($c){
+			if($c->congelado==0){
+				$this->schan($irc,$data->channel, "Ese usuario no está congelado!.",true);
+			}else{
+				$c->congelado=0;$c->save();
+				$this->schan($irc,$data->channel, "Se ha descongelado el usuario.");
+			}
+		}else{
+			$this->schan($irc,$data->channel, "Ese usuario no existe!.",true);
+		}
+	}
+	
 	public function delgameuser(&$irc, $data, &$core){
 		$c = ORM::for_table('games_users')->where("user", $data->messageex[1])->find_one();
 		if($c){
@@ -105,10 +135,14 @@ class jueg{
 				return 0;
 			}
 		}
+		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		if(($data->messageex[0]!="!alta")){
-			$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
-			 if(!isset($k->congelado)){
+			 if(!$k){
 				 $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: No estas dado de alta en el juego. Date de alta escribiendo \002!alta\002");
+				 return 0;
+			 }
+			 if($k->congelado!=0){
+				 $this->schan($irc,$data->channel, "Esta cuenta esta congelada.", true);
 				 return 0;
 			 }
 		}
@@ -169,10 +203,11 @@ class jueg{
 		$i=0;
 		$this->schan($irc,$data->channel, "\00306    NICK                NIVEL  DINERO");
 		foreach($k as $key => $val){
+			if($val->congelado==2){continue;}
 			$i++;
 			$bs1=substr("                  ",0,(20-strlen($val->nick)));
 			$r="\002".$i.(($i>=10)?". ":".  ")."\002".$val->nick .$bs1.$val->nivel.(($val->nivel>=10)?"     ":"      ").$val->dinero;
-			$this->schan($irc,$data->channel, $r);
+			$this->schan($irc,$data->channel,(($val->congelado==0)?"":"\00304"). $r);
 			if($i==$n){break;}
 		}
 		
