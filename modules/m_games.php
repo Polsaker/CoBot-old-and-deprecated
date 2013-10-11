@@ -288,8 +288,10 @@ class jueg{
 				$i++;
 				$basecost=$basecost*2;
 			}
+			$basecost = number_format($basecost, 2,".");
 			$this->schan($irc,$data->channel, "El nivel {$data->messageex[1]} cuesta \$$basecost");
 		}
+		
 	}
 	public function nivel($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
