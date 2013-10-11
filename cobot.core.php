@@ -256,7 +256,7 @@ class CoBot{
 			}else{
 				switch($data->messageex[1]){
 					case "auth":
-						$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de \2help\2: Identifica a un usuario registrado con el bot. Uso: /msg {$irc->_nick} {$conf['irc']['prefix']}auth <USUARIO> <CONTRASEÑA>");
+						$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de \2help\2: Identifica a un usuario registrado con el bot. Uso: /msg {$irc->_nick} {$this->conf['irc']['prefix']}auth <USUARIO> <CONTRASEÑA>");
 						break;
 				}
 			}
