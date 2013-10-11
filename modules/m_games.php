@@ -78,7 +78,7 @@ class jueg{
 	}
 	
 	public function delgameuser(&$irc, $data, &$core){
-		$c = ORM::for_table('games_users')->where("user", $data->messageex[1])->find_one();
+		$c = ORM::for_table('games_users')->where("nick", $data->messageex[1])->find_one();
 		if($c){
 			$c->delete();
 			$this->schan($irc,$data->channel, "Se ha eliminado el usuario.");
