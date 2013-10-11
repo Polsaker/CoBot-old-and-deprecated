@@ -17,19 +17,28 @@ class jueg{
 		$core->registerMessageHandler('PRIVMSG', "games", "gamecommandhandler");
 		$core->registerCommand("changemoney", "games", "Cambia el dinero almacenado en la cuenta de un usuario. Sintaxis: changemoney <nick> <dinero>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("impuesto", "games", "Cobra impuestos.",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("enablegame", "games", "Activa los juegos en un cana. Sintaxis: enablegame <canal>",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("disablegame", "games", "Desactiva los juegos en un canal. Sintaxis: disablegame <canal>",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		
 		$core->registerTimeHandler(86400000, "games", "autoimp");
 		try {
 			$k = ORM::for_table('games_users')->find_one();
 			$k = ORM::for_table('games_banco')->find_one();
 			$k = ORM::for_table('games_cgames')->find_one();
+			$k = ORM::for_table('games_channels')->find_one();
 		}catch(PDOException $e){
-			$db = ORM::get_db();
-			$db->exec("CREATE TABLE 'games_users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'nick' TEXT NOT NULL, 'dinero' INTEGER NOT NULL, 'nivel' INTEGER NOT NULL, 'congelado' INTEGER NOT NULL, 'extrainf' TEXT NOT NULL);");
-			$db->exec("CREATE TABLE 'games_banco' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'dinero' INTEGER NOT NULL, 'extrainf' TEXT NOT NULL);");
-			$db->exec("CREATE TABLE 'games_cgames' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'extrainf' TEXT NOT NULL);");
-			$banco = ORM::for_table('games_banco')->create();
-			$banco->dinero=1000000;$banco->extrainf=json_encode(array('pozo'=>'0'));$banco->save();
+			try{
+				$db = ORM::get_db();
+				$db->exec("CREATE TABLE 'games_channels' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'channel' TEXT NOT NULL, 'extrainf' TEXT NOT NULL);");
+				$db->exec("CREATE TABLE 'games_users' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'nick' TEXT NOT NULL, 'dinero' INTEGER NOT NULL, 'nivel' INTEGER NOT NULL, 'congelado' INTEGER NOT NULL, 'extrainf' TEXT NOT NULL);");
+				$db->exec("CREATE TABLE 'games_banco' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'dinero' INTEGER NOT NULL, 'extrainf' TEXT NOT NULL);");
+				$db->exec("CREATE TABLE 'games_cgames' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'extrainf' TEXT NOT NULL);");
+				$k = ORM::for_table('games_banco')->where('id',1)->find_one();
+				if(!$k){
+					$banco = ORM::for_table('games_banco')->create();
+					$banco->dinero=1000000;$banco->extrainf=json_encode(array('pozo'=>'0'));$banco->save();
+				}
+			}catch(PDOException $e){/* meh */}
 		}
 	}
 	
@@ -37,6 +46,29 @@ class jueg{
 		$r = $this->cimpuesto(5);
 	}
 		
+	public function enablegame(&$irc, $data, &$core){
+		$c = ORM::for_table('games_channels')->where("channel", strtolower($data->messageex[1]))->find_one();
+		if(!$c){
+			$c = ORM::for_table('games_channels')->create();
+			$c->channel=strtolower($data->messageex[1]);
+			$c->extrainf="[]";
+			$c->save();
+			$this->schan($irc,$data->channel, "Se han habilitado los juegos en \2{$data->messageex[1]}\2");
+		}else{
+			$this->schan($irc,$data->channel, "Los juegos ya están habilitados en ese canal.",true);
+		}
+	}
+	
+	public function disablegame(&$irc, $data, &$core){
+		$c = ORM::for_table('games_channels')->where("channel", strtolower($data->messageex[1]))->find_one();
+		if(!$c){
+			$c->delete();
+			$this->schan($irc,$data->channel, "Se han deshabilitado los juegos en \2{$data->messageex[1]}\2");
+		}else{
+			$this->schan($irc,$data->channel, "Los juegos no estaban habilitados en ese canal.",true);
+		}
+	}
+	
 	public function impuesto(&$irc, $data, &$core){
 		$r = $this->cimpuesto();
 		$this->schan($irc,$data->channel, "Se han cobrado \${$r['dinero']} de impuestos a {$r['users']} usuarios");
@@ -52,6 +84,8 @@ class jueg{
 	
   public function gamecommandhandler(&$irc, $data, &$core){
 		if($data->messageex[0][0]!="!"){return 0;}
+		$chan=ORM::for_table("games_channels")->where("channel", $data->channel)->find_one();
+		if(!$chan){return 0;}
 		// TODO 1: Verificar si el nick esta registrado y si puso un comando de juegos en un canal con juegos habilitados..
 		$bu = ORM::for_table('users')->where("username", strtolower($data->nick))->find_one();
 		if($bu){
