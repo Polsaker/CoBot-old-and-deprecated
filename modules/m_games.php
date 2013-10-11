@@ -217,6 +217,7 @@ class jueg{
 			case "!tragaperras": $this->tragaperras($irc,$data);break;
 			case "!rueda": $this->rueda($irc,$data);break;
 			case "!transferir": $this->transferir($irc,$data);break;
+			case "!lvlp": $this->lvlp($irc,$data);break;
 		}
 		
   }
@@ -275,6 +276,16 @@ class jueg{
 			if($i==$n){break;}
 		}
 		
+	}
+	public function lvlp($irc,$data){
+		if((isset($data->messageex[1])) && (is_numeric($data->messageex[1]))){
+			$basecost=125;$i=0;
+			while($i<($data->messageex[1])){
+				$i++;
+				$basecost=$basecost*2;
+			}
+			$this->schan($irc,$data->channel, "El nivel {$data->messageex[1]} cuesta \$$basecost");
+		}
 	}
 	public function nivel($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
