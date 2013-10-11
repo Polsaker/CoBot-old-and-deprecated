@@ -31,6 +31,10 @@ class amodkey{
 		if(!isset($data->messageex[2])){
 			$irc->message(SMARTIRC_TYPE_QUERY, $data->nick, "Faltan parámetros. Sintaxis: register <usuario> <contraseña>");return 0;
 		}
+		$user = ORM::for_table('users')->where("username", $data->messageex[1])->find_one();
+		if($user){
+			$irc->message(SMARTIRC_TYPE_QUERY, $data->nick, "Ese usuario ya esta registrado!");return 0;
+		}
 		$user = ORM::for_table('users')->create();
 		$user->username=strtolower($data->messageex[1]);
 		$user->pass=sha1($data->messageex[2]);
