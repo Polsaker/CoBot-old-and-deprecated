@@ -29,7 +29,7 @@ class CoBot{
 				
 		ORM::configure($config['ormconfig']);
 		
-		if(file_exists("authinf")){unlink("authinf");} // Borramos la "cache" de usuarios identificados al iniciar
+		if(!@$config['core']['keepusercache']){if(file_exists("authinf")){unlink("authinf");}} // Borramos la "cache" de usuarios identificados al iniciar
 	}
 	
 	/*
@@ -259,7 +259,7 @@ class CoBot{
 	public function auth(&$irc, $data){
 		if(isset($data->messageex[2])){
 			//$result = $this->dbcon->query("SELECT * FROM 'users' WHERE user='{$data->messageex[1]}' AND pass='".sha1($data->messageex[2])."';")->fetch();
-			$user = ORM::for_table('users')->where('username', $data->messageex[1])->where('pass', sha1($data->messageex[2]))->find_one();
+			$user = ORM::for_table('users')->where('username', strtolower($data->messageex[1]))->where('pass', sha1($data->messageex[2]))->find_one();
 
 			if($user!=false){
 				if(file_exists("authinf")){$authinf=json_decode(file_get_contents("authinf"));}else{$authinf=array();}

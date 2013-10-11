@@ -18,6 +18,8 @@
 	$conf['m_short']['bitly-api']=""; //Bit.ly api key
 	$conf['m_short']['bitly-user']=""; //Bit.ly user
 	
+	$conf['core']['keepusercache']=false; // true si se desea que los usuarios sigan idenficados aun despues de que el bot haya sido reiniciado
+	
 	# No modificar
 	$conf['ormconfig'] = 'sqlite:./db/cobot.db';
 
