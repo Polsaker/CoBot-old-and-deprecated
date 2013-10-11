@@ -245,9 +245,9 @@ class CoBot{
 					}
 				}
 				$commands.="{$a['name']} ";
-				
 			}
-			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
+			//$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
+			$this->sendMessage($data->channel, "Comandos: help auth $commands", true);
 		}else{
 			if((isset($this->commands[$data->messageex[1]])) && ($this->commands[$data->messageex[1]]['help'] != "")){
 				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de {$data->messageex[1]}: {$this->commands[$data->messageex[1]]['help']}");
@@ -374,6 +374,31 @@ class CoBot{
 			}
 		}
 		return false;
+	}
+	
+	/* sendMessage
+	 *  Envía un mensaje a un canal, con la opción de partirlo, para mensajes largos
+	 * @param $chan = Canal a donde el mensaje se enviará
+	 * @param $msg = Mensaje que será eniado
+	 * @param $arrow = Si se partirá el mensaje (opcional)
+	 * @param $len = Cada cuantos caracteres se partirá el mensaje
+	 * @param $sep = Que separador se utilizara para basarse al partir el mensaje (por defecto lo parte cuando encuentra un espacio)
+	 */ 
+	public function sendMessage($chan,$msg,$arrow=false,$len=400, $sep=" "){
+		$send="";
+		if($arrow==true){
+			$a=explode($sep, $msg);
+			foreach($a as $key=>$val){
+				if(strlen($send)+strlen($val)>=$len){
+					time_nanosleep(0,250000000); 
+					$this->irc->message(SMARTIRC_TYPE_CHANNEL, $chan, $send." 06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
+					$send="";
+				}else{$send.=$val.$sep;}
+			}
+			$send=trim($send,$sep);
+			
+		}else{$send=$msg;}
+		$this->irc->message(SMARTIRC_TYPE_CHANNEL,$chan,$send);
 	}
 	
 	# Funcion para conectarse al irc.
