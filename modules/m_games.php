@@ -246,7 +246,7 @@ class jueg{
 		$k = ORM::for_table('games_users')->where("nick", $user)->find_one();
 		if($k){
 			$bu = ORM::for_table('users')->where("username", strtolower($user))->find_one();
-			$r="\017En la cuenta de \002$user\002 hay $\002".number_format($k->dinero,0,".",",")."\002. Flags: [\002Lvl\002 {$k->nivel}] ";
+			$r="\017En la cuenta de \002$user\002 hay $\002".number_format($k->dinero,0,",",".")."\002. Flags: [\002Lvl\002 {$k->nivel}] ";
 			if($k->dinero>1000000){$r.="[\002\00303M\003\002] ";}
 			if($k->dinero>3000000){$r.="[\002\00304M\003\002] ";}
 			if($k->dinero>1000000000){$r.="[\002\00304MM\003\002] ";}
@@ -275,7 +275,7 @@ class jueg{
 			if($val->congelado==2){continue;}
 			$i++;
 			$bs1=substr("                  ",0,(20-strlen($val->nick)));
-			$r="\002".$i.(($i>=10)?". ":".  ")."\002".$val->nick .$bs1.$val->nivel.(($val->nivel>=10)?"     ":"      ").number_format($val->dinero,0,".",",");
+			$r="\002".$i.(($i>=10)?". ":".  ")."\002".$val->nick .$bs1.$val->nivel.(($val->nivel>=10)?"     ":"      ").number_format($val->dinero,0,",",".");
 			$this->schan($irc,$data->channel,(($val->congelado==0)?"":"\00304"). $r);
 			if($i==$n){break;}
 		}
