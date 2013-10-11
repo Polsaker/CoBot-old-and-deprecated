@@ -46,7 +46,7 @@ class jueg{
 	}
 	
 	public function autoimp(&$irc){
-		$r = $this->cimpuesto(5);
+		$r = $this->cimpuesto($irc,5);
 	}
 		
 	public function congelar(&$irc, $data, &$core){
@@ -111,7 +111,7 @@ class jueg{
 	}
 	
 	public function impuesto(&$irc, $data, &$core){
-		$r = $this->cimpuesto();
+		$r = $this->cimpuesto($irc);
 		$this->schan($irc,$data->channel, "Se han cobrado \${$r['dinero']} de impuestos a {$r['users']} usuarios");
 	}
 	public function changemoney(&$irc, $data, &$core){
@@ -361,9 +361,9 @@ class jueg{
 	
 	
 	// Cobra impuestos:
-	public function cimpuesto($perc = 10){
+	public function cimpuesto($irc,$perc = 10){
 		$s = ORM::for_table('games_users')->where_gt("dinero", 1000)->find_many();
-		$totdi=0; $totu = 0;
+		$toti=0; $totu = 0;
 		foreach($s as $user){
 			$imp=round(($user->dinero * $perc/100),0);
 			$user->dinero=$user->dinero - $imp;
