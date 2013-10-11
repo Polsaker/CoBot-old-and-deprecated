@@ -176,9 +176,8 @@ class CoBot{
 		if(isset($this->commands[$command])){
 			if($this->commands[$command]['perm']!=-1){
 				if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['sec'])==false){
-					return -5;
-				}else{
 					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: No autorizado.");
+					return -5;
 				}
 			}
 			$fu = $this->commands[$command]['method'];
