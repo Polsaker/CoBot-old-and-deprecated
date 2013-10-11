@@ -195,8 +195,9 @@ class jueg{
 				 if($k->congelado==3){
 					 $r=rand(1,3);
 					 if($r==1){return 0;}
+				 }else{
+				 	 $this->schan($irc,$data->channel, "Esta cuenta esta congelada.", true);
 				 }
-				 $this->schan($irc,$data->channel, "Esta cuenta esta congelada.", true);
 				 return 0;
 			 }
 			 if($k->nivel>4){
