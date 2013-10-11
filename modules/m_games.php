@@ -247,9 +247,9 @@ class jueg{
 			if($k->dinero>1000000000){$r.="[\002\00304MM\003\002] ";}
 			if($bu){$r.="[\2\00307R\003\2] ";}
 			if($k->congelado!=0){$r.="[\2\00305F\003\2] ";}
-			if($this->core->authchk($data->from, 4,"games")){$r.="[\2\00307A-\003\2] ";}
+		/*	if($this->core->authchk($data->from, 4,"games")){$r.="[\2\00307A-\003\2] ";}
 			if($this->core->authchk($data->from, 6,"games")){$r.="[\2\00310A\003\2] ";}
-			if($this->core->authchk($data->from, 8,"games")){$r.="[\2\00311A+\003\2] ";}
+			if($this->core->authchk($data->from, 8,"games")){$r.="[\2\00311A+\003\2] ";}*/
 		}else{
 			$r="\00304Error\003: El usuario \002$user\002 no existe.";
 		}
