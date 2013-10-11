@@ -24,6 +24,7 @@ class jueg{
 		$core->registerCommand("delgameuser", "games", "Elimina a un usurio de los juegos. Sintaxis: delgameuser <usuario>",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("congelar", "games", "Congela a un usuario de los juegos. Sintaxis congelar <usuario> [hiper]",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("descongelar", "games", "Descongela a un usuario de los juegos. Sintaxis: descongelar <usuario>",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("top100", "games", "Muestra los 100 usuarios con mas dinero",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		
 		$core->irc->setSenddelay(500); // Nosotros hacemos mucho flood, pero queremos que el bot siga vivo!
 		$core->registerTimeHandler(86400000, "games", "autoimp");
@@ -99,6 +100,9 @@ class jueg{
 		$r = $this->cimpuesto($irc,5);
 	}
 		
+	public function top100(&$irc, $data, &$core){
+		$this->top($irc, $data, 100);
+	}
 	public function congelar(&$irc, $data, &$core){
 		$c = ORM::for_table('games_users')->where("nick", $data->messageex[1])->find_one();
 		if($c){
