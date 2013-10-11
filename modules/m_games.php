@@ -61,7 +61,7 @@ class jueg{
 	
 	public function disablegame(&$irc, $data, &$core){
 		$c = ORM::for_table('games_channels')->where("channel", strtolower($data->messageex[1]))->find_one();
-		if(!$c){
+		if($c){
 			$c->delete();
 			$this->schan($irc,$data->channel, "Se han deshabilitado los juegos en \2{$data->messageex[1]}\2");
 		}else{
