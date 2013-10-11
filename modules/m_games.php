@@ -11,18 +11,19 @@
 
 class jueg{
 	public $xcommands=array(); // Pensado para futuros comandos agregados por modulos de terceros... probablemente sea Array('fname', 'module', 'func', 'help')
-	
+	private $core;
 	public $startrial=100;
 	private $lastplayer=false;
 	public function __construct(&$core){
+		$this->core = $core;
 		$core->registerMessageHandler('PRIVMSG', "games", "gamecommandhandler");
-		$core->registerCommand("changemoney", "games", "Cambia el dinero almacenado en la cuenta de un usuario. Sintaxis: changemoney <nick> <dinero>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
-		$core->registerCommand("impuesto", "games", "Cobra impuestos.",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("changemoney", "games", "Cambia el dinero almacenado en la cuenta de un usuario. Sintaxis: changemoney <nick> <dinero>",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("impuesto", "games", "Cobra impuestos.",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("enablegame", "games", "Activa los juegos en un cana. Sintaxis: enablegame <canal>",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("disablegame", "games", "Desactiva los juegos en un canal. Sintaxis: disablegame <canal>",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
-		$core->registerCommand("delgameuser", "games", "Elimina a un usurio de los juegos. Sintaxis: delgameuser <usuario>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
-		$core->registerCommand("congelar", "games", "Congela a un usuario de los juegos. Sintaxis congelar <usuario> [hiper]",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
-		$core->registerCommand("descongelar", "games", "Descongela a un usuario de los juegos. Sintaxis: descongelar <usuario>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("delgameuser", "games", "Elimina a un usurio de los juegos. Sintaxis: delgameuser <usuario>",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("congelar", "games", "Congela a un usuario de los juegos. Sintaxis congelar <usuario> [hiper]",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("descongelar", "games", "Descongela a un usuario de los juegos. Sintaxis: descongelar <usuario>",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		
 		$core->irc->setSenddelay(500); // Nosotros hacemos mucho flood, pero queremos que el bot siga vivo!
 		$core->registerTimeHandler(86400000, "games", "autoimp");
@@ -246,6 +247,9 @@ class jueg{
 			if($k->dinero>1000000000){$r.="[\002\00304MM\003\002] ";}
 			if($bu){$r.="[\2\00307R\003\2] ";}
 			if($k->congelado!=0){$r.="[\2\00305F\003\2] ";}
+			if($this->core->authchk($data->from, 4,"games")){$r.="[\2\00307A-\003\2] ";}
+			if($this->core->authchk($data->from, 6,"games")){$r.="[\2\00310A\003\2] ";}
+			if($this->core->authchk($data->from, 8,"games")){$r.="[\2\00311A+\003\2] ";}
 		}else{
 			$r="\00304Error\003: El usuario \002$user\002 no existe.";
 		}
