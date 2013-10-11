@@ -177,6 +177,8 @@ class CoBot{
 			if($this->commands[$command]['perm']!=-1){
 				if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['sec'])==false){
 					return -5;
+				}else{
+					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: No autorizado.");
 				}
 			}
 			$fu = $this->commands[$command]['method'];
@@ -251,6 +253,12 @@ class CoBot{
 		}else{
 			if((isset($this->commands[$data->messageex[1]])) && ($this->commands[$data->messageex[1]]['help'] != "")){
 				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de {$data->messageex[1]}: {$this->commands[$data->messageex[1]]['help']}");
+			}else{
+				switch($data->messageex[1]){
+					case "auth":
+						$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de \2help\2: Identifica a un usuario registrado con el bot. Uso: /msg {$irc->_nick} {$conf['irc']['prefix']}auth <USUARIO> <CONTRASEÑA>");
+						break;
+				}
 			}
 		}
 	}
