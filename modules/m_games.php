@@ -50,7 +50,7 @@ class jueg{
 	}
 		
 	public function congelar(&$irc, $data, &$core){
-		$c = ORM::for_table('games_users')->where("user", $data->messageex[1])->find_one();
+		$c = ORM::for_table('games_users')->where("nick", $data->messageex[1])->find_one();
 		if($c){
 			if(isset($data->messageex[2]) && $data->messageex[2]=="hiper"){
 				$c->congelado = 2;
@@ -64,7 +64,7 @@ class jueg{
 		}
 	}
 	public function descongelar(&$irc, $data, &$core){
-		$c = ORM::for_table('games_users')->where("user", $data->messageex[1])->find_one();
+		$c = ORM::for_table('games_users')->where("nick", $data->messageex[1])->find_one();
 		if($c){
 			if($c->congelado==0){
 				$this->schan($irc,$data->channel, "Ese usuario no está congelado!.",true);
@@ -125,7 +125,7 @@ class jueg{
 	
   public function gamecommandhandler(&$irc, $data, &$core){
 		if($data->messageex[0][0]!="!"){return 0;}
-		$chan=ORM::for_table("games_channels")->where("channel", $data->channel)->find_one();
+		$chan=ORM::for_table("games_channels")->where("channel", strtolower($data->channel))->find_one();
 		if(!$chan){return 0;}
 		// TODO 1: Verificar si el nick esta registrado y si puso un comando de juegos en un canal con juegos habilitados..
 		$bu = ORM::for_table('users')->where("username", strtolower($data->nick))->find_one();
