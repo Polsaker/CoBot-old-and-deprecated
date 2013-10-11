@@ -288,7 +288,7 @@ class jueg{
 				$i++;
 				$basecost=$basecost*2;
 			}
-			$basecost = number_format($basecost, 2);
+			$basecost = number_format($basecost, 2, ",", ".");
 			$this->schan($irc,$data->channel, "El nivel {$data->messageex[1]} cuesta \$$basecost");
 		}
 		
