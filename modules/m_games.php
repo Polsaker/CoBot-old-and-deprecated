@@ -198,8 +198,8 @@ class jueg{
 					 if($r==1){return 0;}
 				 }else{
 				 	 $this->schan($irc,$data->channel, "Esta cuenta esta congelada.", true);
+				 	 return 0;
 				 }
-				 return 0;
 			 }
 			 if($k->nivel>4){
 				 $this->lastplayer=$data->nick;
