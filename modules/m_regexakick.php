@@ -13,8 +13,8 @@ class woop{
         $core->registerMessageHandler('PRIVMSG', "regexakick", "msgs");
         $core->registerMessageHandler('NOTICE', "regexakick", "msgs");
         $core->registerMessageHandler('JOIN', "regexakick", "joinlookup");
-		$core->registerCommand("msgakick", "regexakick", "Maneja los akicks por expresiones regulares (por mensajes). Sintaxis: regexakick <add|del|list> <canal> <Expresión regular> (Nota: las expresiones regulares deben incluir el separador.)");
-		$core->registerCommand("joinakick", "regexakick", "Maneja los akicks por expresiones regulares (Al entrar al canal, por máscara). Sintaxis: regexakick <add|del|list> <canal> <Expresión regular> (Nota: las expresiones regulares deben incluir el separador. Nota 2: la regex se analiza teniendo en cuenta la máscara del usuario (nick!user@host). )");
+		$core->registerCommand("msgakick", "regexakick", "Maneja los akicks por expresiones regulares (por mensajes). Sintaxis: regexakick <add|del|list> <canal> <Expresión regular> (Nota: las expresiones regulares deben incluir el separador.)", 5);
+		$core->registerCommand("joinakick", "regexakick", "Maneja los akicks por expresiones regulares (Al entrar al canal, por máscara). Sintaxis: regexakick <add|del|list> <canal> <Expresión regular> (Nota: las expresiones regulares deben incluir el separador. Nota 2: la regex se analiza teniendo en cuenta la máscara del usuario (nick!user@host). )", 5);
 		try {
 			$k = ORM::for_table('akicks')->find_one();
 		}catch(PDOException $e){
