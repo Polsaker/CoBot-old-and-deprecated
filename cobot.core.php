@@ -21,9 +21,9 @@ class CoBot{
 		$this->irc->setUseSockets(false);
 		$this->irc->setCtcpVersion("B. Olivaw/".VER);
 		
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL|SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:,] )(help|ayuda)(?!\w+)", $this, "help");
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:,] )".'auth(?!\w+)', $this, "auth");
-		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|¬NICK¬[:,] )".'update(?!\w+)', $this, "update");
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL|SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:, ] )(help|ayuda)(?!\w+)", $this, "help");
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:, ] )".'auth(?!\w+)', $this, "auth");
+		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL, '^'."(?:{$this->prefix}|¬NICK¬[:, ] )".'update(?!\w+)', $this, "update");
 		$this->irc->cobot=$this;
 				
 		ORM::configure($config['ormconfig']);
@@ -129,7 +129,7 @@ class CoBot{
 	 * @param $type: El tipo de handler que se registrara. Por defecto: SMARTIRC_TYPE_CHANNEL
 	 */ 
 	public function registerCommand($name, $module, $help = false, $perm = -1, $sec = "*", $method = null, $type=SMARTIRC_TYPE_CHANNEL){
-		$ac = $this->irc->registerActionhandler($type, '^'."(?:{$this->prefix}|¬NICK¬[:,] )".$name.'(?!\w+)', $this, 'commandHandler');
+		$ac = $this->irc->registerActionhandler($type, '^'."(?:{$this->prefix}|¬NICK¬[:, ] )".$name.'(?!\w+)', $this, 'commandHandler');
 		if($method!=null){$fmethod=$method;}else{$fmethod=$name;}
 		if($help != false){
 			array_push($this->help,array('m'=>$module,'name' => $name, 'priv' => $perm, 'sec' => $sec));
