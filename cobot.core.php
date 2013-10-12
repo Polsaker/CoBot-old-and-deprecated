@@ -269,7 +269,10 @@ class CoBot{
 				$commands.="{$a['name']} ";
 			}
 			//$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
-			$this->sendMessage($data->channel, "Comandos: help auth $commands", true);
+			//$this->sendMessage($data->channel, "Comandos: help auth $commands", true);
+			$f=" 06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES');
+			$asg = explode("||||",trim(wordwrap($message,"Comandos: help auth $commands", $f."||||",false), $f));
+			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $asg);
 		}else{
 			if((isset($this->commands[$data->messageex[1]])) && ($this->commands[$data->messageex[1]]['help'] != "")){
 				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de {$data->messageex[1]}: {$this->commands[$data->messageex[1]]['help']}");
@@ -404,7 +407,8 @@ class CoBot{
 		return false;
 	}
 	
-	/* sendMessage
+	/* @deprecated
+	 * sendMessage
 	 *  Envía un mensaje a un canal, con la opción de partirlo, para mensajes largos
 	 * @param $chan = Canal a donde el mensaje se enviará
 	 * @param $msg = Mensaje que será eniado
