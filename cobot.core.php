@@ -271,7 +271,7 @@ class CoBot{
 			//$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
 			//$this->sendMessage($data->channel, "Comandos: help auth $commands", true);
 			$f=" 06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES');
-			$asg = explode("||||",trim(wordwrap($message,"Comandos: help auth $commands", $f."||||",false), $f));
+			$asg = explode("||||",trim(wordwrap("Comandos: help auth $commands",350, $f."||||",false), $f));
 			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $asg);
 		}else{
 			if((isset($this->commands[$data->messageex[1]])) && ($this->commands[$data->messageex[1]]['help'] != "")){
