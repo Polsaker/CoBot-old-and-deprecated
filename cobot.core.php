@@ -8,7 +8,7 @@ class CoBot{
 	public $prefix;
 	private $commands=array();
 	public $dbcon;
-	private $help=array();
+	private $help=array(); 
 	
 	private $messagehandlers=array();
 	private $timehandlers=array();
@@ -210,13 +210,13 @@ class CoBot{
 			if(!file_exists($val['path'])){
 				$k=json_decode(file_get_contents($val['url']));
 				file_put_contents($val['path'],base64_decode($k->content));$u=true;
-				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Actualizando \00303{$val['path']}\003\002 \00308[Nuevo]");
+				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Actualizando \00303{$val['path']}\003\002 \00308[Nuevo]", SMARTIRC_CRITICAL);
 			}else{
 				$hash1 = sha1("blob {$val['l']}\0".file_get_contents($val['path']));
 				if($hash1 != $val['hash']){
 					$k=json_decode(file_get_contents($val['url']));
 					file_put_contents($val['path'],base64_decode($k->content));$u=true;
-					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Actualizando \00303{$val['path']}\003\002");
+					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Actualizando \00303{$val['path']}\003\002", SMARTIRC_CRITICAL);
 					if(($val['path']=="cobot.php")||($val['path']=="cobot.core.php")){$p = true;}
 					if(preg_match("#modules/(.+)#",$val['path'],$m)){ $this->unloadModule($m[1]); $this->loadModule($m[1]);}
 				} 
@@ -224,7 +224,7 @@ class CoBot{
 		}
 		if($p==true){
 			$irc->quit("[UPDATE] Aplicando actualizaciones.");
-			exec("php restart.php &");
+			exec("php cobot.php &");
 			exit;
 		}
 		if($u==false){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "No hay actulizaciones disponibles.");}
