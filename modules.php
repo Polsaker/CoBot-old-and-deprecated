@@ -22,3 +22,4 @@ $cobot->loadModule("m_iplocator.php");
 $cobot->loadModule("m_sasl.php");
 $cobot->loadModule("m_seen.php");
 $cobot->loadModule("m_ping.php");
+$cobot->loadModule("m_wikichan.php");
