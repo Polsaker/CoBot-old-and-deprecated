@@ -12,6 +12,8 @@
  * muestran por defecto las categorías asimov, deprimente, informatica, leydemurphy y camioneros en español, si desea agregar más
  * puede conseguir un listado completo de las disponibles en http://wertarbyte.de/gigaset-rss/
  *
+ * Requiere ./lib/fortune/fortune.php requiere php-xml para funcionar y debe estar instalado si no, el bot puede morir con este error:
+ * PHP Fatal error:  Class 'DOMDocument' not found
  */
 
 class sayfortune{
