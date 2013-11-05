@@ -107,7 +107,7 @@ class asdfg{
 		$xml =  file_get_contents("http://".$qad->api."/api.php?action=query&prop=extracts&exchars=440&titles=".urlencode(str_replace(" ", "_",$ts))."&format=json");		
 		$result = json_decode($xml);
 		foreach($result->query->pages as $key => $val){$pageid=$key;}
-		if(@isset($result->query->pages->$pageid->missing)){$irc->SendCommand("PRIVMSG ".$channel.' :04Error: El artículo no existe.');return 0;}
+		if(@isset($result->query->pages->$pageid->missing)){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel,"04Error: El artículo no existe.');return 0;}
 		$rs=$result->query->pages->$pageid->extract;
 		if(preg_match('#^.*REDIRECCIÓN (.+)$#',strip_tags($rs), $matches)){
 			$this->preview($irc,$msg,$channel,array("",$matches[1]),$who);
