@@ -2294,7 +2294,7 @@ class Net_SmartIRC_base
     {
         $found = false;
         if (@method_exists($this->cobot, "messageHandler")) {
-           $this->log(SMARTIRC_DEBUG_MESSAGEHANDLER, 'DEBUG_MESSAGEHANDLER: calling user defined method "'.get_class($this->cobot).'->messageHandler" ('.$_codetype.')', __FILE__, __LINE__);
+           $this->log(SMARTIRC_DEBUG_MESSAGEHANDLER, 'DEBUG_MESSAGEHANDLER: calling user defined method "'.get_class($this->cobot).'->messageHandler"', __FILE__, __LINE__);
            $this->cobot->messageHandler($ircdata, $messagecode);
            $found = true;
         }
