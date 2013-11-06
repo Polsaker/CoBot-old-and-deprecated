@@ -20,7 +20,7 @@ class CoBot{
 		$this->irc = &new Net_SmartIRC();
 		$this->irc->setDebug(SMARTIRC_DEBUG_IRCMESSAGES);
 		$this->irc->setUseSockets(false);
-		$this->irc->setCtcpVersion("B. Olivaw/".VER);
+		$this->irc->setCtcpVersion("CoBot/".VER);
 		
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL|SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:, ]? )(help|ayuda)(?!\w+)", $this, "help");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:, ]? )".'auth(?!\w+)', $this, "auth");
@@ -236,7 +236,7 @@ class CoBot{
 		if(!$data->channel){$data->channel=$data->nick;}
 		$data->messageex = $this->rsMsgEx($data->messageex);
 		if((!isset($data->messageex[1])) || ($data->messageex[1]== "")){
-			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "B. Olivaw v".VER." Por MRX Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
+			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "CoBot v".VER."Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
 			$commands="";
 			foreach($this->help as $a){
 				if($a['priv']!=-1){
@@ -381,7 +381,7 @@ class CoBot{
 		if($this->conf['irc']['ssl']==true){$this->conf['irc']['host']="ssl://".$this->conf['irc']['host'];}
 		$this->irc->connect($this->conf['irc']['host'], $this->conf['irc']['port']);
 		$this->irc->send($this->onconnect, SMARTIRC_CRITICAL);
-		$this->irc->login($this->conf['irc']['nick'], 'B. Olivaw/'.VER.'', 0, $this->conf['irc']['nick']);
+		$this->irc->login($this->conf['irc']['nick'], 'CoBot/'.VER.'', 0, $this->conf['irc']['nick']);
 		$this->irc->join($this->conf['irc']['channels']);
 		$this->irc->listen();
 		$this->irc->disconnect();
