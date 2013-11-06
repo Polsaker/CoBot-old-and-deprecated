@@ -9,6 +9,7 @@ class CoBot{
 	private $commands=array();
 	public $dbcon;
 	private $help=array(); 
+	public $onconnect; // blergh!
 	
 	private $messagehandlers=array();
 	private $timehandlers=array();
@@ -17,7 +18,7 @@ class CoBot{
 		$this->conf = $config;
 		$this->prefix= preg_quote($this->conf['irc']['prefix']);
 		$this->irc = &new Net_SmartIRC();
-		$this->irc->setDebug(SMARTIRC_DEBUG_ALL);
+		$this->irc->setDebug(SMARTIRC_DEBUG_IRCMESSAGES);
 		$this->irc->setUseSockets(false);
 		$this->irc->setCtcpVersion("B. Olivaw/".VER);
 		
@@ -318,6 +319,19 @@ class CoBot{
 	}
 	
 	/*
+	 * des-registra un TimeHandler 
+	 * @param: $id = ID del timehandler
+	 */
+	public function unregisterTimeHandler($id){
+		foreach($this->timehandlers as $key => $val){
+			if($val['tid']==$id){
+				$this->irc->unregisterTimeid($val['tid']);
+				unset($this->timehandlers[$key]);
+			}
+		}
+	}
+	
+	/*
 	 * Junta los valores de un array en una sola cadena.
 	 * Util para unir parametros
 	 * 
@@ -366,6 +380,7 @@ class CoBot{
 	public function connect(){
 		if($this->conf['irc']['ssl']==true){$this->conf['irc']['host']="ssl://".$this->conf['irc']['host'];}
 		$this->irc->connect($this->conf['irc']['host'], $this->conf['irc']['port']);
+		$this->irc->send($this->onconnect, SMARTIRC_CRITICAL);
 		$this->irc->login($this->conf['irc']['nick'], 'B. Olivaw/'.VER.'', 0, $this->conf['irc']['nick']);
 		$this->irc->join($this->conf['irc']['channels']);
 		$this->irc->listen();
