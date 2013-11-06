@@ -10,16 +10,14 @@
  */
 
 class imagenius{
-	private $fnoticmh;
 	public function __construct(&$core){
-        $this->fnoticmh = $core->registerMessageHandler('NOTICE', "sasl", "fnotic");
+        $core->registerMessageHandler('AUTHENTICATE', "sasl", "reg");
+        $core->onconnect.="CAP REQ :sasl\nAUTHENTICATE PLAIN";
 	}
-	public function fnotic(&$irc, $data, $core){
-		$irc->_send("CAP REQ SASL", SMARTIRC_CRITICAL);
-		$irc->_send("AUTHENTICATE PLAIN", SMARTIRC_CRITICAL);
-		$irc->_send("AUTHENTICATE ".base64_encode("{$core->conf['nickserv']['nsuser']}\0{$core->conf['nickserv']['nsuser']}\0{$core->conf['nickserv']['nspass']}"), SMARTIRC_CRITICAL);
-		$irc->_send("CAP END", SMARTIRC_CRITICAL);
-		$core->unregisterMessageHandler($this->fnoticmh);
+	
+	public function reg(&$irc, $data, $core){
+		$irc->send("AUTHENTICATE ".base64_encode("{$core->conf['nickserv']['nsuser']}\0{$core->conf['nickserv']['nsuser']}\0{$core->conf['nickserv']['nspass']}"), SMARTIRC_CRITICAL);
+		$irc->send("CAP END", SMARTIRC_CRITICAL);
 	}
 	
 }

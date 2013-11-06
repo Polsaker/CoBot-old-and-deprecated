@@ -1,0 +1,10 @@
+La API para desarrollar módulos esta divida en dos partes: el núcleo (core)
+del bot y la librería SmartIRC.
+
+El núcleo contiene todo lo referido a la parte interna del bot (registro de
+handlers, verificación de autenticación, carga/descarga de módulos, etc) 
+mientras que SmartIRC tiene todo lo relacionado con el IRC (envio de
+mensajes, obtención de datos, etc).
+
+SmartIRC será identificado como $irc y el núcleo será identificado como
+$core.

@@ -1,6 +1,6 @@
 <?php
 
-	define("VER", "1.0 Beta");
+	define("VER", "1.0 (Olivaw)");
 	date_default_timezone_set('UTC');
 	require("config.php");
 	require("lib/idiorm/idiorm.php");

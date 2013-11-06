@@ -1,0 +1,23 @@
+Los módulos estan compuestos por dos partes: La cabecera y la clase
+principal. La cabecera contiene la información necesaria para cargar
+el módulo y la clase principal el código mismo.
+
+
+La cabecera es un bloque de código comentado que se ve así:
+/*
+ * @name: Módulo de prueba
+ * @desc: Modulo basico para hacer pruebas
+ * @ver: 1.0
+ * @author: MRX
+ * @id: test
+ * @key: asdfg
+ *
+ */
+De esos valores, los únicos obligatorios son @id y @key.
+@id es el nombre con el que el módulo será identificado internamente,
+mientras que @key es el nombre de la clase principal.
+
+La clase principal debe tener obligatoriamente el mismo nombre que @key
+y debe tener una función __construct que tome un parámetro ($core).
+En esa función se declararán mas tarde los comandos, eventHandlers y
+messageHandlers.

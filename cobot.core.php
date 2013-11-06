@@ -9,6 +9,7 @@ class CoBot{
 	private $commands=array();
 	public $dbcon;
 	private $help=array(); 
+	public $onconnect; // blergh!
 	
 	private $messagehandlers=array();
 	private $timehandlers=array();
@@ -17,9 +18,9 @@ class CoBot{
 		$this->conf = $config;
 		$this->prefix= preg_quote($this->conf['irc']['prefix']);
 		$this->irc = &new Net_SmartIRC();
-		$this->irc->setDebug(SMARTIRC_DEBUG_ALL);
+		$this->irc->setDebug(SMARTIRC_DEBUG_IRCMESSAGES);
 		$this->irc->setUseSockets(false);
-		$this->irc->setCtcpVersion("B. Olivaw/".VER);
+		$this->irc->setCtcpVersion("CoBot/".VER);
 		
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_CHANNEL|SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:, ]? )(help|ayuda)(?!\w+)", $this, "help");
 		$this->irc->registerActionhandler(SMARTIRC_TYPE_QUERY, '^'."(?:{$this->prefix}|¬NICK¬[:, ]? )".'auth(?!\w+)', $this, "auth");
@@ -235,7 +236,7 @@ class CoBot{
 		if(!$data->channel){$data->channel=$data->nick;}
 		$data->messageex = $this->rsMsgEx($data->messageex);
 		if((!isset($data->messageex[1])) || ($data->messageex[1]== "")){
-			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "B. Olivaw v".VER." Por MRX Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
+			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "CoBot v".VER."Comandos empezar con ".$this->conf['irc']['prefix'].". Escriba ".$this->conf['irc']['prefix']."help <comando> para mas información acerca de un comando.");
 			$commands="";
 			foreach($this->help as $a){
 				if($a['priv']!=-1){
@@ -318,6 +319,19 @@ class CoBot{
 	}
 	
 	/*
+	 * des-registra un TimeHandler 
+	 * @param: $id = ID del timehandler
+	 */
+	public function unregisterTimeHandler($id){
+		foreach($this->timehandlers as $key => $val){
+			if($val['tid']==$id){
+				$this->irc->unregisterTimeid($val['tid']);
+				unset($this->timehandlers[$key]);
+			}
+		}
+	}
+	
+	/*
 	 * Junta los valores de un array en una sola cadena.
 	 * Util para unir parametros
 	 * 
@@ -366,7 +380,8 @@ class CoBot{
 	public function connect(){
 		if($this->conf['irc']['ssl']==true){$this->conf['irc']['host']="ssl://".$this->conf['irc']['host'];}
 		$this->irc->connect($this->conf['irc']['host'], $this->conf['irc']['port']);
-		$this->irc->login($this->conf['irc']['nick'], 'B. Olivaw/'.VER.'', 0, $this->conf['irc']['nick']);
+		$this->irc->send($this->onconnect, SMARTIRC_CRITICAL);
+		$this->irc->login($this->conf['irc']['nick'], 'CoBot/'.VER.'', 0, $this->conf['irc']['nick']);
 		$this->irc->join($this->conf['irc']['channels']);
 		$this->irc->listen();
 		$this->irc->disconnect();
