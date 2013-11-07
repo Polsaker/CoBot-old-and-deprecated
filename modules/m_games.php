@@ -69,18 +69,29 @@ class jueg{
 	}
 	
 	public function dados($irc,$data){
-	  $d1 = rand(1,6);  $d2 = rand(1,6);  $d3 = rand(1,6);
-	  $d = $d1+$d2+$d3;
-	  
-	  if ($d%2==0){// TODO: si es nivel 1, bla bla bla
-		  $w=rand(2, 150);
-	  }else{
-		  $w=rand(2, 350);
-	  }
-	  $r = "\002{$data->nick}\002:\017 [\002$d1+$d2+$d3=$d\002] ".(($d%2==0)?"ganaste":"perdiste")." $$w!!!";
-	  // TODO: lo de la base de datos...
-	  
-	  
-	  $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
-  }
+
+		$k = ORM::for_table('games_users')->where("nick", $user)->find_one();
+		if($k->dinero<10){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $10.", true);}
+		$d1 = rand(1,6);  $d2 = rand(1,6);  $d3 = rand(1,6);
+		$d = $d1+$d2+$d3;
+
+		if ($d%2==0){// TODO: si es nivel 1, bla bla bla
+			$w=rand(2, 150);
+		}else{
+			$w=rand(2, 350);
+		}
+		$r = "\002{$data->nick}\002:\017 [\002$d1+$d2+$d3=$d\002] ".(($d%2==0)?"ganaste":"perdiste")." $$w!!!";
+		// TODO: lo de la base de datos...
+
+
+		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
+	}
+	
+	
+	
+	/* Funciones internas */
+	
+	private function schan($irc, $chan, $txt, $err=false){
+		$irc->message(SMARTIRC_TYPE_CHANNEL, $chan, ($err?"\00304Error\003: ":"").$txt);
+	}
 }
