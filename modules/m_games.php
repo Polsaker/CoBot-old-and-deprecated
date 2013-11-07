@@ -42,21 +42,33 @@ class jueg{
 		switch($data->messageex[0]){
 			case "!alta": $this->alta($irc,$data);break;
 			case "!dados": $this->dados($irc,$data);break;
+			case "!dinero": $this->dinero($irc,$data);break;
 		}
   }
   
-  public function alta($irc,$data){
-	  
-	  $guser = ORM::for_table('games_users')->create();
-	  $guser->nick=$data->nick;
-	  $guser->dinero=$this->startrial;
-	  $guser->congelado=0;
-	  $guser->extrainf=json_encode(array());
-	  $guser->nivel=0; $guser->save();
-	  $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Te has dado de alta!!\002 ahora tienes \002\${$this->startrial}\002 para empezar a jugar!");
-  }
+	public function alta($irc,$data){
+		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		if(isset($k->nick)){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: Ya estás dado de alta");return 0;}
+		$guser = ORM::for_table('games_users')->create();
+		$guser->nick=$data->nick;
+		$guser->dinero=$this->startrial;
+		$guser->congelado=0;
+		$guser->extrainf=json_encode(array());
+		$guser->nivel=0; $guser->save();
+		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\002Te has dado de alta!!\002 ahora tienes \002\${$this->startrial}\002 para empezar a jugar!");
+	}
   
-  public function dados($irc,$data){
+	public function dinero($irc,$data){
+		if(!isset($data->messageex[1])){$user = $data->nick;}else{$user=$data->messageex[1];}
+		$k = ORM::for_table('games_users')->where("nick", $user)->find_one();
+		if($k){
+			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "En la cuenta de \002$user\002 hay \002\${$k->dinero}\002");
+		}else{
+			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: El usuario \002$user\002 no existe.");
+		}
+	}
+	
+	public function dados($irc,$data){
 	  $d1 = rand(1,6);  $d2 = rand(1,6);  $d3 = rand(1,6);
 	  $d = $d1+$d2+$d3;
 	  
