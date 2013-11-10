@@ -41,7 +41,7 @@ class jueg{
 	}
 	
   public function gamecommandhandler(&$irc, $data, &$core){
-		if(substr($data->messageex[0],0,1)!="!"){return 0;}
+		if($data->messageex[0][0]!="!"){return 0;}
 		// TODO 1: Verificar si el nick esta registrado y si puso un comando de juegos en un canal con juegos habilitados..
 		$bu = ORM::for_table('users')->where("username", strtolower($data->nick))->find_one();
 		if($bu){
