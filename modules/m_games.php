@@ -170,10 +170,10 @@ class jueg{
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		if($k->dinero<5){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $5.", true); return 0;}
 		$d1 = rand(1,6);  $d2 = rand(1,6);  $d3 = rand(1,6);
-		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();		$k->dinero=$k->dinero-10;
+		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+//		$k->dinero=$k->dinero-10;
 		$po=json_decode($b->extrainf);
-		$po->pozo=$po->pozo+5;
-		$b->extrainf=json_encode($po);
+		
 		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true);return 0;}
 
 		$d = $d1+$d2+$d3;
@@ -185,7 +185,9 @@ class jueg{
 		}else{
 			$w=rand(2, 15);
 			$k->dinero=$k->dinero - $w;$k->save();
-			$b->dinero=$b->dinero + $w;$b->save();
+			//$b->dinero=$b->dinero + $w;$b->save();
+			$po->pozo=$po->pozo+$w;
+			$b->extrainf=json_encode($po);
 		}
 		$r = "\002{$data->nick}\002:\017 [\002$d1+$d2+$d3=$d\002] ".(($d%2==0)?"ganaste":"perdiste")." $$w!!!";
 
