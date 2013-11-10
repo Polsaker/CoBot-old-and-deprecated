@@ -67,6 +67,7 @@ class jueg{
 			case "!nivel": $this->nivel($irc,$data);break;
 			case "!tragamonedas": 
 			case "!tragaperras": $this->tragaperras($irc,$data);break;
+			case "!rueda": $this->rueda($irc,$data);break;
 		}
   }
   
@@ -137,16 +138,60 @@ class jueg{
 		$this->schan($irc,$data->channel, "Ahora eres nivel {$k->nivel}!");
 	}
 	
+	public function rueda($irc,$data){
+		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		$ba = ORM::for_table('games_banco')->where("id", 1)->find_one();
+		if($k->dinero<500){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $500.", true); return 0;}
+		
+		if($k->nivel<4){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 4 para poder jugar a este juego.", true); return 0;}
+		
+		$po=json_decode($ba->extrainf);
+		$resu = rand(0,5);
+		switch($resu){
+			case 0:
+				$final = $k->dinero + round(($po->pozo * 50/100),0);
+				$finalp = round(($po->pozo * 50/100),0);$finalb=$ba->dinero;
+				$r="\2{$data->nick}\2:\17 \00304GANASTE\00311 EL 50% DEL DINERO DEL POZO!!!\003 Ahora tienes\00303\2 $$final";
+				break;
+			case 1:
+				$final = $k->dinero + round(($po->pozo * 25/100),0);
+				$finalp = round(($po->pozo * 75/100),0);$finalb=$ba->dinero;
+				$r="\2{$data->nick}\2:\17 \00304GANASTE\00311 EL 25% DEL DINERO DEL POZO!!!\003 Ahora tienes\00303\2 $$final";
+				break;
+			case 2:
+				$final = $k->dinero; $finalp=$po->pozo;$finalb=$ba->dinero;
+				$r="\2{$data->nick}\2:\17 No pierdes ni ganas nada de dinero.";
+				break;
+			case 3:
+				$final = round(($k->dinero * 50/100),0);$finalp=$po->pozo;
+				$finalb= $ba->dinero + round(($k->dinero * 50/100),0);
+				$r="\2{$data->nick}\2:\17 \00304PERDISTE\00311 EL 50% DE TU DINERO!!!\003 Ahora tienes\00303\2 $$final";
+				break;
+			case 4:
+				$final = round(($k->dinero * 25/100),0);$finalp=$po->pozo;
+				$finalb= $ba->dinero + round(($k->dinero * 75/100),0);
+				$r="\2{$data->nick}\2:\17 \00304PERDISTE\00311 EL 75% DE TU DINERO!!!\003 Ahora tienes\00303\2 $$final";
+				break;
+			case 5:
+				$final = 200;$finalp=$po->pozo;
+				$finalb= $ba->dinero + ($k->dinero -200);
+				$r="\2{$data->nick}\2:\17 \00304PERDISTE\00311 TODO TU DINERO!!!\003 Tienes $200 para amortizar la perdida.";
+				break;
+		}
+		$ba->dinero = $finalb;
+		$ba->extrainf=json_encode($po);$ba->save();
+		$k->dinero=$final;$k->save();
+		$this->schan($irc, $data->channel, $r);
+	}
 	public function tragaperras($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		$ba = ORM::for_table('games_banco')->where("id", 1)->find_one();
 		if($ba->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true); return 0;}
 		if($k->dinero<10){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $10.", true); return 0;}
 		if($k->nivel==0){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 1 para poder jugar a este juego.", true); return 0;}
-		$k->dinero=$k->dinero-10; $k->save();
+		//$k->dinero=$k->dinero-10; $k->save();
 		$po=json_decode($ba->extrainf);
-		$po->pozo=$po->pozo+10;
-		$ba->extrainf=json_encode($po);
+		
 		switch($k->nivel){
 			case 1:	$s=rand(5,10);	$p=rand(2,14);	$n=rand(-6,10);	$m=rand(9,29);	$e=rand(-10,1);	$b=rand(-19,-2); $x=rand(-10,10); $a=rand(-5,10);break;
 			default:$s=rand(6,12);	$p=rand(5,16);	$n=rand(-9,15);	$m=rand(12,30);	$e=rand(-17,3);	$b=rand(-26,-8); $x=rand(-17,17); $a=rand(-8,15);break;
@@ -160,7 +205,12 @@ class jueg{
 		$tot=$r1+$r2+$r3;
 		if($n1==$n2 && $n3==$n2){$tot=200;}
 		$k->dinero=$k->dinero + $tot;$k->save();
-		$ba->dinero=$ba->dinero - $tot;$ba->save();
+		if($tot>0){
+			$po->pozo=$po->pozo+abs-($tot);
+			$ba->extrainf=json_encode($po);
+		}else{
+			$ba->dinero=$ba->dinero - $tot;
+		}$ba->save();
 		$resp="\002{$data->nick}\002\017: $comb ".(($tot<0)?"\002PERDISTE\002 $".abs($tot):"\002GANASTE\002 $$tot");
 
 		$this->schan($irc,$data->channel,$resp);
