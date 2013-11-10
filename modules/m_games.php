@@ -173,8 +173,8 @@ class jueg{
 				$r="\2{$data->nick}\2:\17 \00304PERDISTE\00311 EL 75% DE TU DINERO!!!\003 Ahora tienes\00303\2 $$final";
 				break;
 			case 5:
-				$final = 200;$finalp=$po->pozo+ round(($k->dinero -200) * 50/100),0);
-				$finalb= $ba->dinero + round(($k->dinero -200) * 50/100),0);
+				$final = 200;$finalp=$po->pozo+ round(($k->dinero -200) * 50/100,0);
+				$finalb= $ba->dinero + round(($k->dinero -200) * 50/100,0);
 				$r="\2{$data->nick}\2:\17 \00304PERDISTE\00311 TODO TU DINERO!!!\003 Tienes $200 para amortizar la perdida.";
 				break;
 		}
