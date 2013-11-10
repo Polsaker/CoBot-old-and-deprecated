@@ -101,7 +101,8 @@ class jueg{
 		if($user=="banco"){
 			$k = ORM::for_table('games_banco')->where("id", 1)->find_one();
 			$r="En el banco hay $\002{$k->dinero}\002. Flags: [\002\00302B\003\002] ";
-			if($k->dinero<1000){$r.="[\2\00305Q\003\2]";}
+			if($k->dinero<1000){$r.="[\2\00305Q\003\2] ";}
+			if($p = json_decode($k->extrainf)->pozo){$r.="[\2Pozo\2 $p]";}
 		}
 		$this->schan($irc,$data->channel,$r);
 	}
@@ -168,6 +169,10 @@ class jueg{
 		$d1 = rand(1,6);  $d2 = rand(1,6);  $d3 = rand(1,6);
 		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
 		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true);return 0;}
+		$k->dinero=$k->dinero-10;
+		$po=json_decode($b->extrainf);
+		$po->pozo=$po->pozo+10;
+		$b->extrainf=json_encode($po);
 		$d = $d1+$d2+$d3;
 
 		if ($d%2==0){
