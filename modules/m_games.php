@@ -141,11 +141,11 @@ class jueg{
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		$ba = ORM::for_table('games_banco')->where("id", 1)->find_one();
 		if($ba->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true); return 0;}
-		if($k->dinero<15){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $15.", true); return 0;}
+		if($k->dinero<10){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $10.", true); return 0;}
 		if($k->nivel==0){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 1 para poder jugar a este juego.", true); return 0;}
-		$k->dinero=$k->dinero-15; $k->save();
+		$k->dinero=$k->dinero-10; $k->save();
 		$po=json_decode($ba->extrainf);
-		$po->pozo=$po->pozo+15;
+		$po->pozo=$po->pozo+10;
 		$ba->extrainf=json_encode($po);
 		switch($k->nivel){
 			case 1:	$s=rand(5,10);	$p=rand(2,14);	$n=rand(-6,10);	$m=rand(9,29);	$e=rand(-10,1);	$b=rand(-19,-2); $x=rand(-10,10); $a=rand(-5,10);break;
@@ -168,11 +168,11 @@ class jueg{
 	
 	public function dados($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
-		if($k->dinero<10){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $10.", true); return 0;}
+		if($k->dinero<5){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $5.", true); return 0;}
 		$d1 = rand(1,6);  $d2 = rand(1,6);  $d3 = rand(1,6);
 		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();		$k->dinero=$k->dinero-10;
 		$po=json_decode($b->extrainf);
-		$po->pozo=$po->pozo+10;
+		$po->pozo=$po->pozo+5;
 		$b->extrainf=json_encode($po);
 		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true);return 0;}
 
