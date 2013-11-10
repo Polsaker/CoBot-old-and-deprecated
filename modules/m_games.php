@@ -205,7 +205,7 @@ class jueg{
 		$tot=$r1+$r2+$r3;
 		if($n1==$n2 && $n3==$n2){$tot=200;}
 		$k->dinero=$k->dinero + $tot;$k->save();
-		if($tot>0){
+		if($tot<0){
 			$po->pozo=$po->pozo+abs-($tot);
 			$ba->extrainf=json_encode($po);
 		}else{
