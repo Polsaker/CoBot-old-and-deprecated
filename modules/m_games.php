@@ -68,6 +68,7 @@ class jueg{
 			case "!tragamonedas": 
 			case "!tragaperras": $this->tragaperras($irc,$data);break;
 			case "!rueda": $this->rueda($irc,$data);break;
+			case "!transferir": $this->transferir($irc,$data);break;
 		}
   }
   
@@ -179,6 +180,7 @@ class jueg{
 				break;
 		}
 		$ba->dinero = $finalb;
+		$po->pozo=$finalp;
 		$ba->extrainf=json_encode($po);$ba->save();
 		$k->dinero=$final;$k->save();
 		$this->schan($irc, $data->channel, $r);
