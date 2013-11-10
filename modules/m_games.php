@@ -27,7 +27,7 @@ class jueg{
 			$db->exec("CREATE TABLE 'games_banco' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'dinero' INTEGER NOT NULL, 'extrainf' TEXT NOT NULL);");
 			$db->exec("CREATE TABLE 'games_cgames' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'extrainf' TEXT NOT NULL);");
 			$banco = ORM::for_table('games_banco')->create();
-			$banco->dinero=1000000;$banco->extrainf=json_encode(array());$banco->save();
+			$banco->dinero=1000000;$banco->extrainf=json_encode(array('pozo'=>'0'));$banco->save();
 		}
 	}
 	
@@ -41,7 +41,7 @@ class jueg{
 	}
 	
   public function gamecommandhandler(&$irc, $data, &$core){
-		if(!preg_match("#\!.*#", $data->message)){return 0;}
+		if(substr($data->messageex[0],0,1)!="!"){return 0;}
 		// TODO 1: Verificar si el nick esta registrado y si puso un comando de juegos en un canal con juegos habilitados..
 		$bu = ORM::for_table('users')->where("username", strtolower($data->nick))->find_one();
 		if($bu){
@@ -127,7 +127,8 @@ class jueg{
 			$i++;
 			$basecost=$basecost*2;
 		}
-		if($k->dinero<$basecost){$this->schan($irc,$data->channel,"Necesitas $basecost para pasar al nivel ".($k->nivel+1),true);return 0;}
+		$basecost=$basecost;
+		if($k->dinero<$basecost){$this->schan($irc,$data->channel,"Necesitas ".($basecost+50)." para pasar al nivel ".($k->nivel+1),true);return 0;}
 		$k->nivel=$k->nivel+1;
 		$k->dinero=$k->dinero-$basecost;$k->save();
 		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
