@@ -185,9 +185,9 @@ class jueg{
 		}else{
 			$w=rand(2, 15);
 			$k->dinero=$k->dinero - $w;$k->save();
-			//$b->dinero=$b->dinero + $w;$b->save();
+			//$b->dinero=$b->dinero + $w;
 			$po->pozo=$po->pozo+$w;
-			$b->extrainf=json_encode($po);
+			$b->extrainf=json_encode($po);$b->save();
 		}
 		$r = "\002{$data->nick}\002:\017 [\002$d1+$d2+$d3=$d\002] ".(($d%2==0)?"ganaste":"perdiste")." $$w!!!";
 
