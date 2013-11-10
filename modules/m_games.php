@@ -129,7 +129,7 @@ class jueg{
 			$basecost=$basecost*2;
 		}
 		$basecost=$basecost;
-		if($k->dinero<$basecost){$this->schan($irc,$data->channel,"Necesitas ".($basecost+50)." para pasar al nivel ".($k->nivel+1),true);return 0;}
+		if($k->dinero<($basecost+50)){$this->schan($irc,$data->channel,"Necesitas ".($basecost+50)." para pasar al nivel ".($k->nivel+1),true);return 0;}
 		$k->nivel=$k->nivel+1;
 		$k->dinero=$k->dinero-$basecost;$k->save();
 		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
@@ -143,7 +143,10 @@ class jueg{
 		if($ba->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true); return 0;}
 		if($k->dinero<25){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $25.", true); return 0;}
 		if($k->nivel==0){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 1 para poder jugar a este juego.", true); return 0;}
-		
+		$k->dinero=$k->dinero-25;
+		$po=json_decode($b->extrainf);
+		$po->pozo=$po->pozo+25;
+		$b->extrainf=json_encode($po);
 		switch($k->nivel){
 			case 1:	$s=rand(5,10);	$p=rand(2,14);	$n=rand(-6,10);	$m=rand(9,29);	$e=rand(-10,1);	$b=rand(-19,-2); $x=rand(-10,10); $a=rand(-5,10);break;
 			default:$s=rand(6,12);	$p=rand(5,16);	$n=rand(-9,15);	$m=rand(12,30);	$e=rand(-17,3);	$b=rand(-26,-8); $x=rand(-17,17); $a=rand(-8,15);break;
@@ -167,12 +170,12 @@ class jueg{
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		if($k->dinero<10){$this->schan($irc,$data->channel, "No tienes suficiente dinero como para jugar a este juego. Necesitas $10.", true); return 0;}
 		$d1 = rand(1,6);  $d2 = rand(1,6);  $d3 = rand(1,6);
-		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
-		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true);return 0;}
-		$k->dinero=$k->dinero-10;
+		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();		$k->dinero=$k->dinero-10;
 		$po=json_decode($b->extrainf);
 		$po->pozo=$po->pozo+10;
 		$b->extrainf=json_encode($po);
+		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true);return 0;}
+
 		$d = $d1+$d2+$d3;
 
 		if ($d%2==0){
