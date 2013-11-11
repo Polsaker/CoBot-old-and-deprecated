@@ -139,6 +139,20 @@ class jueg{
 		$this->schan($irc,$data->channel, "Ahora eres nivel {$k->nivel}!");
 	}
 	
+	public function transferir($irc,$data){
+		if(!isset($data->messageex[2])){return 0;} // Por que enviar un mensaje de error es mucho trabajo.
+		$data->messageex[2]=abs($data->messageex[2]);
+		$f = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		$t = ORM::for_table('games_users')->where("nick", $data->messageex[1])->find_one();
+		if($f->nivel<6){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 6 para enviar dinero a otros usuarios.", true);}
+		if($f->dinero<200){$this->schan($irc,$data->channel, "Debes tener por lo menos $200 para enviar dinero a alguien.", true);}
+		if(($f->dinero-$data->messageex[2])<100){$this->schan($irc,$data->channel, "Siempre debes conservar por lo menos $100",true);}
+		$t->dinero = $t->dinero + $data->messageex[2]; $t->save();
+		$f->dinero = $f->dinero - ($data->messageex[2]+50);$f->save();
+		$ba = ORM::for_table('games_banco')->where("id", 1)->find_one();
+		$ba->dinero = $ba->dinero +50; $ba->save();
+		$this->schan($irc, $data->channel, "Se han transferido \${$data->messageex[2]} a {$t->nick}.");
+	}
 	public function rueda($irc,$data){
 		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		$ba = ORM::for_table('games_banco')->where("id", 1)->find_one();
