@@ -144,9 +144,10 @@ class jueg{
 		$data->messageex[2]=abs($data->messageex[2]);
 		$f = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		$t = ORM::for_table('games_users')->where("nick", $data->messageex[1])->find_one();
-		if($f->nivel<6){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 6 para enviar dinero a otros usuarios.", true);}
-		if($f->dinero<200){$this->schan($irc,$data->channel, "Debes tener por lo menos $200 para enviar dinero a alguien.", true);}
-		if(($f->dinero-$data->messageex[2])<100){$this->schan($irc,$data->channel, "Siempre debes conservar por lo menos $100",true);}
+		if(!$t){$this->schan($irc,$data->channel, "El usuario {$data->messageex[1]} no existe.", true); return 0; }
+		if($f->nivel<6){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 6 para enviar dinero a otros usuarios.", true);return 0;}
+		if($f->dinero<200){$this->schan($irc,$data->channel, "Debes tener por lo menos $200 para enviar dinero a alguien.", true); return 0;}
+		if(($f->dinero-$data->messageex[2])<100){$this->schan($irc,$data->channel, "Siempre debes conservar por lo menos $100",true); return 0;}
 		$t->dinero = $t->dinero + $data->messageex[2]; $t->save();
 		$f->dinero = $f->dinero - ($data->messageex[2]+50);$f->save();
 		$ba = ORM::for_table('games_banco')->where("id", 1)->find_one();
