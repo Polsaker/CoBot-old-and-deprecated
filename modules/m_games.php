@@ -16,6 +16,7 @@ class jueg{
 	public function __construct(&$core){
 		$core->registerMessageHandler('PRIVMSG', "games", "gamecommandhandler");
 		$core->registerCommand("changemoney", "games", "Cambia el dinero almacenado en la cuenta de un usuario. Sintaxis: changemoney <nick> <dinero>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("impuesto", "games", "Cobra impuestos.",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 
 		try {
 			$k = ORM::for_table('games_users')->find_one();
@@ -31,6 +32,9 @@ class jueg{
 		}
 	}
 	
+	public function impuesto(&$irc, $data, &$core){
+		$r = $this->cimpuesto();
+	}
 	public function changemoney(&$irc, $data, &$core){
 		if($data->messageex[1]=="banco"){
 			$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
@@ -267,5 +271,22 @@ class jueg{
 	
 	private function schan($irc, $chan, $txt, $err=false){
 		$irc->message(SMARTIRC_TYPE_CHANNEL, $chan, ($err?"\00304Error\003: ":"").$txt);
+	}
+	
+	
+	// Cobra impuestos:
+	public function cimpuesto($perc = 10){
+		$s = ORM::for_table('games_users')->where_lt("dinero", 1000)->find_many();
+		$totdi=0; $totu = 0;
+		foreach($s as $user){
+			$imp=round(($user->dinero * $perc/100),0);
+			$user->dinero=$user->dinero - $imp;
+			$user->save();
+			$totu++; $toti = $toti+$imp;
+		}
+		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+		$b->dinero = $b->dinero+$toti;$b->save();
+		
+		return array('users'=>$totu, 'dinero'=>$toti);
 	}
 }
