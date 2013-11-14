@@ -277,7 +277,7 @@ class jueg{
 	
 	// Cobra impuestos:
 	public function cimpuesto($perc = 10){
-		$s = ORM::for_table('games_users')->where_lt("dinero", 1000)->find_many();
+		$s = ORM::for_table('games_users')->where_gt("dinero", 1000)->find_many();
 		$totdi=0; $totu = 0;
 		foreach($s as $user){
 			$imp=round(($user->dinero * $perc/100),0);
