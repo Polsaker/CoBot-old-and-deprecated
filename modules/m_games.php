@@ -23,6 +23,7 @@ class jueg{
 		$core->registerCommand("congelar", "games", "Congela a un usuario de los juegos. Sintaxis congelar <usuario> [hiper]",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("descongelar", "games", "Descongela a un usuario de los juegos. Sintaxis: descongelar <usuario>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		
+		$core->irc->setSenddelay(500); // Nosotros hacemos mucho flood, pero queremos que el bot siga vivo!
 		$core->registerTimeHandler(86400000, "games", "autoimp");
 		try {
 			$k = ORM::for_table('games_users')->find_one();
