@@ -17,7 +17,8 @@ class jueg{
 		$core->registerMessageHandler('PRIVMSG', "games", "gamecommandhandler");
 		$core->registerCommand("changemoney", "games", "Cambia el dinero almacenado en la cuenta de un usuario. Sintaxis: changemoney <nick> <dinero>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("impuesto", "games", "Cobra impuestos.",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
-
+		
+		$core->registerTimeHandler(86400000, "games", "autoimp");
 		try {
 			$k = ORM::for_table('games_users')->find_one();
 			$k = ORM::for_table('games_banco')->find_one();
@@ -32,6 +33,10 @@ class jueg{
 		}
 	}
 	
+	public function autoimp(&$irc){
+		$r = $this->cimpuesto(5);
+	}
+		
 	public function impuesto(&$irc, $data, &$core){
 		$r = $this->cimpuesto();
 		$this->schan($irc,$data->channel, "Se han cobrado \${$r['dinero']} de impuestos a {$r['users']} usuarios");
