@@ -34,6 +34,7 @@ class jueg{
 	
 	public function impuesto(&$irc, $data, &$core){
 		$r = $this->cimpuesto();
+		$this->schan($irc,$data->channel, "Se han cobrado \${$r['dinero']} de impuestos a {$r['users']} usuarios");
 	}
 	public function changemoney(&$irc, $data, &$core){
 		if($data->messageex[1]=="banco"){
