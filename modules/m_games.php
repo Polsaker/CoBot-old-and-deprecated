@@ -234,12 +234,13 @@ class jueg{
 		if(!isset($data->messageex[1])){$user = $data->nick;}else{$user=$data->messageex[1];}
 		$k = ORM::for_table('games_users')->where("nick", $user)->find_one();
 		if($k){
-			$bu = ORM::for_table('users')->where("username", strtolower($data->nick))->find_one();
+			$bu = ORM::for_table('users')->where("username", strtolower($user))->find_one();
 			$r="\017En la cuenta de \002$user\002 hay $\002{$k->dinero}\002. Flags: [\002Lvl\002 {$k->nivel}] ";
 			if($k->dinero>1000000){$r.="[\002\00303M\003\002] ";}
 			if($k->dinero>3000000){$r.="[\002\00304M\003\002] ";}
 			if($k->dinero>1000000000){$r.="[\002\00304MM\003\002] ";}
 			if($bu){$r.="[\2\00307R\003\2] ";}
+			if($k->congelado!=0){$r.="[\2\00305F\003\2] ";}
 		}else{
 			$r="\00304Error\003: El usuario \002$user\002 no existe.";
 		}
