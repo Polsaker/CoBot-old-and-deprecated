@@ -13,6 +13,7 @@ class jueg{
 	public $xcommands=array(); // Pensado para futuros comandos agregados por modulos de terceros... probablemente sea Array('fname', 'module', 'func', 'help')
 	
 	public $startrial=100;
+	private $lastplayer=false;
 	public function __construct(&$core){
 		$core->registerMessageHandler('PRIVMSG', "games", "gamecommandhandler");
 		$core->registerCommand("changemoney", "games", "Cambia el dinero almacenado en la cuenta de un usuario. Sintaxis: changemoney <nick> <dinero>",5, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
@@ -25,6 +26,7 @@ class jueg{
 		
 		$core->irc->setSenddelay(500); // Nosotros hacemos mucho flood, pero queremos que el bot siga vivo!
 		$core->registerTimeHandler(86400000, "games", "autoimp");
+		$core->registerTimeHandler(1800000, "games", "sourprise");
 		try {
 			$k = ORM::for_table('games_users')->find_one();
 			$k = ORM::for_table('games_banco')->find_one();
@@ -43,6 +45,52 @@ class jueg{
 					$banco->dinero=1000000;$banco->extrainf=json_encode(array('pozo'=>'0'));$banco->save();
 				}
 			}catch(PDOException $e){/* meh */}
+		}
+	}
+	
+	public function sourprise(&$irc){
+		if($this->lastplayer){
+			$c = ORM::for_table('games_users')->where("nick", $this->lastplayer)->find_one();
+			if(!$c){$this->lastplayer=false; return 0;}
+			$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+			$l=rand(1,10); $m ="";
+			switch($l){
+				case "1":
+					$pu=round(($c->dinero * 85/100),0);	$pb=$b->dinero + round(($c->dinero * 15/100),0);
+					$m="\2{$this->lastplayer}\2 ha caido ebrio en el suelo. Alguien se aprovecha y le roba algo de dinero. Le quedan \2\${$pu}\2"; break;
+				case "2":
+					$pu=round(($c->dinero * 107/100),0);	$pb=$b->dinero - round(($pu * 7/100),0);
+					$m="\2{$this->lastplayer}\2 ha encontrado una billetera en el suelo. Ahora tiene \2\${$pu}\2"; break;
+				case "3":
+					$pu=round(($c->dinero * 85/100),0);	$pb=$b->dinero + round(($c->dinero * 15/100),0);
+					$m="A \2{$this->lastplayer}\2 le ha caido un rayo aun estando dentro del casino! Este increible suceso hace que parte de su dinero se queme. Le quedan \2\${$pu}\2"; break;
+				case "4":
+					$pu=round(($c->dinero * 85/100),0);	$pb=$b->dinero + round(($c->dinero * 15/100),0);
+					$m="\2{$this->lastplayer}\2 es estafado con el tipico mail del principe sudafricano que necesita dinero para huir. Le quedan \2\${$pu}\2"; break;
+				case "5":
+					$pu=round(($c->dinero * 95/100),0);	$pb=$b->dinero + round(($c->dinero * 5/100),0);
+					$m="A \2{$this->lastplayer}\2 se le cae algo de dinero por el retrete. Le quedan \2\${$pu}\2"; break;
+				case "6":
+					$pu=round(($c->dinero * 95/100),0);	$pb=$b->dinero + round(($c->dinero * 5/100),0);
+					$m="\2{$this->lastplayer}\2 despierta y aparece en sudafrica. Le quedan \2\${$pu}\2"; break;
+				case "7":
+					$pu=round(($c->dinero * 105/100),0);	$pb=$b->dinero - round(($pu * 5/100),0);
+					$m="\2{$this->lastplayer}\2 encuentra dinero adentro de una almohada. Ahora tiene \2\${$pu}\2"; break;
+				case "8":
+					$pu=round(($c->dinero * 95/100),0);	$pb=$b->dinero + round(($c->dinero * 5/100),0);
+					$m="\2{$this->lastplayer}\2 despierta y aparece en sudafrica. Le quedan \2\${$pu}\2"; break;
+				case "9":
+					$pu=round(($c->dinero * 105/100),0);	$pb=$b->dinero - round(($pu * 5/100),0);
+					$m="\2{$this->lastplayer}\2 le pego a alguien con un caño en la cabeza y se queda con su dinero. Ahora tiene \2\${$pu}\2"; break;
+				case "10":
+					$pu=round(($c->dinero * 95/100),0);	$pb=$b->dinero + round(($c->dinero * 5/100),0);
+					$m="A \2{$this->lastplayer}\2 le han pegado con un caño de acero en la cabeza. Se roban parte de su dinero. Le quedan \2\${$pu}\2"; break;
+			}
+			
+			$c->dinero =$pu; $c->save();
+			$b->dinero =$pb; $b->save();
+			$this->sendGlobalNotice($m);
+			$this->lastplayer=false;
 		}
 	}
 	
@@ -143,8 +191,12 @@ class jueg{
 				 return 0;
 			 }
 			 if($k->congelado!=0){
+				 if($k->congelado==2){return 0;}
 				 $this->schan($irc,$data->channel, "Esta cuenta esta congelada.", true);
 				 return 0;
+			 }
+			 if($k->nivel>4){
+				 $this->lastplayer=$data->nick;
 			 }
 		}
 		switch($data->messageex[0]){
@@ -160,6 +212,7 @@ class jueg{
 			case "!rueda": $this->rueda($irc,$data);break;
 			case "!transferir": $this->transferir($irc,$data);break;
 		}
+		
   }
   
 	public function alta($irc,$data){
@@ -373,10 +426,16 @@ class jueg{
 		}
 		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
 		$b->dinero = $b->dinero+$toti;$b->save();
+		
+		$this->sendGlobalNotice("Se han cobrado \$\2$toti\2 de impuestos a $totu usuarios");
+		
+		return array('users'=>$totu, 'dinero'=>$toti);
+	}
+	
+	public function sendGlobalNotice($message){
 		$chans = ORM::for_table('games_channels')->find_many();
 		foreach($chans as $chan){
-			$irc->message(SMARTIRC_TYPE_NOTICE, $chan->channel, "Se han cobrado \$\2$toti\2 de impuestos a $totu usuarios");
+			$irc->message(SMARTIRC_TYPE_NOTICE, $chan->channel, $message);
 		}
-		return array('users'=>$totu, 'dinero'=>$toti);
 	}
 }
