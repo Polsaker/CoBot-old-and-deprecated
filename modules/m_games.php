@@ -89,7 +89,7 @@ class jueg{
 			
 			$c->dinero =$pu; $c->save();
 			$b->dinero =$pb; $b->save();
-			$this->sendGlobalNotice($m);
+			$this->sendGlobalNotice($irc,$m);
 			$this->lastplayer=false;
 		}
 	}
@@ -428,12 +428,12 @@ class jueg{
 		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
 		$b->dinero = $b->dinero+$toti;$b->save();
 		
-		$this->sendGlobalNotice("Se han cobrado \$\2$toti\2 de impuestos a $totu usuarios");
+		$this->sendGlobalNotice($irc,"Se han cobrado \$\2$toti\2 de impuestos a $totu usuarios");
 		
 		return array('users'=>$totu, 'dinero'=>$toti);
 	}
 	
-	public function sendGlobalNotice($message){
+	public function sendGlobalNotice($irc,$message){
 		$chans = ORM::for_table('games_channels')->find_many();
 		foreach($chans as $chan){
 			$irc->message(SMARTIRC_TYPE_NOTICE, $chan->channel, $message);
