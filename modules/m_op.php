@@ -26,7 +26,7 @@ class ghasts{
 	}
 	
 	public function whorecv(&$irc, $data, $core){
-		print_r($data);
+		//print_r($data);
 		if($data->rawmessageex[7] == $this->searchfor){
 			echo "wooo--";
 			if($this->ban==true){

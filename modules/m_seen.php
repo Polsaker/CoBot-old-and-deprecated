@@ -66,7 +66,7 @@ class imagenius{
 	} 
 	
 	public function seenator(&$irc, $data, $core){
-		print_r($data);
+		//print_r($data);
 		$n = ORM::for_table('seen')->where('nick',strtolower($data->nick))->find_one();
 		if(!$n){
 			$s = ORM::for_table('seen')->create();

@@ -172,7 +172,7 @@ class CoBot{
 			$command = substr($data->messageex[0],1);
 		}
 		$data->messageex = $this->rsMsgEx($data->messageex);
-		print_r($data->messageex);
+		//print_r($data->messageex);
 		if(isset($this->commands[$command])){
 			if($this->commands[$command]['perm']!=-1){
 				if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['sec'])==false){

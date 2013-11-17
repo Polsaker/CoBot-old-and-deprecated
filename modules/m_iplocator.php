@@ -17,7 +17,7 @@ class key{
 	public function ip(&$irc, &$data, &$core){
             $gap = file_get_contents("http://ip-api.com/json/{$data->messageex[1]}?fields=61439");
 			$jao=json_decode($gap);
-            print_r($jao);
+           // print_r($jao);
             $r="";
             if($jao->status=="success"){
                 $r.="IP: \002{$jao->query}\002";

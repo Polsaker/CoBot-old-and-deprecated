@@ -21,7 +21,7 @@ class polsakervaadominarelmundo{
 	public function part(&$irc, $data, &$core)
 	{
 		$partmsg="Salida ordenada por un administrador";$i=2;
-        print_r($data);
+        //print_r($data);
 		if(!isset($data->messageex[1]) || substr($data->messageex[1],0,1)!="#"){$chanout=$data->channel;$i=1;}else{$chanout=$data->messageex[1];}
 		if((isset($data->messageex[1]) && substr($data->messageex[1],0,1)!="#")||isset($data->messageex[2])){
 			$ts=$core->jparam($data->messageex,$i);
