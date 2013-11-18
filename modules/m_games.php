@@ -101,10 +101,10 @@ class jueg{
 	public function congelar(&$irc, $data, &$core){
 		$c = ORM::for_table('games_users')->where("nick", $data->messageex[1])->find_one();
 		if($c){
-			if(isset($data->messageex[2]) && $data->messageex[2]=="hiper"){
-				$c->congelado = 2;
-			}else{
-				$c->congelado = 1;
+			switch(@$data->messageex[2]){
+				case "hiper":$c->congelado = 2;break;
+				case "light":$c->congelado = 3;break;
+				default: $c->congelado = 1; break;
 			}
 			$c->save();
 			$this->schan($irc,$data->channel, "Se ha congelado la cuenta.");
@@ -192,6 +192,10 @@ class jueg{
 			 }
 			 if($k->congelado!=0){
 				 if($k->congelado==2){return 0;}
+				 if($k->congelado==3){
+					 $r=rand(1,3);
+					 if($r==1){return 0;}
+				 }
 				 $this->schan($irc,$data->channel, "Esta cuenta esta congelada.", true);
 				 return 0;
 			 }
