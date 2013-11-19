@@ -44,7 +44,11 @@ class quotes{
 				break; 
 			case 'last': 
 				$n = ORM::for_table('quotes')->order_by_desc('id')->find_one();
-				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Quote número \002{$n->id}\002, agregada por \002{$n->nick}\002 de fecha \002{$n->date}\002: $n->quote");
+				if(!$n){
+					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Todavía no se ha añadido ningun quote..");
+				}else{
+					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Quote número \002{$n->id}\002, agregada por \002{$n->nick}\002 de fecha \002{$n->date}\002: $n->quote");
+				}
 				break; 
 			case 'find': 
 				$n = ORM::for_table('quotes')->where_like('quote', "%$opt[2]%")->find_one();
