@@ -121,6 +121,27 @@ class CoBot{
 	}	
 	
 	/*
+	 * Verifica si un módulo esta cargado
+	 * @param: $module: @id del modulo
+	 * @return: true si el modulo esta cargado, false si no esta cargado
+	 */
+	public function isLoaded($module){
+		if(@isset($this->module[$module])){return true;}else{return false;}
+	}
+	
+	/*
+	 * Retorna la clase principal de un modulo
+	 * (ideal para integración entre modulos)
+	 * @param: @id del modulo
+	 * @return: la clase principal del módulo o false si no está cargado
+	 */
+	public function getModule($module){
+		if($this->isLoaded($module)){
+			return $this->module[$module];
+		}else{return false;}
+	}
+	
+	/*
 	 * Registra un comando con el bot.
 	 * @param $name: Nombre del comando
 	 * @param $module: Nombre del modulo (@id)
