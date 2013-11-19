@@ -50,6 +50,13 @@ class jueg{
 		}
 	}
 	
+	
+	/***** <API> *****/
+	public function registerGameCommand($command, $module){
+		array_push($this->xcommands,array('command'=>$command, 'module'=>$module));
+	}
+	
+	/***** </API> *****/
 	public function sourprise(&$irc){
 		if($this->lastplayer){
 			$c = ORM::for_table('games_users')->where("nick", $this->lastplayer)->find_one();
@@ -222,6 +229,12 @@ class jueg{
 			case "!rueda": $this->rueda($irc,$data);break;
 			case "!transferir": $this->transferir($irc,$data);break;
 			case "!lvlp": $this->lvlp($irc,$data);break;
+		}
+		
+		foreach($this->xcommands as $com){
+			if($data->messageex[0]=="!".$com['command']){
+				$this->core->getModule($com['module'])->$com['command']($irc, $data);
+			}
 		}
 		
   }
