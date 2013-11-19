@@ -68,7 +68,7 @@ class jueg{
 					$m="A \2{$this->lastplayer}\2 le ha caido un rayo aun estando dentro del casino! Este increible suceso hace que parte de su dinero se queme. Le quedan \2\${$pu}\2"; break;
 				case "4":
 					$pu=round(($c->dinero * 85/100),0);	$pb=$b->dinero + round(($c->dinero * 15/100),0);
-					$m="\2{$this->lastplayer}\2 es estafado con el tipico mail del principe sudafricano que necesita dinero para huir. Le quedan \2\${$pu}\2"; break;
+					$m="\2{$this->lastplayer}\2 es estafado con el tipico mail del principe nigeriano que necesita dinero para huir. Le quedan \2\${$pu}\2"; break;
 				case "5":
 					$pu=round(($c->dinero * 95/100),0);	$pb=$b->dinero + round(($c->dinero * 5/100),0);
 					$m="A \2{$this->lastplayer}\2 se le cae algo de dinero por el retrete. Le quedan \2\${$pu}\2"; break;
