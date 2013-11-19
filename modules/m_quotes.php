@@ -84,7 +84,7 @@ class quotes{
 						$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Quote número \002{$data->messageex[1]}\002, no existe");
 					}
 				} else {
-					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Opción no disponible, intente " . $core->conf['irc']['prefix'] . "quote help");
+					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Opción no disponible, intente " . $core->conf['irc']['prefix'] . "help quote");
 				}
 				break; 
 		} 
