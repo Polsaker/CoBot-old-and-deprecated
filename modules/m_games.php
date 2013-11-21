@@ -212,9 +212,6 @@ class jueg{
 				 	 return 0;
 				 }
 			 }
-			 if($k->nivel>4){
-				 $this->lastplayer=$data->nick;
-			 }
 		}
 		switch($data->messageex[0]){
 			case "!alta": $this->alta($irc,$data);break;
@@ -392,6 +389,9 @@ class jueg{
 		if($k->nivel==0){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 1 para poder jugar a este juego.", true); return 0;}
 		//$k->dinero=$k->dinero-10; $k->save();
 		$po=json_decode($ba->extrainf);
+		if($k->nivel>4){
+			$this->lastplayer=$data->nick;
+		}
 		
 		switch($k->nivel){
 			case 1:	$s=rand(5,10);	$p=rand(2,14);	$n=rand(-6,10);	$m=rand(9,29);	$e=rand(-10,1);	$b=rand(-19,-2); $x=rand(-10,10); $a=rand(-5,10);break;
@@ -426,7 +426,9 @@ class jueg{
 		$po=json_decode($b->extrainf);
 		
 		if($b->dinero<1000){$this->schan($irc,$data->channel, "No puedes jugar. El banco está en quiebra.", true);return 0;}
-
+		if($k->nivel>4){
+			$this->lastplayer=$data->nick;
+		}
 		$d = $d1+$d2+$d3;
 
 		if ($d%2==0){
