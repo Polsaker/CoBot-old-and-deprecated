@@ -15,29 +15,10 @@ class imagenius{
 
         }
         
-        public function btc(&$irc, $data, $core){
+        public function bitcoin(&$irc, $data, $core){
             $b = file_get_contents("http://www.bitstamp.net/api/ticker/");
             $l = json_decode($b);
-            print_r($l);
+            #print_r($l);
+            $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Último: \2\${$l->last}\2, Álto: \2\${$l->high}\2, Álto: \2\${$l->low}\2");
         }
-        
-        function diff($start,$end = false) { 
-                if(!$end) { $end = time(); } 
-                if(!is_numeric($start) || !is_numeric($end)) { return false; } 
-
-                $start  = date('Y-m-d H:i:s',$start); 
-                $end    = date('Y-m-d H:i:s',$end); 
-                $d_start    = new DateTime($start); 
-                $d_end      = new DateTime($end); 
-                $diff = $d_start->diff($d_end); 
-
-                $this->diff['ye']    = $diff->format('%y'); 
-                $this->diff['mo']    = $diff->format('%m'); 
-                $this->diff['da']      = $diff->format('%d'); 
-                $this->diff['ho']     = $diff->format('%h'); 
-                $this->diff['mi']      = $diff->format('%i'); 
-                $this->diff['se']      = $diff->format('%s'); 
-                return true; 
-        } 
-        
 }
