@@ -210,9 +210,10 @@ class jueg{
 				 }else{
 				 	 $this->schan($irc,$data->channel, "Esta cuenta esta congelada.", true);
 				 	 return 0;
-				 }
+				 } 
 			 }
 		}
+		$data->messageex[0] = strtolower($data->messageex[0]);
 		switch($data->messageex[0]){
 			case "!alta": $this->alta($irc,$data);break;
 			case "!dados": $this->dados($irc,$data);break;
