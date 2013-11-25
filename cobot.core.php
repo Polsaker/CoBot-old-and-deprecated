@@ -196,9 +196,17 @@ class CoBot{
 		//print_r($data->messageex);
 		if(isset($this->commands[$command])){
 			if($this->commands[$command]['perm']!=-1){
-				if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['sec'])==false){
-					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: No autorizado.");
-					return -5;
+				if($this->commands[$command]['sec']==CUSTOMPRIV){
+					$fe = $this->commands[$command]['method']."_priv";
+					if( $this->module[$this->commands[$command]['module']]->$fe($irc, $data, $this) == false){
+						$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: No autorizado.");
+						return -5;
+					}
+				}else{
+					if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['sec'])==false){
+						$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: No autorizado.");
+						return -5;
+					}
 				}
 			}
 			$fu = $this->commands[$command]['method'];
@@ -395,12 +403,14 @@ class CoBot{
 		foreach($authinf as $key => $val){
 			if($val->h==$host){
 				//$user = ORM::for_table('users')->where('id', $val['u'])->find_one();
-				$userpriv = ORM::for_table('userpriv')->where('uid', $val->u)->find_one();
-				if($userpriv==false){continue;}
-				if(($userpriv->sec == "*") && ($userpriv->rng >= $perm)){
-					return true;
-				}elseif(($userpriv->sec == $permsec) && ($userpriv->rng >= $perm)){
-					return true;
+				$userpriv = ORM::for_table('userpriv')->where('uid', $val->u)->find_many();
+				foreach($userpriv as $priv){
+					if($priv==false){break;}
+					if(($priv->sec == "*") && ($priv->rng >= $perm)){
+						return true;
+					}elseif(($priv->sec == $permsec) && ($priv->rng >= $perm)){
+						return true;
+					}
 				}
 			}
 		}
