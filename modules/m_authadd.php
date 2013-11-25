@@ -13,8 +13,8 @@ class amodkey{
 	public function __construct($core){
 		$core->registerCommand("register", "authadd", false, -1, "*", null, SMARTIRC_TYPE_QUERY);
 		$core->registerCommand("listpriv", "authadd", "Lista los privilegios de un usuario. Sintaxis: listpriv <usuario>");
-		$core->registerCommand("addpriv", "authadd", "Da privilegios a un usuario. Sintaxis: addpriv <usuario> <privilegios> <sector>",9);
-		$core->registerCommand("delpriv", "authadd", "Quita privilegios a un usuario. Sintaxis: delpriv <usuario> <privilegios> <sector>",9);
+		$core->registerCommand("addpriv", "authadd", "Da privilegios a un usuario. Sintaxis: addpriv <usuario> <privilegios> <sector>",9, CUSTOMPRIV);
+		$core->registerCommand("delpriv", "authadd", "Quita privilegios a un usuario. Sintaxis: delpriv <usuario> <privilegios> <sector>",9, CUSTOMPRIV);
 		$core->registerCommand("listusers", "authadd", "Lista los usuarios actualmente registrados");
 
 	}
@@ -60,6 +60,14 @@ class amodkey{
 		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
 	}
 	
+	public function addpriv_priv(&$irc, &$data, &$core){
+		if($core->authchk($data->from, 10, $data->messageex[3]) == true){
+			return true;
+		}elseif($core->authchk($data->from, 9, $data->messageex[3]) == true){
+			if($data->messageex[2]>8){ return false;}else{ return true;}
+		}else{return false;}
+	}
+	public function delpriv_priv(&$irc, &$data, &$core){return $this->addpriv_priv($irc,$data,$core);}
 	public function addpriv(&$irc, &$data, &$core){
 		if(!isset($data->messageex[3])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!"); return 0;}
 		if($data->messageex[2]>9){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Error de usuario. Inserte otro usuario y presione enter. (No se pueden otorgar privilegios de nivel 10!!)"); return 0;}
@@ -76,7 +84,7 @@ class amodkey{
 	
 	public function delpriv(&$irc, &$data, &$core){
 		if(!isset($data->messageex[3])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!");return 0;}
-		if($data->messageex[2]>9){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Error de usuario. Inserte otro usuario y presione enter. (No se pueden otorgar privilegios de nivel 10!!)");}
+		if($data->messageex[2]>9){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Error de usuario. Inserte otro usuario y presione enter. (No se pueden modificar privilegios de nivel 10!!)");}
 		$user = ORM::for_table('users')->where('username', strtolower($data->messageex[1]))->find_one();
 		if(!isset($user->id)){return 0; } //el usuario no existeer 
 		$userpriv = ORM::for_table('userpriv')->where('uid', $user->id)->where("rng", $data->messageex[2])->where("sec", $data->messageex[3])->find_one();
