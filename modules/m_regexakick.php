@@ -26,7 +26,6 @@ class woop{
 	
 	public function msgs(&$irc, $data, $core){
 		$k = ORM::for_table('akicks')->where('type', 1)->where('channel', strtolower($data->channel))->find_many();
-		print_r($data);
 		foreach($k as $akick){
 			if(preg_match($akick->regex,$data->message)){
 				#if($irc->isOpped($data->channel)){

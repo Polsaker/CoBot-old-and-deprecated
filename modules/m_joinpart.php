@@ -33,7 +33,6 @@ class polsakervaadominarelmundo{
 			$partmsg=$ts;
 			
 		}
-        echo "---$chanout";
         $irc->part($chanout, $partmsg);
 	}
 

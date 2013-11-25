@@ -193,21 +193,18 @@ class CoBot{
 			$command = substr($data->messageex[0],1);
 		}
 		$data->messageex = $this->rsMsgEx($data->messageex);
-		//print_r($data->messageex);
 		if(isset($this->commands[$command])){
 			if($this->commands[$command]['perm']!=-1){
+				$c=true;
 				if($this->commands[$command]['sec']==CUSTOMPRIV){
 					$fe = $this->commands[$command]['method']."_priv";
-					if( $this->module[$this->commands[$command]['module']]->$fe($irc, $data, $this) == false){
-						$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: No autorizado.");
-						return -5;
-					}
+					if( $this->module[$this->commands[$command]['module']]->$fe($irc, $data, $this) == false){$c=false;}
 				}else{
-					if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['sec'])==false){
-						$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: No autorizado.");
-						return -5;
-					}
+					if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['sec'])==false){$c=false;}
 				}
+				if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['module']) == false){$c=false;}else{$c=true;}
+				if($c==false){$irc->message(SMARTIRC_TYPE_CHANNEL, ($data->channel?$data->channel:$data->nick), "\00304Error\003: No autorizado"); return -5;}
+				
 			}
 			$fu = $this->commands[$command]['method'];
 			$this->module[$this->commands[$command]['module']]->$fu($irc, $data, $this);
