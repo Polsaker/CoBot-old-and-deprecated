@@ -162,9 +162,36 @@ class CoBot{
 			'sec' 	 => $sec,
 			'help' 	 => $help,
 			'handler'=> $ac,
-			'method' => $fmethod
+			'method' => $fmethod,
+			'alias'  => false,
+			'ctype'	 => $type
 		);
 		
+	}
+	
+	/*
+	 * registerCommandAlias
+	 *  Registra un alias de un comando.
+	 * @param: $name: nombre del alias (puede ser un array)
+	 * @param: $command: nombre del comando
+	 * 
+	 */ 
+	public function registerCommandAlias($name, $command){
+		if(!is_array($name)){$name=array($name);}
+		foreach($name as $alias){
+			$ac = $this->irc->registerActionhandler($this->commands[$command]['ctype'], '^'."(?:{$this->prefix}|¬NICK¬[:, ]? )".$alias.'(?!\w+)', $this, 'commandHandler');
+			$this->commands[$alias] = array(
+				'module' => $this->commands[$command]['module'],
+				'perm' 	 => $this->commands[$command]['perm'],
+				'sec' 	 => $this->commands[$command]['sec'],
+				'help' 	 => $this->commands[$command]['help'],
+				'handler'=> $this->commands[$command]['handler'],
+				'method' => $this->commands[$command]['method'],
+				'ctype'  => $this->commands[$command]['ctype'],
+				'alias'  => true,
+				'alicom' => $command
+			);
+		}
 	}
 	
 	private function rsMsgEx($messageex){
@@ -285,7 +312,7 @@ class CoBot{
 			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $asg);
 		}else{
 			if((isset($this->commands[$data->messageex[1]])) && ($this->commands[$data->messageex[1]]['help'] != "")){
-				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de {$data->messageex[1]}: {$this->commands[$data->messageex[1]]['help']}");
+				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de {$data->messageex[1]}".($this->commands[$data->messageex[1]]['alias']==true?" (Alias de {$this->commands[$data->messageex[1]]['alicom']})":"").": {$this->commands[$data->messageex[1]]['help']}");
 			}else{
 				switch($data->messageex[1]){
 					case "auth":
