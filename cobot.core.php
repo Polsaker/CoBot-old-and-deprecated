@@ -270,8 +270,13 @@ class CoBot{
 			$commands="";
 			foreach($this->help as $a){
 				if($a['priv']!=-1){
-					if($this->authchk($data->from, $a['priv'], $a['sec'])==false){
-						continue;
+					if($a['sec']==CUSTOMPRIV){
+						
+						if($this->authchk($data->from, $a['priv'], $data->channel)==false){echo $data->channel."-";continue;}
+					}else{
+						if($this->authchk($data->from, $a['priv'], $a['sec'])==false){
+							continue;
+						}
 					}
 				}
 				$commands.="{$a['name']} ";
