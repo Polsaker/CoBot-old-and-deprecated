@@ -227,6 +227,7 @@ class jueg{
 			case "!rueda": $this->rueda($irc,$data);break;
 			case "!transferir": $this->transferir($irc,$data);break;
 			case "!lvlp": $this->lvlp($irc,$data);break;
+			case "!circulando": $this->circulando($irc,$data);break;
 		}
 		
 		foreach($this->xcommands as $com){
@@ -327,6 +328,7 @@ class jueg{
 		$f = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
 		$t = ORM::for_table('games_users')->where("nick", $data->messageex[1])->find_one();
 		if(!$t){$this->schan($irc,$data->channel, "El usuario {$data->messageex[1]} no existe.", true); return 0; }
+		if($t->congelado != 0){ $this->schan($irc, $data->channel, "No puedes enviarle dinero a una cuenta congelada.",true); return 0;}
 		if($f->nivel<6){$this->schan($irc,$data->channel, "Debes ser por lo menos nivel 6 para enviar dinero a otros usuarios.", true);return 0;}
 		if($f->dinero<200){$this->schan($irc,$data->channel, "Debes tener por lo menos $200 para enviar dinero a alguien.", true); return 0;}
 		if(($f->dinero-$data->messageex[2])<100){$this->schan($irc,$data->channel, "Siempre debes conservar por lo menos $100",true); return 0;}
@@ -416,6 +418,25 @@ class jueg{
 		$resp="\002{$data->nick}\002\017: $comb ".(($tot<0)?"\002PERDISTE\002 $".abs($tot):"\002GANASTE\002 $$tot");
 
 		$this->schan($irc,$data->channel,$resp);
+	}
+	
+	public function circulando($irc,$data){
+		$k = ORM::for_table('games_users')->find_many();
+		$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+		$to = 0;
+		$ba = $b->dinero;
+		$bp = json_decode($b->extrainf)->pozo;
+		$ia = 0;
+		foreach($k as $user){
+			if(($user->congelado != 0) && ($user->congelado != 3)){
+				$to = $to + $user->dinero;
+			}else{
+				$ia = $ia + $user->dinero;
+			}
+		}
+		$utot = $to + $ba + $bp + $ia;
+		$tb = $ba + $bp;
+		$this->schan($irc, $data->channel, "En el juego hay circulando, en total, \$\2$utot\2. \$\2$to\2 en manos de los jugadores, \$\2$tb\2 en el banco (de los cuales \$\2$bp\2 están en el pozo y \$\2$ba\2 son accesibles) y \$\2$ia\2 han quedado fuera de circulación en cuentas congeladas.");
 	}
 	
 	public function dados($irc,$data){
