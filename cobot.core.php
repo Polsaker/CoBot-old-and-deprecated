@@ -231,7 +231,7 @@ class CoBot{
 				}else{
 					if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['sec'])==false){$c=false;}
 				}
-				if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['module']) == false){$c=false;}else{$c=true;}
+				if($c==false){if($this->authchk($data->from, $this->commands[$command]['perm'], $this->commands[$command]['module']) == false){$c=false;}else{$c=true;}}
 				if($c==false){$irc->message(SMARTIRC_TYPE_CHANNEL, ($data->channel?$data->channel:$data->nick), "\00304Error\003: No autorizado"); return -5;}
 				
 			}
