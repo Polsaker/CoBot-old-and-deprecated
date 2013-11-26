@@ -21,7 +21,7 @@ class ghasts{
 		$core->registerCommand("kick", "op", "Kickea a una persona en un canal. Sintaxis: kick [canal] [nick]", 5, CUSTOMPRIV, null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommandAlias("k", "kick");
 		$core->registerCommand("kickban", "op", "Banea a alguien en un canal. Sintaxis: kickban [canal] [nick]", 5, CUSTOMPRIV, null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
-		$core->registerCommandAlias(array("kb", "ban"), "voice");
+		$core->registerCommandAlias(array("kb", "ban", "b"), "kickban");
 		$core->registerCommand("unban", "op", "Desanea a alguien en un canal. Sintaxis: unban [canal] [nick]", 5, CUSTOMPRIV, null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("topic", "op", "Cambia el topic en un canal. Sintaxis: topic [canal] [topic]", 5, CUSTOMPRIV, null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		
