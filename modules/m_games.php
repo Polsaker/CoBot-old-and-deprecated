@@ -429,9 +429,9 @@ class jueg{
 		$ia = 0;
 		foreach($k as $user){
 			if(($user->congelado != 0) && ($user->congelado != 3)){
-				$to = $to + $user->dinero;
-			}else{
 				$ia = $ia + $user->dinero;
+			}else{
+				$to = $to + $user->dinero;
 			}
 		}
 		$utot = $to + $ba + $bp + $ia;
