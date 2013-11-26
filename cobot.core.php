@@ -30,6 +30,8 @@ class CoBot{
 		ORM::configure($config['ormconfig']);
 		
 		if(!@$config['core']['keepusercache']){if(file_exists("authinf")){unlink("authinf");}} // Borramos la "cache" de usuarios identificados al iniciar
+		
+		ini_set("user_agent", "CoBot/".VER);
 	}
 	
 	/*
