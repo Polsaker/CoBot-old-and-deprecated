@@ -187,7 +187,7 @@ class CoBot{
 				'perm' 	 => $this->commands[$command]['perm'],
 				'sec' 	 => $this->commands[$command]['sec'],
 				'help' 	 => $this->commands[$command]['help'],
-				'handler'=> $this->commands[$command]['handler'],
+				'handler'=> $ac,
 				'method' => $this->commands[$command]['method'],
 				'ctype'  => $this->commands[$command]['ctype'],
 				'alias'  => true,
