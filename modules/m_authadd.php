@@ -11,7 +11,7 @@
 
 class amodkey{
 	public function __construct($core){
-		$core->registerCommand("register", "authadd", false, -1, "*", null, SMARTIRC_TYPE_QUERY);
+		$core->registerCommand("register", "authadd", "Registra a un usuario con el bot. Sintaxis: register <usuario> <contraseña>. ESTE COMANDO SE DEBE USAR EN PRIVADO!!", -1, "*", null, SMARTIRC_TYPE_QUERY);
 		$core->registerCommand("listpriv", "authadd", "Lista los privilegios de un usuario. Sintaxis: listpriv <usuario>");
 		$core->registerCommand("addpriv", "authadd", "Da privilegios a un usuario. Sintaxis: addpriv <usuario> <privilegios> <sector>",9, CUSTOMPRIV);
 		$core->registerCommand("delpriv", "authadd", "Quita privilegios a un usuario. Sintaxis: delpriv <usuario> <privilegios> <sector>",9, CUSTOMPRIV);
@@ -51,6 +51,7 @@ class amodkey{
 	public function listpriv(&$irc, &$data, &$core){
 		if(!isset($data->messageex[1])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!");return 0;}
 		$user = ORM::for_table('users')->where('username', strtolower($data->messageex[1]))->find_one();
+		if(!$user){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00304Error\003: El usuario \"{$data->messageex[1]}\" no está registrado");}
 		$userpriv = ORM::for_table('userpriv')->where('uid', $user->id)->find_many();
 		$r="\002{$data->messageex[1]}\002 tiene los siguientes privilegios: ";
 		foreach($userpriv as $privuser){
