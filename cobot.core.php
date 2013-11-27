@@ -296,15 +296,15 @@ class CoBot{
 			$commands="";
 			foreach($this->help as $a){
 				if($a['priv']!=-1){
-					if($a['sec']==CUSTOMPRIV){
-						
-						if($this->authchk($data->from, $a['priv'], $data->channel)==false){echo $data->channel."-";continue;}
+					$p=false;
+					if($a['sec']==CUSTOMPRIV){ // Suponiendo que los privilegios "personalizados" solo aplican a canales..
+						if($this->authchk($data->from, $a['priv'], $data->channel)==false){$p=true;}
 					}else{
-						if($this->authchk($data->from, $a['priv'], $a['sec'])==false){
-							continue;
-						}
+						if($this->authchk($data->from, $a['priv'], $a['sec'])==false){$p=true;}
 					}
+					if($p==true){if($this->authchk($data->from, $a['priv'], $this->commands[$a['name']]['module']) == false){$p=true;}else{$p=false;}}
 				}
+				if($p==true){continue;}
 				$commands.="{$a['name']} ";
 			}
 			//$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
