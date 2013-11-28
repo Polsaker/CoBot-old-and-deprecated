@@ -19,6 +19,10 @@ class imagenius{
             $b = file_get_contents("http://www.bitstamp.net/api/ticker/");
             $l = json_decode($b);
             #print_r($l);
-            $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Último: \2\${$l->last}\2, Álto: \2\${$l->high}\2, Bajo: \2\${$l->low}\2");
+            if((isset($data->messageex[1])) && (is_numeric($data->messageex[1]))){
+				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "BTC \2{$data->messageex[1]}\2 = USD \2".($l->last*$data->messageex[1])."\2");
+			}else{
+				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Último: \2\${$l->last}\2, Álto: \2\${$l->high}\2, Bajo: \2\${$l->low}\2");
+			}
         }
 }
