@@ -121,7 +121,7 @@ class asdfg{
 		
 		$irc->message(SMARTIRC_TYPE_CHANNEL,$data->channel,$rs);
 
-		$irc->message(SMARTIRC_TYPE_CHANNEL,$channel,'10http://'.$qad->api.'/index.php?title='.urlencode(str_replace(" ", "_",$ts)));
+		$irc->message(SMARTIRC_TYPE_CHANNEL,$data->channel,'10http://'.$qad->api.'/index.php?title='.urlencode(str_replace(" ", "_",$ts)));
 
 	}
 	
