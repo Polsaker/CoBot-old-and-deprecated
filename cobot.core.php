@@ -431,6 +431,7 @@ class CoBot{
 	 */ 
 	public function authchk($host, $perm, $permsec=false){
 		if(!file_exists("authinf")){ return false;}else{$authinf=json_decode(file_get_contents("authinf"));}
+		$permsec=strtolower($permsec);
 		foreach($authinf as $key => $val){
 			if($val->h==$host){
 				//$user = ORM::for_table('users')->where('id', $val['u'])->find_one();
@@ -439,7 +440,7 @@ class CoBot{
 					if($priv==false){break;}
 					if(($priv->sec == "*") && ($priv->rng >= $perm)){
 						return true;
-					}elseif(($priv->sec == $permsec) && ($priv->rng >= $perm)){
+					}elseif((strtolower($priv->sec) == $permsec) && ($priv->rng >= $perm)){
 						return true;
 					}
 				}
