@@ -317,9 +317,8 @@ class CoBot{
 				$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de {$data->messageex[1]}".($this->commands[$data->messageex[1]]['alias']==true?" (Alias de {$this->commands[$data->messageex[1]]['alicom']})":"").": {$this->commands[$data->messageex[1]]['help']}");
 			}else{
 				switch($data->messageex[1]){
-					case "auth":
-						$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de \2help\2: Identifica a un usuario registrado con el bot. Uso: /msg {$irc->_nick} {$this->conf['irc']['prefix']}auth <USUARIO> <CONTRASEÑA>");
-						break;
+					case "auth":$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de \2auth\2: Identifica a un usuario registrado con el bot. Uso: /msg {$irc->_nick} {$this->conf['irc']['prefix']}auth <USUARIO> <CONTRASEÑA>");break;
+					case "help":$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Ayuda de \2help\2: Muestra ayuda de un comando o la lista de comandos que el usuario puede ejecutar. Sintaxis: help [comando]");break;
 				}
 			}
 		}
