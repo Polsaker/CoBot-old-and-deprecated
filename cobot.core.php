@@ -303,8 +303,8 @@ class CoBot{
 						if($this->authchk($data->from, $a['priv'], $a['sec'])==false){$p=true;}
 					}
 					if($p==true){if($this->authchk($data->from, $a['priv'], $this->commands[$a['name']]['module']) == false){$p=true;}else{$p=false;}}
+					if($p==true){continue;}
 				}
-				if($p==true){continue;}
 				$commands.="{$a['name']} ";
 			}
 			//$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
