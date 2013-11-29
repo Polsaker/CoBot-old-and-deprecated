@@ -29,7 +29,9 @@ class subliminalmessagesonthecode{
 				if($tz=="UTC"){
 					$ts=time();
 				}else{
-					preg_match("#UTC(\+|\-)(.+)\:(.+)#", $tz, $m);
+					echo $tz;
+					preg_match("#UTC(\+|\-|−)(.+)\:(.+)#i", $tz, $m);
+					print_r($m);
 					$diff = ($m[2] * 3600) + ($m[3]*60);
 					if($m[1]=="+"){
 						$ts = time() + $diff;

@@ -51,7 +51,7 @@ class ghasts{
 		if(substr($data->messageex[1],0,1)=="#"){$chan=$data->messageex[1];}else{$chan=$data->channel;}
 		if(!isset($data->messageex[1]) || (substr($data->messageex[1],0,1)=="#" && !isset($data->messageex[2]))){$user=$data->nick;}elseif(substr($data->messageex[1],0,1)=="#"){$user=$data->messageex[2];}else{$user=$data->messageex[1];}
 		if($irc->isOpped($chan)){
-			if(preg_match("·.+!.+@.*·", $user)){
+			if(preg_match("&.+\!.+\@.*&", $user)){
 				$irc->unban($chan,$user);
 			}else{
 				$this->ban = false;
@@ -67,7 +67,7 @@ class ghasts{
 		if(substr($data->messageex[1],0,1)=="#"){$chan=$data->messageex[1];$reason=$core->jparam($data->messageex,3);}else{$chan=$data->channel;$reason=$core->jparam($data->messageex,2);}
 		if(!isset($data->messageex[1]) || (substr($data->messageex[1],0,1)=="#" && !isset($data->messageex[2]))){$user=$data->nick;}elseif(substr($data->messageex[1],0,1)=="#"){$user=$data->messageex[2];}else{$user=$data->messageex[1];}
 		if($irc->isOpped($chan)){
-			if(preg_match("#@.+!.+@.*#", $user)){
+			if(preg_match("&.+!.+@.*&", $user)){
 				$irc->ban($chan,$user);
 			}else{
 				$this->ban = true;
