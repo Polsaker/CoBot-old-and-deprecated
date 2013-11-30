@@ -325,8 +325,8 @@ class CoBot{
 	}
 	
 	public function message($channel, $message){
-		$f=" 06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES');
-		$asg = explode("||||",trim(wordwrap($message,350, $f."||||",false), $f));
+		$f=mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES');
+		$asg = explode("||||",trim(wordwrap($message,350, "06 ". $f."||||",false), $f));
 		$this->irc->message(SMARTIRC_TYPE_CHANNEL, $channel, $asg);
 	}
 	
