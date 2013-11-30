@@ -28,7 +28,15 @@ class subliminalmessagesonthecode{
 		$j = json_decode($p);
 		//print_r($j);
 		if($j->area<1){$area=($j->area*100 )."\2 has";}else{$area=$j->area."\2 km²";}
-		$r = "\2{$j->translations->es}\2: Capital: \2{$j->capital}\2, moneda: \2{$j->currency}\2, población: \2".number_format($j->population,0,",",".")."\2 ".
+		$moneda = "";
+		if($core->isLoaded("divisa")){
+			$monedas = explode(",", $j->currency);
+			foreach($monedas as $mo){
+				$moneda .= $core->getModule("divisa")->divinam[$mo]. " ({$mo}), ";
+			}
+			$moneda = trim($moneda, ", ");
+		}else{ $moneda = $j->currency;}
+		$r = "\2{$j->translations->es}\2: Capital: \2{$j->capital}\2, moneda: \2{$moneda}\2, población: \2".number_format($j->population,0,",",".")."\2 ".
 		"TLD: \2{$j->topLevelDomain}\2. Superficie: \2$area. Idiomas: ";
 			foreach($j->languages as $l){
 				$r.="\2".$this->idiomas[$l]."\2, ";
@@ -53,7 +61,8 @@ class subliminalmessagesonthecode{
 			}
 			$r=trim($r, ", ");
 		/* </parseo> */
-		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
+		//$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
+		$core->message($data->channel, $r);
 	}
 	
 	private function iidiomas(){
