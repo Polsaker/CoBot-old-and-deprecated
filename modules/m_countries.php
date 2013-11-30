@@ -23,7 +23,7 @@ class subliminalmessagesonthecode{
 		$p = file_get_contents("http://restcountries.eu/rest/alpha/{$data->messageex[1]}");
 		$j = json_decode($p);
 		//print_r($j);
-		if($j->area<1){$area=($j->area*100 )."\2 has";}else{$area=$area."\2 km²";}
+		if($j->area<1){$area=($j->area*100 )."\2 has";}else{$area=$j->area."\2 km²";}
 		$r = "\2{$j->translations->es}\2: Capital: \2{$j->capital}\2, moneda: \2{$j->currency}\2, población: \2".number_format($j->population,0,",",".")."\2 ".
 		"TLD: \2{$j->topLevelDomain}\2. Superficie: \2$area. Idiomas: ";
 			foreach($j->languages as $l){
