@@ -66,19 +66,21 @@ class imagenius{
 	} 
 	
 	public function seenator(&$irc, $data, $core){
-		//print_r($data);
-		$n = ORM::for_table('seen')->where('nick',strtolower($data->nick))->find_one();
-		if(!$n){
-			$s = ORM::for_table('seen')->create();
-			$s->nick = strtolower($data->nick);
-			$s->ts = time();
-			$s->txt = $data->message;
-			$s->save();
-		}else{
-			$n->ts = time();
-			$n->txt = $data->message;
-			$n->save();
-		}
+		try{	
+			//print_r($data);
+			$n = ORM::for_table('seen')->where('nick',strtolower($data->nick))->find_one();
+			if(!$n){
+				$s = ORM::for_table('seen')->create();
+				$s->nick = strtolower($data->nick);
+				$s->ts = time();
+				$s->txt = $data->message;
+				$s->save();
+			}else{
+				$n->ts = time();
+				$n->txt = $data->message;
+				$n->save();
+			}
+		}catch(PDOException $e){echo "ATENCION ATENCION ATENCION: Algo raro ha pasao con la base de datos!";}
 	}
 	
 }
