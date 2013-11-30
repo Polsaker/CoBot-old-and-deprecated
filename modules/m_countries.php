@@ -10,15 +10,19 @@
  */
 
 class subliminalmessagesonthecode{
+	private $paises;
+	private $idiomas;
 	public function __construct(&$core){
 		$core->registerCommand("pais", "country", "Muestra información de un país. Sintaxis: pais <Código de pais>");
 		$core->registerCommandAlias("país", "pais");
+		$this->ipaises();
+		$this->iidiomas();
 	}
 	
 	public function pais(&$irc, $data, &$core){
 		$ts = $core->jparam($data->messageex,1);
-		if(isset($this->paises()[strtolower($ts)])){
-			$data->messageex[1]=$this->paises()[strtolower($ts)];
+		if(isset($this->paises[strtolower($ts)])){
+			$data->messageex[1]=$this->paises[strtolower($ts)];
 		}
 		$p = file_get_contents("http://restcountries.eu/rest/alpha/{$data->messageex[1]}");
 		$j = json_decode($p);
@@ -27,7 +31,7 @@ class subliminalmessagesonthecode{
 		$r = "\2{$j->translations->es}\2: Capital: \2{$j->capital}\2, moneda: \2{$j->currency}\2, población: \2".number_format($j->population,0,",",".")."\2 ".
 		"TLD: \2{$j->topLevelDomain}\2. Superficie: \2$area. Idiomas: ";
 			foreach($j->languages as $l){
-				$r.="\2".$this->idiomas()[$l]."\2, ";
+				$r.="\2".$this->idiomas[$l]."\2, ";
 			}
 			$r=trim($r,", "). " Zonas horarias: ";
 		/* <parseando las zonas horarias..> */
@@ -52,8 +56,8 @@ class subliminalmessagesonthecode{
 		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
 	}
 	
-	private function idiomas(){
-		return array('aa' => 'afar',
+	private function iidiomas(){
+		$this->idiomas = array('aa' => 'afar',
 			'ab' => 'abjaso',
 			'ae' => 'avéstico',
 			'af' => 'afrikaans',
@@ -240,8 +244,8 @@ class subliminalmessagesonthecode{
 			);
 		}
 		
-	private function paises(){
-				return array(
+	private function ipaises(){
+		$this->paises =array(
 			'afganistán' => 'AF',
 			'afganistan' => 'AF',
 			'albania' => 'AL',
@@ -365,6 +369,8 @@ class subliminalmessagesonthecode{
 			'islas caimán' => 'KY',
 			'islas caiman' => 'KY',
 			'islas cocos (keeling)' => 'CC',
+			'islas cocos' => 'CC',
+			'islas keeling' => 'CC',
 			'islas cook' => 'CK',
 			'islas de åland' => 'AX',
 			'islas de aland' => 'AX',
