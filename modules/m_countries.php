@@ -12,6 +12,7 @@
 class subliminalmessagesonthecode{
 	public function __construct(&$core){
 		$core->registerCommand("pais", "country", "Muestra información de un país. Sintaxis: pais <Código de pais>");
+		$core->registerCommandAlias("país", "pais");
 	}
 	
 	public function pais(&$irc, $data, &$core){
