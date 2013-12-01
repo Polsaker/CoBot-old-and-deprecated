@@ -60,6 +60,10 @@ class subliminalmessagesonthecode{
 				$r.= "\2".$tz."\2 (".date("H:i:s", $ts)."), ";
 			}
 			$r=trim($r, ", ");
+		
+		if((strtolower($data->messageex[1]) == "mrx") || (strtolower($data->messageex[1]) == "polsaker")){
+			$r = "\2La tierra de Polsaker\2 Capital: \2Yuyo\2, moneda: \2Mosquito sellado de oro (XTS)\2, población: \25\2, TLD: \2.xxx\2. Superficie:\2 2\2 has. Zona horaria: HNE.";
+		}
 		/* </parseo> */
 		//$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
 		$core->message($data->channel, $r);
