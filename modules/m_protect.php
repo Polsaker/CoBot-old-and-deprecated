@@ -20,9 +20,13 @@ class key{
 	}
 	
 	public function modeprotect(&$irc, $data, $core){
-		if(($data->rawmessageex[3]=="-o") && ($irc->isMe($data->rawmessageex[4]))){
+		print_r($data);
+		if(preg_match("&:.* MODE (.+) .*\-.*o.* .*".preg_quote($irc->_nick).".*&", $data->rawmessage, $m)){
 			$irc->message(SMARTIRC_TYPE_QUERY, "ChanServ", "OP {$data->rawmessageex[2]}");
 		}
+	/*	if(($data->rawmessageex[3]=="-o") && ($irc->isMe($data->rawmessageex[4]))){
+			$irc->message(SMARTIRC_TYPE_QUERY, "ChanServ", "OP {$data->rawmessageex[2]}");
+		}*/
 	}
 	
 	public function banprotect(&$irc, $data, $core){
