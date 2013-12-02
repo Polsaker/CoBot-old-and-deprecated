@@ -180,7 +180,7 @@ class jueg{
 			$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
 			$b->dinero=$data->messageex[2];$b->save();return 0;
 		}
-		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		$k = ORM::for_table('games_users')->where("nick", $data->messageex[1])->find_one();
 		if($k){	$k->dinero=$data->messageex[2]; $k->save(); }
 	}
 	
