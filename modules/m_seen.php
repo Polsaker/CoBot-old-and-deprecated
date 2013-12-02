@@ -80,7 +80,7 @@ class imagenius{
 				$n->txt = $data->message;
 				$n->save();
 			}
-		}catch(PDOException $e){echo "ATENCION ATENCION ATENCION: Algo raro ha pasao con la base de datos!";}
+		}catch(PDOException $e){echo "ATENCION ATENCION ATENCION: Algo raro ha pasao con la base de datos! {$e}\n";}
 	}
 	
 }
