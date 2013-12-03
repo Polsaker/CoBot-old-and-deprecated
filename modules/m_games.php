@@ -228,6 +228,8 @@ class jueg{
 			case "!transferir": $this->transferir($irc,$data);break;
 			case "!lvlp": $this->lvlp($irc,$data);break;
 			case "!circulando": $this->circulando($irc,$data);break;
+			case "!lvltop": $this->top($irc,$data,5, "nivel");break;
+			case "!lvltop10": $this->top($irc,$data,10, "nivel");break;
 		}
 		
 		foreach($this->xcommands as $com){
@@ -279,8 +281,8 @@ class jueg{
 		$this->schan($irc,$data->channel,$r);
 	}
 	
-	public function top($irc,$data, $n){
-		$k = ORM::for_table('games_users')->order_by_desc("dinero")->find_many();
+	public function top($irc,$data, $n, $order="dinero"){
+		$k = ORM::for_table('games_users')->order_by_desc($order)->find_many();
 		$i=0;
 		$this->schan($irc,$data->channel, "\00306    NICK                NIVEL  DINERO");
 		foreach($k as $key => $val){
