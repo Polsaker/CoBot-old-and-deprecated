@@ -376,6 +376,8 @@ class jueg{
 		if(!isset($data->messageex[2])){return 0;} // Por que enviar un mensaje de error es mucho trabajo.
 		$data->messageex[2]=abs($data->messageex[2]);
 		$f = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		$i = json_decode($f->extrainf);
+		if((isset($inf->prestamo)) && ($inf->prestamo != 0)){ $this->schan($irc, $data->channel, "No puedes transferir dinero si tienes una deuda con el banco! para pagarla pon !prestamo pagar", true); return 0; }
 		$t = ORM::for_table('games_users')->where("nick", $data->messageex[1])->find_one();
 		if(!$t){$this->schan($irc,$data->channel, "El usuario {$data->messageex[1]} no existe.", true); return 0; }
 		if($t->congelado != 0){ $this->schan($irc, $data->channel, "No puedes enviarle dinero a una cuenta congelada.",true); return 0;}
