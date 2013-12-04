@@ -7,9 +7,10 @@
 	define("CUSTOMPRIV", 5000);
 	
 	require("config.php");
-	require("lib/idiorm/idiorm.php");
-	require("lib/SmartIRC/SmartIRC.php");
-	require("cobot.core.php");
+	
+	require("core/lib/idiorm/idiorm.php");
+	require("core/lib/SmartIRC/SmartIRC.php");
+	require("core/cobot.core.php");
 	
 	$cobot = new CoBot($conf);
 	
