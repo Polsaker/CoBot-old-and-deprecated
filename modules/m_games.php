@@ -110,9 +110,9 @@ class jueg{
 			if((isset($inf->prestamo)) && ($inf->prestamo != 0)){
 				$inf->prestamo = $inf->prestamo + round(($inf->prestamo * 5/100),0);
 				$user->extrainf = json_encode($inf); 
+				$user->save();
 			}
 		}
-		$c->save();
 	}
 	
 	public function autoimp(&$irc){
