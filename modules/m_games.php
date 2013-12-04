@@ -22,7 +22,7 @@ class jueg{
 		$core->registerCommand("enablegame", "games", "Activa los juegos en un cana. Sintaxis: enablegame <canal>",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("disablegame", "games", "Desactiva los juegos en un canal. Sintaxis: disablegame <canal>",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("delgameuser", "games", "Elimina a un usurio de los juegos. Sintaxis: delgameuser <usuario>",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
-		$core->registerCommand("congelar", "games", "Congela a un usuario de los juegos. Sintaxis congelar <usuario> [hiper]",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
+		$core->registerCommand("congelar", "games", "Congela a un usuario de los juegos. Sintaxis congelar <usuario> [hiper|light]",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("descongelar", "games", "Descongela a un usuario de los juegos. Sintaxis: descongelar <usuario>",6, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		$core->registerCommand("top100", "games", "Muestra los 100 usuarios con mas dinero",4, "games", null, SMARTIRC_TYPE_QUERY|SMARTIRC_TYPE_CHANNEL);
 		
@@ -101,6 +101,18 @@ class jueg{
 			$this->sendGlobalNotice($irc,$m);
 			$this->lastplayer=false;
 		}
+		
+		// Aprovechamos para aumentarle la deuda  a los que pidieron prestamos >:D
+		
+		$c = ORM::for_table('games_users')->where_not_equal("extrainf", "[]")->find_many();
+		foreach ($c as $user){
+			$i = json_decode($user->extrainf);
+			if((isset($inf->prestamo)) && ($inf->prestamo != 0)){
+				$inf->prestamo = $inf->prestamo + round(($inf->prestamo * 5/100),0);
+				$user->extrainf = json_encode($inf); 
+			}
+		}
+		$c->save();
 	}
 	
 	public function autoimp(&$irc){
@@ -230,6 +242,7 @@ class jueg{
 			case "!circulando": $this->circulando($irc,$data);break;
 			case "!lvltop": $this->top($irc,$data,5, "nivel");break;
 			case "!lvltop10": $this->top($irc,$data,10, "nivel");break;
+			case "!prestamo": $this->prestamo($irc,$data);break;
 		}
 		
 		foreach($this->xcommands as $com){
@@ -266,6 +279,8 @@ class jueg{
 			if($k->dinero>1000000000){$r.="[\002\00304MM\003\002] ";}
 			if($bu){$r.="[\2\00307R\003\2] ";}
 			if($k->congelado!=0){$r.="[\2\00305F\003\2] ";}
+			$inf = json_decode($k->extrainf);
+			if((isset($inf->prestamo)) && ($inf->prestamo != 0)){$r.="[\2Deuda\2 {$inf->prestamo}]";}
 		/*	if($this->core->authchk($data->from, 4,"games")){$r.="[\2\00307A-\003\2] ";}
 			if($this->core->authchk($data->from, 6,"games")){$r.="[\2\00310A\003\2] ";}
 			if($this->core->authchk($data->from, 8,"games")){$r.="[\2\00311A+\003\2] ";}*/
@@ -279,6 +294,39 @@ class jueg{
 			if($p = json_decode($k->extrainf)->pozo){$r.="[\2Pozo\2 $p]";}
 		}
 		$this->schan($irc,$data->channel,$r);
+	}
+	
+	public function prestamo($irc,$data){
+		$k = ORM::for_table('games_users')->where("nick", $data->nick)->find_one();
+		$base = 500;$i=0; $maximo = $base;
+		while($i<($k->nivel)){
+			$i++;
+			$maximo = $maximo + round(($base * 25/100),0);
+		}
+		
+		if($data->messageex[1] =="pagar"){
+			$inf = json_decode($k->extrainf);
+			if((!isset($inf->prestamo)) && ($inf->prestamo == 0)){$this->schan($irc, $data->channel, "No tienes ningun prestamo pendiente de pago.", true); return 0;}
+			if($k->dinero < ($inf->prestamo +200)){$this->schan($irc, $data->channel, "No tienes dinero suficiente como para pagar este prestamo.", true); return 0;}
+			$b = ORM::for_table('games_banco')->where("id", 1)->find_one();
+			$k->dinero = $k->dinero - $inf->prestamo;
+			$b->dinero = $b->dinero + $inf->prestamo; $b->save();
+			$inf->prestamo=0;
+			$k->extrainf = json_encode($inf);
+			$k->save();
+			$this->schan($irc, $data->channel, "Has pagado tus deudas.");
+		}elseif((!isset($data->messageex[1])) || (!is_numeric($data->messageex[1]))){
+			$this->schan($irc, $data->channel, "Podes pedir hasta \$\2{$maximo}\2");
+		}else{
+			if($data->messageex[1] > $maximo){$this->schan($irc,$data->channel, "Solo podes pedir hasta \$\2{$maximo}\2!!", true); return 0;}
+			$inf = json_decode($k->extrainf);
+			if((isset($inf->prestamo)) && ($inf->prestamo != 0)){$this->schan($irc,$data->channel, "Debes pagar tu prestamo anterior antes de pedir otro!", true); return 0;}
+			if(!isset($inf->prestamo)){ $inf['prestamo'] = 0;  $l = json_encode($inf); $inf = json_decode($l);}
+			$inf->prestamo = $data->messageex[1] + 100;
+			$k->dinero = $k->dinero + $data->messageex[1];
+			$k->extrainf = json_encode($inf); $k->save();
+			$this->schan($irc, $data->channel, "El banco le ha otorgado el prestamo. Su deuda se incrementará en un 5% cada media hora. Para pagar su prestamo escriba !prestamo pagar");
+		}
 	}
 	
 	public function top($irc,$data, $n, $order="dinero"){
