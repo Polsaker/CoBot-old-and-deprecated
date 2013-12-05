@@ -301,7 +301,7 @@ class jueg{
 		$base = 500;$i=0; $maximo = $base;
 		while($i<($k->nivel)){
 			$i++;
-			$maximo = $maximo + round(($base * 25/100),0);
+			$maximo = $maximo + round(($maximo * 25/100),0);
 		}
 		
 		if($data->messageex[1] =="pagar"){
