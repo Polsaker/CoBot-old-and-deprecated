@@ -24,7 +24,8 @@ class amodkey{
 		$r="Usuarios actualmente registrados: ";
 		foreach($users as $val){$r.="{$val->username}, ";}
 		$r = trim($r,", ");
-		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
+		//$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
+		$core->message($data->channel, $r);
 		
 	}
 	public function register(&$irc, &$data, &$core){
