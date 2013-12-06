@@ -75,7 +75,7 @@ fclose($fp);
 	if($g==true){
 		ORM::configure('sqlite:./db/cobot.db');
 		$user = ORM::for_table('users')->create();
-		$user->username=$uname;
+		$user->username=strtolower($uname);
 		$user->pass=sha1($upass);
 		$user->save();
 
