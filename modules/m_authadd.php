@@ -15,7 +15,7 @@ class amodkey{
 		$core->registerCommand("listpriv", "authadd", "Lista los privilegios de un usuario. Sintaxis: listpriv <usuario>");
 		$core->registerCommand("addpriv", "authadd", "Da privilegios a un usuario. Sintaxis: addpriv <usuario> <privilegios> <sector>",9, CUSTOMPRIV);
 		$core->registerCommand("delpriv", "authadd", "Quita privilegios a un usuario. Sintaxis: delpriv <usuario> <privilegios> <sector>",9, CUSTOMPRIV);
-		$core->registerCommand("listusers", "authadd", "Lista los usuarios actualmente registrados");
+		$core->registerCommand("listusers", "authadd", "Lista los usuarios actualmente registrados", 1);
 
 	}
 	
@@ -24,7 +24,8 @@ class amodkey{
 		$r="Usuarios actualmente registrados: ";
 		foreach($users as $val){$r.="{$val->username}, ";}
 		$r = trim($r,", ");
-		$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
+		//$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $r);
+		$core->message($data->channel, $r);
 		
 	}
 	public function register(&$irc, &$data, &$core){
