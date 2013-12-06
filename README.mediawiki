@@ -1,4 +1,14 @@
 '''CoBot''' es un bot IRC modular programado en PHP. <br>
+
+==Ingredientes==
+Antes de poder instalar y posteriormente ejecutar CoBot necesita algunos paquetes a instalar:
+* php5-cli = Necesario para ejecutar CoBot.
+* php5-sqlite = Crear la base de datos de CoBot.
+* php5-curl = Paquete que permite acortar las url de CoBot.
+
+Para instalar estos paquetes solo basta con escribir en la terminal:
+ # aptitude install php5-cli php5-sqlite php5-curl
+
 ==Instalación==
 Para instalar el bot ejecute en un terminal:
 
