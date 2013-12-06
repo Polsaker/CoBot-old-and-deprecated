@@ -11,6 +11,7 @@
 
 class imagenius{
 	public function __construct(&$core){
+		if(!$core->conf['nickserv']['nspass']){return 0;}
         $core->registerMessageHandler('001', "nickserv", "identify");
 	}
 	
