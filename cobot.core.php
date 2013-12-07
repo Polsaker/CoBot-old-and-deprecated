@@ -309,7 +309,7 @@ class CoBot{
 			}
 			//$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Comandos: help auth $commands");
 			//$this->sendMessage($data->channel, "Comandos: help auth $commands", true);
-			$f=" 06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES');
+			$f=" 06\342\206\231";
 			$asg = explode("||||",trim(wordwrap("Comandos: help auth $commands",350, $f."||||",false), $f));
 			$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, $asg);
 		}else{
@@ -325,7 +325,7 @@ class CoBot{
 	}
 	
 	public function message($channel, $message){
-		$f=mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES');
+		$f="\342\206\231";
 		$asg = explode("||||",trim(wordwrap($message,350, "06 ". $f."||||",false), $f));
 		$this->irc->message(SMARTIRC_TYPE_CHANNEL, $channel, $asg);
 	}
@@ -470,7 +470,7 @@ class CoBot{
 			foreach($a as $key=>$val){
 				if(strlen($send)+strlen($val)>=$len){
 					time_nanosleep(0,250000000); 
-					$this->irc->message(SMARTIRC_TYPE_CHANNEL, $chan, $send." 06".mb_convert_encoding("&#8601;", 'UTF-8',  'HTML-ENTITIES'));
+					$this->irc->message(SMARTIRC_TYPE_CHANNEL, $chan, $send." 06\342\206\231");
 					$send="";
 				}else{$send.=$val.$sep;}
 			}
