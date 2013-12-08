@@ -11,14 +11,16 @@
 
 class key{
 	private $paises;
+	private $paises2;
 	public function __construct(&$core){
 		if(!$core->isLoaded("country")){$core->loadModule("m_countries.php"); } // Usaremos a m_countries!
 		$this->paises = array_flip($core->getModule("country")->paises);
+		$this->paises2 = $core->getModule("country")->paises;
 		$core->registerMessageHandler('JOIN', "skynet", "hostspy");
-		$core->registerTimeHandler(1800000, "skynet", "spyall"); // Cada 30 minutos los espiamos a todos!
+		//$core->registerTimeHandler(1800000, "skynet", "spyall"); // Cada 30 minutos los espiamos a todos!
 		$core->irc->setChannelSyncing(true);
-		$core->registerCommand("espiar", "skynet");
-		$core->registerCommand("spystats", "skynet");
+		$core->registerCommand("espiar", "skynet", false, 1);
+		$core->registerCommand("spystats", "skynet", false, 1);
 		$core->registerCommand("skytop", "skynet", "Muestra un ranking de los usuarios por país. Sintaxis: skytop [cantidad] [pais]",1);
 		
 		try {
@@ -34,30 +36,52 @@ class key{
 		$foo=0;$pais=array();
 		foreach($t as $u){
 			$foo++;
-			$pais[$u->pais]++;
+			@$pais[$u->pais]++;
 		}
-		arsort($pais);
-		$r="Tengo en total, registro de {$foo} usuarios, ";
-		foreach($pais as $p => $n){
-			$r.="{$n} de {$p}, ";
-		}
-		$core->message($data->channel, trim($r, ", "));
+		$ps = count($pais);
+		$r="Tengo en total, registro de {$foo} usuarios, de {$ps} países distintos.";
+		
+		$core->message($data->channel, $r);
 	}
 	
 	public function skytop($irc, $data, $core){
-		$t = ORM::for_table('spy')->find_many();
-		$pais=array();
-		foreach($t as $u){
-			$pais[$this->paises[$u->pais]]++;
-		}
-		arsort($pais);
-		$i=0;
-		$core->message($data->channel, "\00306    PAÍS                CANTIDAD");
-		foreach($pais as $p => $n){
-			$i++;
-			$bs1=substr("                  ",0,(20-strlen($p)));
-			$r="\002".$i.(($i>=10)?". ":".  ")."\002".$p .$bs1.$n;
-			$core->message($data->channel,$r);
+		$lpais = false;
+		if((isset($data->messageex[1])) && (is_numeric($data->messageex[1]))){ $limit = $data->messageex[1];}else{$limit = 10;}
+		if((isset($data->messageex[1])) && (!is_numeric($data->messageex[1]))){ $lpais = $data->messageex[1];}
+		if((isset($data->messageex[2])) && (!is_numeric($data->messageex[2]))){ $lpais = $data->messageex[2];}
+		
+		if($lpais == false){
+			$t = ORM::for_table('spy')->find_many();
+			$pais=array();
+			foreach($t as $u){
+				$pais[($this->paises[$u->pais]?$this->paises[$u->pais]:"Desconocido")]++;
+			}
+			arsort($pais);
+			$i=0;
+			$core->message($data->channel, "\00306    PAÍS                     CANTIDAD");
+			foreach($pais as $p => $n){
+				$i++;
+				$bs1=substr("                       ",0,(25-strlen($p)));
+				$r="\002".$i.(($i>=10)?". ":".  ")."\002".$p .$bs1.$n;
+				$core->message($data->channel,$r);
+				if($i == $limit){break;}
+			}
+		}else{
+			$t = ORM::for_table('spy')->where('pais', strtoupper($lpais))->find_many();
+			$pais=array();
+			foreach($t as $u){
+				
+				$pais[($u->ciudad?$u->ciudad:"Desconocido")]++;
+			}
+			arsort($pais);
+			$core->message($data->channel, "\00306    CIUDAD                   CANTIDAD");
+			foreach($pais as $p => $n){
+				$i++;
+				$bs1=substr("                       ",0,(25-strlen($p)));
+				$r="\002".$i.(($i>=10)?". ":".  ")."\002".$p .$bs1.$n;
+				$core->message($data->channel,$r);
+				if($i == $limit){break;}
+			}
 		}
 	}
 	
@@ -67,7 +91,7 @@ class key{
 	public function hostspy(&$irc, $data, $core){
 		
 		if($data->nick != $irc->_nick){
-			print_r($data);
+			//print_r($data);
 			// TODO: geolocalizar $data->host
 			$this->analizar($data->host, $data->nick);
 		}
@@ -98,7 +122,7 @@ class key{
 		
 		/* Validación */
 		$paso = false;
-		if(inet_pton($host)){ $paso =true;}
+		if(@inet_pton($host)){ $paso =true;}
 		if($this->is_valid_domain_name($host)){ $paso =true;}
 		if($paso == false){return 0;}
 		/* </validación> */
@@ -111,7 +135,7 @@ class key{
 			$n = ORM::for_table('spy')->create();
 			$n->nick	= $nick;
 			$n->ip		= $jao->query;
-			$n->pais	= (!$jao->countryCode?"unk":$jao->countryCode);
+			$n->pais	= (!$jao->countryCode?"UNK":$jao->countryCode);
 			$n->region	= $jao->regionName;
 			$n->ciudad	= $jao->city;
 			$n->timezone= $jao->timezone;

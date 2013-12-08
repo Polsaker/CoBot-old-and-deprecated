@@ -259,6 +259,7 @@ class subliminalmessagesonthecode{
 		
 	private function ipaises(){
 		$this->paises =array(
+			'país desconocido' => 'UNK',
 			'afganistán' => 'AF',
 			'afganistan' => 'AF',
 			'albania' => 'AL',
