@@ -10,23 +10,27 @@
  */
 
 class key{
+	private $paises;
 	public function __construct(&$core){
+		if(!$core->isLoaded("country")){$core->loadModule("m_countries.php"); } // Usaremos a m_countries!
+		$this->paises = array_flip($core->getModule("country")->paises);
 		$core->registerMessageHandler('JOIN', "skynet", "hostspy");
 		$core->registerTimeHandler(1800000, "skynet", "spyall"); // Cada 30 minutos los espiamos a todos!
 		$core->irc->setChannelSyncing(true);
 		$core->registerCommand("espiar", "skynet");
 		$core->registerCommand("spystats", "skynet");
+		$core->registerCommand("skytop", "skynet", "Muestra un ranking de los usuarios por país. Sintaxis: skytop [cantidad] [pais]",1);
 		
 		try {
-			$k = ORM::for_table('skynet')->find_one();
+			$k = ORM::for_table('spy')->find_one();
 		}catch(PDOException $e){
-			$query="CREATE TABLE 'skynet' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'nick' TEXT NOT NULL, 'ip' TEXT NOT NULL, 'pais' TEXT NOT NULL, 'region' TEXT NOT NULL, 'ciudad' TEXT NOT NULL, 'timezone' TEXT NOT NULL);";
+			$query="CREATE TABLE 'spy' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'nick' TEXT NOT NULL, 'ip' TEXT NOT NULL, 'pais' TEXT NOT NULL, 'region' TEXT NOT NULL, 'ciudad' TEXT NOT NULL, 'timezone' TEXT NOT NULL);";
 			$db = ORM::get_db();
 			$db->exec($query);
 		}
 	}
 	public function spystats(&$irc, $data, $core){
-		$t = ORM::for_table('skynet')->find_many();
+		$t = ORM::for_table('spy')->find_many();
 		$foo=0;$pais=array();
 		foreach($t as $u){
 			$foo++;
@@ -39,6 +43,24 @@ class key{
 		}
 		$core->message($data->channel, trim($r, ", "));
 	}
+	
+	public function skytop($irc, $data, $core){
+		$t = ORM::for_table('spy')->find_many();
+		$pais=array();
+		foreach($t as $u){
+			$pais[$this->paises[$u->pais]]++;
+		}
+		arsort($pais);
+		$i=0;
+		$core->message($data->channel, "\00306    PAÍS                CANTIDAD");
+		foreach($pais as $p => $n){
+			$i++;
+			$bs1=substr("                  ",0,(20-strlen($p)));
+			$r="\002".$i.(($i>=10)?". ":".  ")."\002".$p .$bs1.$n;
+			$core->message($data->channel,$r);
+		}
+	}
+	
 	public function espiar(&$irc, $data, $core){
 		$this->spyall($irc, $data->channel);
 	}
@@ -58,7 +80,7 @@ class key{
 			$mus= count($chan->users);
 			foreach($chan->users as $user){
 				$ww2++;
-				$u = ORM::for_table('skynet')->where('nick', $user->nick)->find_one();
+				$u = ORM::for_table('spy')->where('nick', $user->nick)->find_one();
 				if(!$u){
 					$ww++;
 					if($ww > 25){
@@ -72,16 +94,24 @@ class key{
 	}
 	
 	private function analizar($host, $nick){
-		$u = ORM::for_table('skynet')->where('nick', $user->nick)->find_one();
+		echo "DEBUG: Analizando {$nick} ({$host})\n";
+		
+		/* Validación */
+		$paso = false;
+		if(inet_pton($host)){ $paso =true;}
+		if($this->is_valid_domain_name($host)){ $paso =true;}
+		if($paso == false){return 0;}
+		/* </validación> */
+		$u = ORM::for_table('spy')->where('nick', $nick)->find_one();
 		if($u){return 0;}
 		$ip = file_get_contents("http://ip-api.com/json/{$host}");
 		$jao = json_decode($ip);
 		if($jao->status=="success"){
 		try{
-			$n = ORM::for_table('skynet')->create();
+			$n = ORM::for_table('spy')->create();
 			$n->nick	= $nick;
 			$n->ip		= $jao->query;
-			$n->pais	= (!$jao->country?"Pais desconocido":$jao->country);
+			$n->pais	= (!$jao->countryCode?"unk":$jao->countryCode);
 			$n->region	= $jao->regionName;
 			$n->ciudad	= $jao->city;
 			$n->timezone= $jao->timezone;
@@ -89,6 +119,13 @@ class key{
 		}catch(PDOException $e){echo $e;}
 		}
 	}
+	
+	function is_valid_domain_name($domain_name)
+{
+    return (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain_name) //valid chars check
+            && preg_match("/^.{1,253}$/", $domain_name) //overall length check
+            && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $domain_name)   ); //length of each label
+}
 	
 	
 }
