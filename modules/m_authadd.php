@@ -72,7 +72,7 @@ class amodkey{
 	public function delpriv_priv(&$irc, &$data, &$core){return $this->addpriv_priv($irc,$data,$core);}
 	public function addpriv(&$irc, &$data, &$core){
 		if(!isset($data->messageex[3])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Faltan parámetros!!"); return 0;}
-		if($data->messageex[2]>9){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Error de usuario. Inserte otro usuario y presione enter. (No se pueden otorgar privilegios de nivel 10!!)"); return 0;}
+		if(($data->messageex[2]>9) && ($data->messageex[3] == "*")){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Error de usuario. Inserte otro usuario y presione enter. (No se pueden otorgar privilegios de nivel 10!!)"); return 0;}
 		$user = ORM::for_table('users')->where('username', strtolower($data->messageex[1]))->find_one(); 
 		if(!$user){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 El usuario no existe!"); return 0;}
 		if(!is_numeric($data->messageex[2])){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "\00305Error:\003 Los privilegios deben ser un número entre el cero y el nueve."); return 0;}
