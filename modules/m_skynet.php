@@ -20,7 +20,7 @@ class key{
 		//$core->registerTimeHandler(1800000, "skynet", "spyall"); // Cada 30 minutos los espiamos a todos!
 		$core->irc->setChannelSyncing(true);
 		$core->registerCommand("espiar", "skynet", false, 1);
-		$core->registerCommand("spystats", "skynet", false, 1);
+		$core->registerCommand("skystats", "skynet", false, 1);
 		$core->registerCommand("skytop", "skynet", "Muestra un ranking de los usuarios por país. Sintaxis: skytop [cantidad] [pais]",1);
 		$core->registerCommand("skyuser", "skynet", "Muestra la información de un usuario o borra la entrada de ese usuario. Sintaxis: skyuser <nick> [del]", 3);
 		
@@ -32,10 +32,11 @@ class key{
 			$db->exec($query);
 		}
 	}
-	public function spystats(&$irc, $data, $core){
+	public function skystats(&$irc, $data, $core){
 		$t = ORM::for_table('spy')->find_many();
-		$foo=0;
-		foreach($t as $u){$foo++;}
+		$foo=0;$pais=array();
+		foreach($t as $u){$foo++; @$pais[$u->pais]++;}
+		$ps = count($pais);
 		$r="Tengo en total, registro de {$foo} usuarios, de {$foo} países distintos.";
 		
 		$core->message($data->channel, $r);
