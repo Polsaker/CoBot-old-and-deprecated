@@ -22,6 +22,7 @@ class key{
 		$core->registerCommand("espiar", "skynet", false, 1);
 		$core->registerCommand("spystats", "skynet", false, 1);
 		$core->registerCommand("skytop", "skynet", "Muestra un ranking de los usuarios por país. Sintaxis: skytop [cantidad] [pais]",1);
+		$core->registerCommand("skyuser", "skynet", "Muestra la información de un usuario o borra la entrada de ese usuario. Sintaxis: skyuser <nick> [del]", 3);
 		
 		try {
 			$k = ORM::for_table('spy')->find_one();
@@ -33,17 +34,27 @@ class key{
 	}
 	public function spystats(&$irc, $data, $core){
 		$t = ORM::for_table('spy')->find_many();
-		$foo=0;$pais=array();
-		foreach($t as $u){
-			$foo++;
-			@$pais[$u->pais]++;
-		}
-		$ps = count($pais);
-		$r="Tengo en total, registro de {$foo} usuarios, de {$ps} países distintos.";
+		$foo=0;
+		foreach($t as $u){$foo++;}
+		$r="Tengo en total, registro de {$foo} usuarios, de {$foo} países distintos.";
 		
 		$core->message($data->channel, $r);
 	}
 	
+	public function skyuser($irc, $data, $core){
+		if(!isset($data->messageex[1])){return 0;}
+		$u = ORM::for_table('spy')->where('nick', $data->messageex[1])->find_one();
+		if($u){
+			if((isset($data->messageex[2])) && ($data->messageex[2] == "del")){
+				$u->delete();
+				$core->message($data->channel, "Se ha borrado la entrada de informacion del usuario \2{$data->messageex[1]}\2");
+			}else{
+				$core->message($data->channel, "P: {$u->pais}, R: {$u->region}, C: {$u->ciudad}, TS: {$u->timezone}, LIP: {$u->ip}");
+			}
+		}else{
+			$core->message($data->channel, "\00304Error\003: Usuario no encontrado.");
+		}
+	}
 	public function skytop($irc, $data, $core){
 		$lpais = false;
 		if((isset($data->messageex[1])) && (is_numeric($data->messageex[1]))){ $limit = $data->messageex[1];}else{$limit = 10;}
@@ -133,7 +144,7 @@ class key{
 		if($jao->status=="success"){
 		try{
 			$n = ORM::for_table('spy')->create();
-			$n->nick	= $nick;
+			$n->nick	= strtolower($nick);
 			$n->ip		= $jao->query;
 			$n->pais	= (!$jao->countryCode?"UNK":$jao->countryCode);
 			$n->region	= $jao->regionName;
