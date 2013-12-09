@@ -72,7 +72,7 @@ class key{
 			$core->message($data->channel, "\00306    PAÍS                     CANTIDAD");
 			foreach($pais as $p => $n){
 				$i++;
-				$bs1=substr("                       ",0,(25-mb_strlen($p)));
+				$bs1=substr("                       ",0,(25-strlen(utf8_decode($p))));
 				$r="\002".$i.(($i>=10)?". ":".  ")."\002".$p .$bs1.$n;
 				$core->message($data->channel,$r);
 				if($i == $limit){break;}
