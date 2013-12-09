@@ -43,7 +43,7 @@ class key{
 	
 	public function skyuser($irc, $data, $core){
 		if(!isset($data->messageex[1])){return 0;}
-		$u = ORM::for_table('spy')->where('nick', $data->messageex[1])->find_one();
+		$u = ORM::for_table('spy')->where('nick', strtolower($data->messageex[1]))->find_one();
 		if($u){
 			if((isset($data->messageex[2])) && ($data->messageex[2] == "del")){
 				$u->delete();
