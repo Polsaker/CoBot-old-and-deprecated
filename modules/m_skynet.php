@@ -37,7 +37,7 @@ class key{
 		$foo=0;$pais=array();
 		foreach($t as $u){$foo++; @$pais[$u->pais]++;}
 		$ps = count($pais);
-		$r="Tengo en total, registro de {$foo} usuarios, de {$foo} países distintos.";
+		$r="Tengo en total, registro de {$foo} usuarios, de {$ps} países distintos.";
 		
 		$core->message($data->channel, $r);
 	}
