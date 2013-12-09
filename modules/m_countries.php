@@ -10,8 +10,8 @@
  */
 
 class subliminalmessagesonthecode{
-	private $paises;
-	private $idiomas;
+	public $paises;
+	public $idiomas;
 	public function __construct(&$core){
 		$core->registerCommand("pais", "country", "Muestra información de un país. Sintaxis: pais <Código de pais>");
 		$core->registerCommandAlias("país", "pais");
@@ -259,6 +259,7 @@ class subliminalmessagesonthecode{
 		
 	private function ipaises(){
 		$this->paises =array(
+			'país desconocido' => 'UNK',
 			'afganistán' => 'AF',
 			'afganistan' => 'AF',
 			'albania' => 'AL',
