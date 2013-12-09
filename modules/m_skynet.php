@@ -116,7 +116,7 @@ class key{
 			$mus= count($chan->users);
 			foreach($chan->users as $user){
 				$ww2++;
-				$u = ORM::for_table('spy')->where('nick', $user->nick)->find_one();
+				$u = ORM::for_table('spy')->where('nick', strtolower($user->nick))->find_one();
 				if(!$u){
 					$ww++;
 					if($ww > 25){
@@ -139,7 +139,7 @@ class key{
 		if($this->is_valid_domain_name($host)){ $paso =true;}
 		if($paso == false){return 0;}
 		/* </validación> */
-		$u = ORM::for_table('spy')->where('nick', $nick)->find_one();
+		$u = ORM::for_table('spy')->where('nick', strtolower($nick))->find_one();
 		if($u){return 0;}
 		$ip = file_get_contents("http://ip-api.com/json/{$host}");
 		$jao = json_decode($ip);
