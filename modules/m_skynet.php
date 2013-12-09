@@ -125,6 +125,7 @@ class key{
 					$this->analizar($user->host, $user->nick);
 				}
 			}
+			$ww2=0;
 		}
 	}
 	
