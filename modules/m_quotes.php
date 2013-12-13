@@ -63,8 +63,7 @@ class quotes{
                                	if(!$n){
                                        	$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Todavía no se ha añadido ningún quote..");
                                 }else{
-                                        $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Quote número \002{$n->id}\002, agregada por \002{$n->nick}\002 de fecha$
-                                }
+                                        $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Quote número \002{$n->id}\002, agregada por \002{$n->nick}\002 de fecha \002{$n->date}\002: $n->quote");                                }
                                 break;
 			case 'del':
 				if(!$core->authchk($data->from, 0, "*")) {
