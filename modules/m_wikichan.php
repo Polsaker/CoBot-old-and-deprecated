@@ -103,18 +103,21 @@ class asdfg{
 		$qad = ORM::for_table('wikichan')->where('chan', strtolower($data->channel))->find_one();
 		if(!isset($qad->api)){ $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Esta funcion no esta habilitada en este canal"); return 0;}
 		$ts = $core->jparam($data->messageex,1);
-		
+		if(isset($data->esg)){$ts = $data->esg;}
+		 
 		$xml =  file_get_contents("http://".$qad->api."/api.php?action=query&prop=extracts&exchars=440&titles=".urlencode(str_replace(" ", "_",$ts))."&format=json");		
 		$result = json_decode($xml);
 		foreach($result->query->pages as $key => $val){$pageid=$key;}
 		if(@isset($result->query->pages->$pageid->missing)){$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, '04Error: El artículo no existe.');return 0;}
 		$rs=$result->query->pages->$pageid->extract;
-		if(preg_match('#^.*REDIRECCIÓN (.+)$#',strip_tags($rs), $matches)){
-			$this->preview($irc,$msg,$channel,array("",$matches[1]),$who);
+		if(preg_match('#^.*REDIRECCIÓN (.+)$#i',strip_tags($rs), $matches)){
+			$data->esg = $matches[1];
+			$this->preview($irc,$data,$core);
 			return 0;
 		}
-		if(preg_match('#^.*REDIRECT (.+)$#',strip_tags($rs), $matches)){
-			$this->preview($irc,$msg,$channel,array("",$matches[1]),$who);
+		if(preg_match('#^.*REDIRECT (.+)$#i',strip_tags($rs), $matches)){
+			$data->esg = $matches[1];
+			$this->preview($irc,$data,$core);
 			return 0;
 		}
 		$rs=$this->wformat($rs);
