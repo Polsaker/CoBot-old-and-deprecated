@@ -12,7 +12,7 @@ class quotes{
 	private $registered;
 
 	public function __construct(&$core){
-		$core->registerCommand("quote", "quote", "Permite gestionar Quotes en el bot. Sintaxis: " . $core->conf['irc']['prefix'] . "quote [add|last|find|del] [mensaje de quote|número de quote]");
+		$core->registerCommand("quote", "quote", "Permite gestionar Quotes en el bot. Sintaxis: " . $core->conf['irc']['prefix'] . "quote [add|last|find|del|random] [mensaje de quote|número de quote]");
 		$core->registerMessageHandler("307", "quote", "isregistered");
 		try {
 			$k = ORM::for_table('quotes')->find_one();
@@ -45,7 +45,7 @@ class quotes{
 			case 'last': 
 				$n = ORM::for_table('quotes')->order_by_desc('id')->find_one();
 				if(!$n){
-					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Todavía no se ha añadido ningun quote..");
+					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Todavía no se ha añadido ningún quote..");
 				}else{
 					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Quote número \002{$n->id}\002, agregada por \002{$n->nick}\002 de fecha \002{$n->date}\002: $n->quote");
 				}
@@ -58,6 +58,13 @@ class quotes{
 					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "No existen Quotes que coincidan con el parámetro de búsqueda: \002{$opt[2]}\002.");
 				}
 				break;
+                        case 'random':
+                                $n = ORM::for_table('quotes')->raw_query('SELECT * FROM quotes ORDER BY RANDOM()')->find_one();
+                               	if(!$n){
+                                       	$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Todavía no se ha añadido ningún quote..");
+                                }else{
+                                        $irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Quote número \002{$n->id}\002, agregada por \002{$n->nick}\002 de fecha \002{$n->date}\002: $n->quote");                                }
+                                break;
 			case 'del':
 				if(!$core->authchk($data->from, 0, "*")) {
 					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "$data->nick, Debe estar registrado con el bot para poder agregar quote: " . $core->conf['irc']['prefix'] . "help auth");
