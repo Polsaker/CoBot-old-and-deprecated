@@ -42,7 +42,7 @@ class qwerty{
 					$trnk=$likes+$dlikes;
 					$rank=round(($likes / $trnk ) * 100);
 					if($rank>50){ $rank="03".$rank; }else{ $rank="05".$rank; }
-					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "$vname 10Duración: $dh:$dm:$ds, 10Visto $views veces, con 03$likes Me gusta, 05$dlikes No me gusta ($rank%) y $coms comentarios" );
+					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "$vname 10Duración: $dh:$dm:$ds, 10Visto $views veces, con 03$likes Me gusta 05$dlikes No me gusta ($rank%) y $coms comentarios" );
 					
 				}
 	}
