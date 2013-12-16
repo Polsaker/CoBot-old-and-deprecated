@@ -14,5 +14,10 @@
 	$cobot = new CoBot($conf);
 	
 	require("modules.php");
-	
-	$cobot->connect();
+	try{
+		$cobot->connect();
+	}catch(Exception $e){
+		$cobot->irc->send("QUIT :CALL NINE ONE ONE, PHP Fatal Error D:", SMARTIRC_CRITICAL);
+		sleep(1); // >:D
+		exec("php cobot.php > log/cobot.log &");
+	}
