@@ -67,12 +67,12 @@ class quotes{
                                 break;
 			case 'del':
 				if(!$core->authchk($data->from, 0, "*")) {
-					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "$data->nick, Debe estar registrado con el bot para poder agregar quote: " . $core->conf['irc']['prefix'] . "help auth");
+					$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "$data->nick, Debe estar registrado con el bot para poder eliminar quote: " . $core->conf['irc']['prefix'] . "help auth");
 				} else {
 					if(is_numeric($opt[2])) {
 						$n = ORM::for_table('quotes')->where('id', $opt[2])->find_one();
 						if($n->id){
-							if($n->nick == strtolower($data->nick)) {
+							if(($n->nick == strtolower($data->nick)) || ($core->authchk($data->from, 4, "quote"))) {
 								$n->delete();
 								$irc->message(SMARTIRC_TYPE_CHANNEL, $data->channel, "Quote número \002{$n->id}\002, eliminada por \002{$data->nick}\002");
 							} else {
