@@ -216,6 +216,8 @@ class CoBot{
 	
 	# Funcion interna: Verifica privilegios y llama a la función correcta
 	public function commandHandler(&$irc, &$data){
+        // When I wrote this, only God and I understood what I was doing
+        // Now, God only knows
 		if(preg_match("#".preg_quote($this->conf['irc']['nick'])."(\:|,)#",$data->messageex[0])){
 			$command = $data->messageex[1];		
 		}else{
