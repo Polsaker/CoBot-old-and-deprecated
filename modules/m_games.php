@@ -448,10 +448,10 @@ class jueg{
 			$this->lastplayer=$data->nick;
 		}
 		
-		switch($k->nivel){
-			case 1:	$s=rand(5,10);	$p=rand(2,14);	$n=rand(-6,10);	$m=rand(9,29);	$e=rand(-10,1);	$b=rand(-19,-2); $x=rand(-10,10); $a=rand(-5,10);break;
-			default:$s=rand(6,12);	$p=rand(5,16);	$n=rand(-9,15);	$m=rand(12,30);	$e=rand(-17,3);	$b=rand(-26,-8); $x=rand(-17,17); $a=rand(-8,15);break;
-		}
+		#switch($k->nivel){
+		#	case 1:	$s=rand(5,10);	$p=rand(2,14);	$n=rand(-6,10);	$m=rand(9,29);	$e=rand(-10,1);	$b=rand(-19,-2); $x=rand(-10,10); $a=rand(-5,10);break;
+		$s=rand(6*$k->nivel,12*$k->nivel);	$p=rand(5*$k->nivel,16*$k->nivel);	$n=rand(-9*(-$k->nivel),15);	$m=rand(12*$k->nivel,30*$k->nivel);	$e=rand(-17*$k->nivel,3*$k->nivel);	$b=rand(-26*$k->nivel,-8*$k->nivel); $x=rand(-17*$k->nivel,17); $a=rand(-8*$k->nivel,15);
+		#}
 		$n1=rand(1,8);	$n2=rand(1,8);	$n3=rand(1,8);
 		// OPTIMIZAR!!!
 		$comb="";
